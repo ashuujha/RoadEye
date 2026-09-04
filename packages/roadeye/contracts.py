@@ -34,20 +34,27 @@ class Input(Model):
     event_id: UUID
     run_id: UUID
     kind: Literal["passage", "ocr", "heartbeat"]
-    camera_id: str = Field(pattern=r"^C[1-6]$")
-    lane_id: str = Field(pattern=r"^C[1-6]-L1$")
+    camera_id: str = Field(pattern=r"^(C[1-6]|REAL_C1)$")
+    lane_id: str = Field(pattern=r"^(C[1-6]|REAL_C1)-L1$")
     captured_at: AwareDatetime
     passage_id: str = Field(min_length=1, max_length=80)
     readings: list[Reading] = Field(default_factory=list, max_length=16)
     input_confidence: float = Field(default=1, ge=0, le=1)
     quality: float = Field(default=1, ge=0, le=1)
     evidence_key: str = Field(default="plate-card.svg", max_length=128)
-    source_mode: Literal["synthetic"] = "synthetic"
-    inference_origin: Literal["mock_candidates"] = "mock_candidates"
+    source_mode: Literal["synthetic", "recorded_real"] = "synthetic"
+    inference_origin: Literal["mock_candidates", "model_inference"] = "mock_candidates"
+    metadata: dict = Field(default_factory=dict)
     dataset_version: Literal["1"] = "1"
 
     @model_validator(mode="after")
     def coherent(self):
+        if (self.source_mode == "synthetic") != (self.inference_origin == "mock_candidates"):
+            raise ValueError("Source and inference origin mismatch")
+        if (self.camera_id == "REAL_C1") != (self.source_mode == "recorded_real"):
+            raise ValueError("Camera source mismatch")
+        if self.source_mode == "recorded_real" and not self.metadata:
+            raise ValueError("Recorded inference metadata required")
         if self.lane_id != f"{self.camera_id}-L1":
             raise ValueError("Lane does not belong to camera")
         if self.kind != "ocr" and self.readings:

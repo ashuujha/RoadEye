@@ -33,13 +33,14 @@ from roadeye.contracts import (
     Window,
 )
 from roadeye.db import now, session
-from roadeye.evidence import LocalEvidenceStore, digest
+from roadeye.evidence import LocalEvidenceStore, digest, evidence_root
 from roadeye.plates import normalize
+from roadeye.recorded import service as video
 from sqlalchemy import func, select, text
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 
-app = FastAPI(title="RoadEye synthetic engineering console", version="1.0.0")
+app = FastAPI(title="RoadEye engineering console", version="1.0.0")
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[settings.cors_origin],
@@ -181,7 +182,7 @@ def live():
 @app.get("/v1/health/ready", response_model=r.HealthResponse)
 def ready(db: DB):
     revision = db.scalar(text("SELECT version_num FROM alembic_version"))
-    if revision != "20260905_immutable":
+    if revision != "20260906_recorded":
         raise HTTPException(503, "MIGRATIONS_NOT_CURRENT")
     return output(
         {
@@ -218,7 +219,14 @@ def logout(request: Request, response: Response, db: DB, actor: User):
 
 @app.get("/v1/cameras", response_model=r.CameraListResponse)
 def cameras(db: DB, actor: User):
-    return output([s.serialize(c) for c in db.scalars(select(m.Camera).order_by(m.Camera.id))])
+    return output(
+        [
+            s.serialize(c)
+            for c in db.scalars(
+                select(m.Camera).where(m.Camera.id != "REAL_C1").order_by(m.Camera.id)
+            )
+        ]
+    )
 
 
 @app.get("/v1/cameras/{camera_id}", response_model=Result)
@@ -305,7 +313,12 @@ def runs(db: DB, actor: User):
     return output(
         [
             s.serialize(r)
-            for r in db.scalars(select(m.Run).order_by(m.Run.created_at.desc()).limit(50))
+            for r in db.scalars(
+                select(m.Run)
+                .where(m.Run.source_mode == "synthetic")
+                .order_by(m.Run.created_at.desc())
+                .limit(50)
+            )
         ]
     )
 
@@ -314,6 +327,8 @@ def runs(db: DB, actor: User):
 def status(run_id: str, db: DB, actor: User):
     local()
     run = s.require_run(db, run_id)
+    if run.source_mode != "synthetic":
+        raise HTTPException(404, "SYNTHETIC_RUN_NOT_FOUND")
     jobs = db.execute(
         select(m.Job.state, func.count()).where(m.Job.run_id == run_id).group_by(m.Job.state)
     ).all()
@@ -339,6 +354,8 @@ def control(run_id: str, body: Control, db: DB, actor: Admin, key: Key):
 
     def action():
         run = s.require_run(db, run_id, lock=True)
+        if run.source_mode != "synthetic":
+            raise HTTPException(409, "USE_RECORDED_CONTROLS")
         if body.action == "pause":
             run.state = "paused"
         elif body.action == "play":
@@ -362,6 +379,8 @@ def control(run_id: str, body: Control, db: DB, actor: Admin, key: Key):
 
 @app.post("/v1/inputs", response_model=Receipt, status_code=202)
 def inputs(body: Input, db: DB, actor: Admin, request: Request, key: Key):
+    if body.source_mode != "synthetic":
+        raise HTTPException(403, "MODEL_INPUTS_WORKER_ONLY")
     try:
         result = s.ingest(db, body, actor, key, request.state.correlation)
     except (ValueError, FileNotFoundError) as exc:
@@ -425,7 +444,7 @@ def evidence(evidence_id: str, db: DB, actor: Investigator, request: Request):
     if not row:
         raise HTTPException(404, "EVIDENCE_NOT_FOUND")
     try:
-        content = LocalEvidenceStore(settings.evidence_root).read(row.object_key)
+        content = LocalEvidenceStore(evidence_root(row.source_mode)).read(row.object_key)
     except (ValueError, FileNotFoundError) as exc:
         raise HTTPException(404, "EVIDENCE_OBJECT_MISSING") from exc
     if digest(content) != row.digest or len(content) != row.size:
@@ -471,6 +490,8 @@ def journey(query_id: str, db: DB, actor: Investigator):
 def metrics(metric: str, run_id: str, start: datetime, end: datetime, db: DB, actor: User):
     if metric not in ("summary", "counts", "od", "travel_times"):
         raise HTTPException(404, "METRIC_NOT_FOUND")
+    if s.require_run(db, run_id).source_mode != "synthetic":
+        raise HTTPException(422, "USE_RECORDED_COUNTS_NO_CALIBRATED_ANALYTICS")
     result = analytics.summary(db, Window.model_validate(dict(run_id=run_id, start=start, end=end)))
     return output(result)
 
@@ -619,4 +640,67 @@ def jobs(run_id: str, db: DB, actor: Admin):
                 select(m.Job).where(m.Job.run_id == run_id).order_by(m.Job.available_at).limit(200)
             )
         ]
+    )
+
+
+@app.get("/v1/recordings", response_model=Result)
+def recordings(actor: Investigator):
+    video.enabled()
+    return output(
+        [
+            {"id": key, **{k: v for k, v in value.items() if k != "path"}}
+            for key, value in video.registry().items()
+        ]
+    )
+
+
+@app.post("/v1/recorded/runs", response_model=Result, status_code=202)
+def recorded_create(body: video.VideoCreate, db: DB, actor: Admin, key: Key):
+    return recorded(
+        db,
+        actor,
+        "recorded.create",
+        key,
+        body.model_dump(mode="json"),
+        lambda: output(video.create(db, body, actor)),
+    )
+
+
+@app.get("/v1/recorded/runs", response_model=Result)
+def recorded_runs(db: DB, actor: Investigator):
+    video.enabled()
+    ids = db.scalars(
+        select(m.Run.id)
+        .where(m.Run.source_mode == "recorded_real")
+        .order_by(m.Run.created_at.desc())
+        .limit(50)
+    )
+    return output([video.status(db, identity) for identity in ids])
+
+
+@app.get("/v1/recorded/runs/{run_id}", response_model=Result)
+def recorded_status(run_id: str, db: DB, actor: Investigator):
+    video.enabled()
+    return output(video.status(db, run_id))
+
+
+@app.get("/v1/recorded/runs/{run_id}/passages", response_model=Result)
+def recorded_passages(run_id: str, db: DB, actor: Investigator, request: Request):
+    video.enabled()
+    result = video.passages(db, run_id)
+    s.audit(db, actor, "recording.passages_read", run_id, run_id, request.state.correlation)
+    db.commit()
+    return output(result)
+
+
+@app.post("/v1/recorded/runs/{run_id}/replay", response_model=Result, status_code=202)
+def recorded_replay(run_id: str, db: DB, actor: Admin, key: Key):
+    video.enabled()
+    return recorded(
+        db,
+        actor,
+        f"recorded.replay:{run_id}",
+        key,
+        {},
+        lambda: output(video.retry(db, run_id, actor)),
     )

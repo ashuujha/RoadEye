@@ -17,7 +17,7 @@ def schedule() -> bool:
     with SessionLocal.begin() as db:
         run = db.scalar(
             select(m.Run)
-            .where(m.Run.state == "playing")
+            .where(m.Run.state == "playing", m.Run.source_mode == "synthetic")
             .order_by(m.Run.created_at)
             .with_for_update(skip_locked=True)
             .limit(1)
@@ -54,6 +54,13 @@ def claim(at=None) -> tuple[str, str] | None:
 
 def handle(job_id: str, token: str) -> bool:
     try:
+        with SessionLocal() as check:
+            event = check.get(m.InputEvent, job_id)
+            video = event is not None and event.payload.get("kind") == "recorded_video"
+        if video:
+            from roadeye.recorded.processing import process_video
+
+            return process_video(job_id, token)
         with SessionLocal.begin() as db:
             # Consistent lock order: run then job, including controls and processing.
             reference = db.get(m.Job, job_id)
@@ -76,7 +83,8 @@ def handle(job_id: str, token: str) -> bool:
             job.lease_until = None
             job.error = None
             db.flush()
-            anomalies(db, run)
+            if run.source_mode == "synthetic":
+                anomalies(db, run)
         logger.info(json.dumps({"event": "job.done", "job_id": job_id}))
         return True
     except Exception as exc:

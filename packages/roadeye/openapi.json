@@ -176,7 +176,10 @@
             "type": "integer"
           },
           "source_mode": {
-            "const": "synthetic",
+            "enum": [
+              "synthetic",
+              "recorded_real"
+            ],
             "title": "Source Mode",
             "type": "string"
           },
@@ -307,16 +310,37 @@
             "type": "string"
           },
           "x": {
-            "title": "X",
-            "type": "number"
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "X"
           },
           "y": {
-            "title": "Y",
-            "type": "number"
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Y"
           },
           "zone_id": {
-            "title": "Zone Id",
-            "type": "string"
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Zone Id"
           }
         },
         "required": [
@@ -735,7 +759,7 @@
         "additionalProperties": false,
         "properties": {
           "camera_id": {
-            "pattern": "^C[1-6]$",
+            "pattern": "^(C[1-6]|REAL_C1)$",
             "title": "Camera Id",
             "type": "string"
           },
@@ -762,8 +786,11 @@
             "type": "string"
           },
           "inference_origin": {
-            "const": "mock_candidates",
             "default": "mock_candidates",
+            "enum": [
+              "mock_candidates",
+              "model_inference"
+            ],
             "title": "Inference Origin",
             "type": "string"
           },
@@ -784,9 +811,14 @@
             "type": "string"
           },
           "lane_id": {
-            "pattern": "^C[1-6]-L1$",
+            "pattern": "^(C[1-6]|REAL_C1)-L1$",
             "title": "Lane Id",
             "type": "string"
+          },
+          "metadata": {
+            "additionalProperties": true,
+            "title": "Metadata",
+            "type": "object"
           },
           "passage_id": {
             "maxLength": 80,
@@ -821,8 +853,11 @@
             "type": "string"
           },
           "source_mode": {
-            "const": "synthetic",
             "default": "synthetic",
+            "enum": [
+              "synthetic",
+              "recorded_real"
+            ],
             "title": "Source Mode",
             "type": "string"
           }
@@ -908,7 +943,10 @@
             "type": "string"
           },
           "source_mode": {
-            "const": "synthetic",
+            "enum": [
+              "synthetic",
+              "recorded_real"
+            ],
             "title": "Source Mode",
             "type": "string"
           },
@@ -991,7 +1029,10 @@
             "type": "string"
           },
           "inference_origin": {
-            "const": "mock_candidates",
+            "enum": [
+              "mock_candidates",
+              "model_inference"
+            ],
             "title": "Inference Origin",
             "type": "string"
           },
@@ -1027,7 +1068,10 @@
             "type": "string"
           },
           "source_mode": {
-            "const": "synthetic",
+            "enum": [
+              "synthetic",
+              "recorded_real"
+            ],
             "title": "Source Mode",
             "type": "string"
           },
@@ -1128,7 +1172,10 @@
             "type": "string"
           },
           "inference_origin": {
-            "const": "mock_candidates",
+            "enum": [
+              "mock_candidates",
+              "model_inference"
+            ],
             "title": "Inference Origin",
             "type": "string"
           },
@@ -1177,7 +1224,10 @@
             "type": "number"
           },
           "source_mode": {
-            "const": "synthetic",
+            "enum": [
+              "synthetic",
+              "recorded_real"
+            ],
             "title": "Source Mode",
             "type": "string"
           },
@@ -1440,7 +1490,10 @@
             "type": "string"
           },
           "source_mode": {
-            "const": "synthetic",
+            "enum": [
+              "synthetic",
+              "recorded_real"
+            ],
             "title": "Source Mode",
             "type": "string"
           },
@@ -1578,6 +1631,46 @@
         "title": "ValidationError",
         "type": "object"
       },
+      "VideoCreate": {
+        "additionalProperties": false,
+        "properties": {
+          "duration_seconds": {
+            "default": 60,
+            "exclusiveMinimum": 0.0,
+            "maximum": 305.0,
+            "title": "Duration Seconds",
+            "type": "number"
+          },
+          "line_y": {
+            "default": 300,
+            "maximum": 600.0,
+            "minimum": 200.0,
+            "title": "Line Y",
+            "type": "integer"
+          },
+          "recording_id": {
+            "const": "delhi_anpr",
+            "default": "delhi_anpr",
+            "title": "Recording Id",
+            "type": "string"
+          },
+          "replay_anchor": {
+            "default": "2026-01-01T00:00:00Z",
+            "format": "date-time",
+            "title": "Replay Anchor",
+            "type": "string"
+          },
+          "roi_top": {
+            "default": 45,
+            "maximum": 150.0,
+            "minimum": 40.0,
+            "title": "Roi Top",
+            "type": "integer"
+          }
+        },
+        "title": "VideoCreate",
+        "type": "object"
+      },
       "WatchCreate": {
         "additionalProperties": false,
         "properties": {
@@ -1631,7 +1724,7 @@
     }
   },
   "info": {
-    "title": "RoadEye synthetic engineering console",
+    "title": "RoadEye engineering console",
     "version": "1.0.0"
   },
   "openapi": "3.1.0",
@@ -2659,6 +2752,219 @@
           }
         },
         "summary": "Review"
+      }
+    },
+    "/v1/recorded/runs": {
+      "get": {
+        "operationId": "recorded_runs_v1_recorded_runs_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Result"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Recorded Runs"
+      },
+      "post": {
+        "operationId": "recorded_create_v1_recorded_runs_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "maxLength": 120,
+              "minLength": 1,
+              "title": "Idempotency-Key",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VideoCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Result"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Recorded Create"
+      }
+    },
+    "/v1/recorded/runs/{run_id}": {
+      "get": {
+        "operationId": "recorded_status_v1_recorded_runs__run_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "run_id",
+            "required": true,
+            "schema": {
+              "title": "Run Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Result"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Recorded Status"
+      }
+    },
+    "/v1/recorded/runs/{run_id}/passages": {
+      "get": {
+        "operationId": "recorded_passages_v1_recorded_runs__run_id__passages_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "run_id",
+            "required": true,
+            "schema": {
+              "title": "Run Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Result"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Recorded Passages"
+      }
+    },
+    "/v1/recorded/runs/{run_id}/replay": {
+      "post": {
+        "operationId": "recorded_replay_v1_recorded_runs__run_id__replay_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "run_id",
+            "required": true,
+            "schema": {
+              "title": "Run Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "maxLength": 120,
+              "minLength": 1,
+              "title": "Idempotency-Key",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Result"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Recorded Replay"
+      }
+    },
+    "/v1/recordings": {
+      "get": {
+        "operationId": "recordings_v1_recordings_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Result"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Recordings"
       }
     },
     "/v1/trajectories": {

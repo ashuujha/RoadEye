@@ -9,7 +9,7 @@ from sqlalchemy.orm import Session
 from roadeye import models as m
 from roadeye.config import settings
 from roadeye.contracts import Input, TrajectoryQuery
-from roadeye.evidence import LocalEvidenceStore, digest
+from roadeye.evidence import LocalEvidenceStore, digest, evidence_root
 from roadeye.plates import consensus
 from roadeye.trajectories import reconstruct, similar
 
@@ -103,7 +103,11 @@ def create_run(db: Session, scenario: str) -> m.Run:
 
 def ingest(db: Session, item: Input, actor: str, key: str, correlation: str) -> dict:
     run = require_run(db, str(item.run_id), lock=True)
+    if run.source_mode != item.source_mode:
+        raise HTTPException(409, "RUN_SOURCE_MISMATCH")
     body = item.model_dump(mode="json")
+    if not body.get("metadata"):
+        body.pop("metadata", None)  # Preserve canonical hashes of existing synthetic receipts.
     fingerprint = digest(json.dumps(body, sort_keys=True, separators=(",", ":")).encode())
     old = db.scalar(
         select(m.InputEvent).where(
@@ -119,11 +123,11 @@ def ingest(db: Session, item: Input, actor: str, key: str, correlation: str) -> 
     count = db.scalar(
         select(func.count()).select_from(m.InputEvent).where(m.InputEvent.run_id == run.id)
     )
-    if count is not None and count >= 500:
+    if count is not None and count >= (500 if run.source_mode == "synthetic" else 5000):
         raise HTTPException(422, "DEMO_RUN_INPUT_LIMIT_500")
     if not db.get(m.Camera, item.camera_id):
         raise HTTPException(422, "UNKNOWN_CAMERA")
-    content = LocalEvidenceStore(settings.evidence_root).read(item.evidence_key)
+    content = LocalEvidenceStore(evidence_root(item.source_mode)).read(item.evidence_key)
     asset = db.scalar(
         select(m.Evidence).where(
             m.Evidence.run_id == run.id, m.Evidence.object_key == item.evidence_key
@@ -138,7 +142,8 @@ def ingest(db: Session, item: Input, actor: str, key: str, correlation: str) -> 
                 object_key=item.evidence_key,
                 digest=digest(content),
                 size=len(content),
-                media_type="image/svg+xml",
+                media_type="image/svg+xml" if item.source_mode == "synthetic" else "image/jpeg",
+                source_mode=item.source_mode,
             )
         )
         db.flush()
@@ -234,7 +239,9 @@ def observation_rows(
 
 def health(db: Session, run: m.Run) -> list[dict]:
     rows = []
-    for camera in db.scalars(select(m.Camera).order_by(m.Camera.id)):
+    for camera in db.scalars(
+        select(m.Camera).where(m.Camera.id != "REAL_C1").order_by(m.Camera.id)
+    ):
         heartbeat = db.get(m.CameraHealth, (run.id, camera.id))
         age = (run.clock - heartbeat.last_seen).total_seconds() if heartbeat else None
         rows.append(
@@ -252,6 +259,8 @@ def health(db: Session, run: m.Run) -> list[dict]:
 
 def trajectory(db: Session, query: TrajectoryQuery, save: bool = True) -> dict:
     run = require_run(db, str(query.run_id), lock=True)
+    if run.source_mode != "synthetic":
+        raise HTTPException(422, "SINGLE_CAMERA_UNCALIBRATED_NO_TRAJECTORY")
     all_nodes = observation_rows(db, run.id, query.start, query.end, query.include_review)
     nodes = [n for n in all_nodes if n["plate"] and similar(n["plate"], query.plate)]
     truncated = len(nodes) > query.limit
@@ -414,13 +423,14 @@ def process_input(db: Session, event: m.InputEvent):
             )
         )
         if not evidence:
-            content = LocalEvidenceStore(settings.evidence_root).read(item.evidence_key)
+            content = LocalEvidenceStore(evidence_root(item.source_mode)).read(item.evidence_key)
             evidence = m.Evidence(
                 run_id=run.id,
                 object_key=item.evidence_key,
                 digest=digest(content),
                 size=len(content),
-                media_type="image/svg+xml",
+                media_type="image/svg+xml" if item.source_mode == "synthetic" else "image/jpeg",
+                source_mode=item.source_mode,
             )
             db.add(evidence)
             db.flush()
@@ -433,6 +443,7 @@ def process_input(db: Session, event: m.InputEvent):
                 captured_at=item.captured_at,
                 input_id=event.id,
                 evidence_id=evidence.id,
+                source_mode=item.source_mode,
             )
         )
     else:
@@ -455,6 +466,8 @@ def process_input(db: Session, event: m.InputEvent):
             run_id=run.id,
             plate=decision["plate"],
             status=decision["status"],
+            source_mode=item.source_mode,
+            inference_origin=item.inference_origin,
             machine=decision,
             policy=decision["policy"],
             captured_at=item.captured_at,

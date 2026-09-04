@@ -13,6 +13,9 @@ class Settings(BaseSettings):
     source_mode: str = "synthetic"
     demo_password: str = ""
     evidence_root: Path = Path("data/synthetic/evidence")
+    recorded_enabled: bool = False
+    recorded_evidence_root: Path = Path(".runtime/evidence")
+    model_root: Path = Path("models")
     accept_score: float = Field(0.8, ge=0, le=1)
     accept_margin: float = Field(0.2, ge=0, le=1)
     lease_seconds: int = Field(30, ge=1)
@@ -22,7 +25,9 @@ class Settings(BaseSettings):
     @model_validator(mode="after")
     def supported(self):
         if self.source_mode != "synthetic":
-            raise ValueError("Real input adapters are unavailable; source_mode must be synthetic")
+            raise ValueError(
+                "Default source_mode must be synthetic; enable recorded_enabled for registered recordings; live adapters unavailable"
+            )
         if not self.database_url.startswith("postgresql+psycopg://"):
             raise ValueError("PostgreSQL with psycopg is required; no fallback database")
         if self.demo_enabled and len(self.demo_password) < 16:

@@ -65,7 +65,9 @@ def summary(db: Session, window: Window) -> dict:
             "Union of 120-second heartbeat validity intervals, not measured physical uptime"
         )
     counts = []
-    for camera in db.scalars(select(m.Camera).order_by(m.Camera.id)):
+    for camera in db.scalars(
+        select(m.Camera).where(m.Camera.id != "REAL_C1").order_by(m.Camera.id)
+    ):
         number = next((n for c, lane, n in passages if c == camera.id), 0)
         recognized = sum(
             o["camera_id"] == camera.id and o["status"] == "accepted" for o in observations

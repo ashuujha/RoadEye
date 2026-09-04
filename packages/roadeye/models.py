@@ -36,10 +36,10 @@ class Zone(Base):
 class Camera(Base):
     __tablename__ = "cameras"
     id: Mapped[str] = mapped_column(String, primary_key=True)
-    zone_id: Mapped[str] = mapped_column(ForeignKey("zones.id"))
+    zone_id: Mapped[str | None] = mapped_column(ForeignKey("zones.id"))
     name: Mapped[str]
-    x: Mapped[float]
-    y: Mapped[float]
+    x: Mapped[float | None]
+    y: Mapped[float | None]
     direction: Mapped[str] = mapped_column(default="forward")
 
 
@@ -82,7 +82,7 @@ class Run(Base):
     clock: Mapped[datetime] = mapped_column(DateTime(timezone=True))
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=now)
     graph: Mapped[list] = mapped_column(JSON)
-    __table_args__ = (CheckConstraint("source_mode = 'synthetic'"),)
+    __table_args__ = (CheckConstraint("source_mode IN ('synthetic', 'recorded_real')"),)
 
 
 class InputEvent(Base):
@@ -277,3 +277,12 @@ class Command(Base):
     digest: Mapped[str]
     response: Mapped[dict] = mapped_column(JSON)
     __table_args__ = (UniqueConstraint("actor", "operation", "key"),)
+
+
+class VideoTask(Base):
+    __tablename__ = "video_tasks"
+    job_id: Mapped[str] = mapped_column(ForeignKey("jobs.id"), primary_key=True)
+    run_id: Mapped[str] = mapped_column(ForeignKey("runs.id"), unique=True)
+    recording_id: Mapped[str]
+    config: Mapped[dict] = mapped_column(JSON)
+    progress: Mapped[dict] = mapped_column(JSON, default=dict)

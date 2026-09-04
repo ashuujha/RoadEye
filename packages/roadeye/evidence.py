@@ -21,3 +21,13 @@ class LocalEvidenceStore:
 
 def digest(content: bytes) -> str:
     return sha256(content).hexdigest()
+
+
+def evidence_root(source_mode: str) -> Path:
+    from roadeye.config import settings
+
+    return (
+        settings.recorded_evidence_root
+        if source_mode == "recorded_real"
+        else settings.evidence_root
+    )

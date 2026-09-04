@@ -19,10 +19,10 @@ class HealthResponse(BaseModel):
 
 class CameraData(Record):
     id: str
-    zone_id: str
+    zone_id: str | None
     name: str
-    x: float
-    y: float
+    x: float | None
+    y: float | None
     direction: str
 
 
@@ -33,7 +33,7 @@ class CameraListResponse(BaseModel):
 class RunData(Record):
     id: str
     scenario: str
-    source_mode: Literal["synthetic"]
+    source_mode: Literal["synthetic", "recorded_real"]
     state: Literal["paused", "playing", "delivered"]
     cursor: int
     version: int
@@ -80,8 +80,8 @@ class ObservationData(Record):
     processed_at: AwareDatetime
     machine: ConsensusData
     policy: str
-    source_mode: Literal["synthetic"]
-    inference_origin: Literal["mock_candidates"]
+    source_mode: Literal["synthetic", "recorded_real"]
+    inference_origin: Literal["mock_candidates", "model_inference"]
 
 
 class ObservedNode(ObservationData):
@@ -132,7 +132,7 @@ class RejectedLink(Link):
 class JourneyData(Record):
     id: str
     run_id: str
-    source_mode: Literal["synthetic"]
+    source_mode: Literal["synthetic", "recorded_real"]
     result_version: int
     scoring_policy: str
     window_start: AwareDatetime
@@ -163,7 +163,7 @@ class CountData(Record):
 
 class AnalyticsData(Record):
     run_id: str
-    source_mode: Literal["synthetic"]
+    source_mode: Literal["synthetic", "recorded_real"]
     window_start: AwareDatetime
     window_end: AwareDatetime
     result_version: int

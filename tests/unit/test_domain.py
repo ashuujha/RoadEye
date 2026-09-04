@@ -96,5 +96,5 @@ def test_real_mode_fails_without_exposing_configuration_secret():
     secret = "test-only-sensitive-config"
     with pytest.raises(ValidationError) as error:
         Settings(source_mode="recorded_real", demo_enabled=True, demo_password=secret)
-    assert "Real input adapters are unavailable" in str(error.value)
+    assert "Default source_mode must be synthetic" in str(error.value)
     assert secret not in str(error.value)

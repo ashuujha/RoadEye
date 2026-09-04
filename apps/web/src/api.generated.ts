@@ -381,6 +381,92 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/recorded/runs": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Recorded Runs */
+        get: operations["recorded_runs_v1_recorded_runs_get"];
+        put?: never;
+        /** Recorded Create */
+        post: operations["recorded_create_v1_recorded_runs_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/recorded/runs/{run_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Recorded Status */
+        get: operations["recorded_status_v1_recorded_runs__run_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/recorded/runs/{run_id}/passages": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Recorded Passages */
+        get: operations["recorded_passages_v1_recorded_runs__run_id__passages_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/recorded/runs/{run_id}/replay": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Recorded Replay */
+        post: operations["recorded_replay_v1_recorded_runs__run_id__replay_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/recordings": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Recordings */
+        get: operations["recordings_v1_recordings_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/v1/trajectories": {
         parameters: {
             query?: never;
@@ -528,9 +614,9 @@ export interface components {
             sample_size: number;
             /**
              * Source Mode
-             * @constant
+             * @enum {string}
              */
-            source_mode: "synthetic";
+            source_mode: "synthetic" | "recorded_real";
             /**
              * Status
              * @enum {string}
@@ -585,11 +671,11 @@ export interface components {
             /** Name */
             name: string;
             /** X */
-            x: number;
+            x: number | null;
             /** Y */
-            y: number;
+            y: number | null;
             /** Zone Id */
-            zone_id: string;
+            zone_id: string | null;
         } & {
             [key: string]: unknown;
         };
@@ -776,9 +862,9 @@ export interface components {
             /**
              * Inference Origin
              * @default mock_candidates
-             * @constant
+             * @enum {string}
              */
-            inference_origin: "mock_candidates";
+            inference_origin: "mock_candidates" | "model_inference";
             /**
              * Input Confidence
              * @default 1
@@ -791,6 +877,10 @@ export interface components {
             kind: "passage" | "ocr" | "heartbeat";
             /** Lane Id */
             lane_id: string;
+            /** Metadata */
+            metadata?: {
+                [key: string]: unknown;
+            };
             /** Passage Id */
             passage_id: string;
             /**
@@ -814,9 +904,9 @@ export interface components {
             /**
              * Source Mode
              * @default synthetic
-             * @constant
+             * @enum {string}
              */
-            source_mode: "synthetic";
+            source_mode: "synthetic" | "recorded_real";
         };
         /** JourneyData */
         JourneyData: {
@@ -850,9 +940,9 @@ export interface components {
             scoring_policy: string;
             /**
              * Source Mode
-             * @constant
+             * @enum {string}
              */
-            source_mode: "synthetic";
+            source_mode: "synthetic" | "recorded_real";
             /** Truncated */
             truncated: boolean;
             /**
@@ -889,9 +979,9 @@ export interface components {
             id: string;
             /**
              * Inference Origin
-             * @constant
+             * @enum {string}
              */
-            inference_origin: "mock_candidates";
+            inference_origin: "mock_candidates" | "model_inference";
             machine: components["schemas"]["ConsensusData"];
             /** Passage Id */
             passage_id: string;
@@ -908,9 +998,9 @@ export interface components {
             run_id: string;
             /**
              * Source Mode
-             * @constant
+             * @enum {string}
              */
-            source_mode: "synthetic";
+            source_mode: "synthetic" | "recorded_real";
             /**
              * Status
              * @enum {string}
@@ -951,9 +1041,9 @@ export interface components {
             id: string;
             /**
              * Inference Origin
-             * @constant
+             * @enum {string}
              */
-            inference_origin: "mock_candidates";
+            inference_origin: "mock_candidates" | "model_inference";
             /** Lane Id */
             lane_id: string;
             machine: components["schemas"]["ConsensusData"];
@@ -979,9 +1069,9 @@ export interface components {
             score: number;
             /**
              * Source Mode
-             * @constant
+             * @enum {string}
              */
-            source_mode: "synthetic";
+            source_mode: "synthetic" | "recorded_real";
             /**
              * Status
              * @enum {string}
@@ -1090,9 +1180,9 @@ export interface components {
             scenario: string;
             /**
              * Source Mode
-             * @constant
+             * @enum {string}
              */
-            source_mode: "synthetic";
+            source_mode: "synthetic" | "recorded_real";
             /**
              * State
              * @enum {string}
@@ -1150,6 +1240,36 @@ export interface components {
             msg: string;
             /** Error Type */
             type: string;
+        };
+        /** VideoCreate */
+        VideoCreate: {
+            /**
+             * Duration Seconds
+             * @default 60
+             */
+            duration_seconds: number;
+            /**
+             * Line Y
+             * @default 300
+             */
+            line_y: number;
+            /**
+             * Recording Id
+             * @default delhi_anpr
+             * @constant
+             */
+            recording_id: "delhi_anpr";
+            /**
+             * Replay Anchor
+             * Format: date-time
+             * @default 2026-01-01T00:00:00Z
+             */
+            replay_anchor: string;
+            /**
+             * Roi Top
+             * @default 45
+             */
+            roi_top: number;
         };
         /** WatchCreate */
         WatchCreate: {
@@ -1919,6 +2039,176 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    recorded_runs_v1_recorded_runs_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Result"];
+                };
+            };
+        };
+    };
+    recorded_create_v1_recorded_runs_post: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["VideoCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Result"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    recorded_status_v1_recorded_runs__run_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                run_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Result"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    recorded_passages_v1_recorded_runs__run_id__passages_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                run_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Result"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    recorded_replay_v1_recorded_runs__run_id__replay_post: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+            };
+            path: {
+                run_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Result"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    recordings_v1_recordings_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Result"];
                 };
             };
         };
