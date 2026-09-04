@@ -1,6 +1,6 @@
 """Public contracts; mock candidates are supplied, never inferred from evidence images."""
 
-from datetime import datetime
+from datetime import datetime, timedelta
 from enum import StrEnum
 from typing import Literal, Protocol
 from uuid import UUID
@@ -52,7 +52,7 @@ class Input(Model):
             raise ValueError("Lane does not belong to camera")
         if self.kind != "ocr" and self.readings:
             raise ValueError("Only OCR input contains candidate readings")
-        if self.captured_at.utcoffset() != __import__("datetime").timedelta(0):
+        if self.captured_at.utcoffset() != timedelta(0):
             raise ValueError("Capture timestamp must use UTC")
         return self
 

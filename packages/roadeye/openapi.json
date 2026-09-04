@@ -1,6 +1,254 @@
 {
   "components": {
     "schemas": {
+      "AlertData": {
+        "additionalProperties": true,
+        "properties": {
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "details": {
+            "additionalProperties": true,
+            "title": "Details",
+            "type": "object"
+          },
+          "evidence_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Evidence Id"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "kind": {
+            "title": "Kind",
+            "type": "string"
+          },
+          "observation_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Observation Id"
+          },
+          "run_id": {
+            "title": "Run Id",
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "active",
+              "review_required",
+              "acknowledged"
+            ],
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "run_id",
+          "kind",
+          "status",
+          "observation_id",
+          "evidence_id",
+          "details",
+          "created_at"
+        ],
+        "title": "AlertData",
+        "type": "object"
+      },
+      "AlertListResponse": {
+        "properties": {
+          "data": {
+            "items": {
+              "$ref": "#/components/schemas/AlertData"
+            },
+            "title": "Data",
+            "type": "array"
+          }
+        },
+        "required": [
+          "data"
+        ],
+        "title": "AlertListResponse",
+        "type": "object"
+      },
+      "AnalyticsData": {
+        "additionalProperties": true,
+        "properties": {
+          "accepted_plates": {
+            "title": "Accepted Plates",
+            "type": "integer"
+          },
+          "ambiguous_links_excluded": {
+            "title": "Ambiguous Links Excluded",
+            "type": "integer"
+          },
+          "basis": {
+            "title": "Basis",
+            "type": "string"
+          },
+          "camera_health": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "title": "Camera Health",
+            "type": "array"
+          },
+          "counts": {
+            "items": {
+              "$ref": "#/components/schemas/CountData"
+            },
+            "title": "Counts",
+            "type": "array"
+          },
+          "flow": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "title": "Flow",
+            "type": "array"
+          },
+          "limitations": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Limitations",
+            "type": "array"
+          },
+          "ocr_pending": {
+            "title": "Ocr Pending",
+            "type": "integer"
+          },
+          "od": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "title": "Od",
+            "type": "array"
+          },
+          "recognition_coverage": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Recognition Coverage"
+          },
+          "rejected": {
+            "title": "Rejected",
+            "type": "integer"
+          },
+          "result_version": {
+            "title": "Result Version",
+            "type": "integer"
+          },
+          "review_required": {
+            "title": "Review Required",
+            "type": "integer"
+          },
+          "run_id": {
+            "title": "Run Id",
+            "type": "string"
+          },
+          "sample_size": {
+            "title": "Sample Size",
+            "type": "integer"
+          },
+          "source_mode": {
+            "const": "synthetic",
+            "title": "Source Mode",
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "provisional",
+              "current_recomputable"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "travel_times": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "title": "Travel Times",
+            "type": "array"
+          },
+          "vehicle_passages": {
+            "title": "Vehicle Passages",
+            "type": "integer"
+          },
+          "window_end": {
+            "format": "date-time",
+            "title": "Window End",
+            "type": "string"
+          },
+          "window_start": {
+            "format": "date-time",
+            "title": "Window Start",
+            "type": "string"
+          }
+        },
+        "required": [
+          "run_id",
+          "source_mode",
+          "window_start",
+          "window_end",
+          "result_version",
+          "status",
+          "basis",
+          "sample_size",
+          "vehicle_passages",
+          "accepted_plates",
+          "recognition_coverage",
+          "review_required",
+          "rejected",
+          "ocr_pending",
+          "counts",
+          "camera_health",
+          "flow",
+          "od",
+          "travel_times",
+          "ambiguous_links_excluded",
+          "limitations"
+        ],
+        "title": "AnalyticsData",
+        "type": "object"
+      },
+      "AnalyticsResponse": {
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/AnalyticsData"
+          }
+        },
+        "required": [
+          "data"
+        ],
+        "title": "AnalyticsResponse",
+        "type": "object"
+      },
       "CameraConfig": {
         "additionalProperties": false,
         "properties": {
@@ -43,6 +291,61 @@
         "title": "CameraConfig",
         "type": "object"
       },
+      "CameraData": {
+        "additionalProperties": true,
+        "properties": {
+          "direction": {
+            "title": "Direction",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "x": {
+            "title": "X",
+            "type": "number"
+          },
+          "y": {
+            "title": "Y",
+            "type": "number"
+          },
+          "zone_id": {
+            "title": "Zone Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "zone_id",
+          "name",
+          "x",
+          "y",
+          "direction"
+        ],
+        "title": "CameraData",
+        "type": "object"
+      },
+      "CameraListResponse": {
+        "properties": {
+          "data": {
+            "items": {
+              "$ref": "#/components/schemas/CameraData"
+            },
+            "title": "Data",
+            "type": "array"
+          }
+        },
+        "required": [
+          "data"
+        ],
+        "title": "CameraListResponse",
+        "type": "object"
+      },
       "Candidate": {
         "additionalProperties": false,
         "properties": {
@@ -65,6 +368,127 @@
         "title": "Candidate",
         "type": "object"
       },
+      "ConsensusData": {
+        "additionalProperties": true,
+        "properties": {
+          "alternatives": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "title": "Alternatives",
+            "type": "array"
+          },
+          "contributions": {
+            "items": {
+              "$ref": "#/components/schemas/Contribution"
+            },
+            "title": "Contributions",
+            "type": "array"
+          },
+          "independent_frames": {
+            "title": "Independent Frames",
+            "type": "integer"
+          },
+          "margin": {
+            "title": "Margin",
+            "type": "number"
+          },
+          "plate": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Plate"
+          },
+          "policy": {
+            "title": "Policy",
+            "type": "string"
+          },
+          "reasons": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Reasons",
+            "type": "array"
+          },
+          "score": {
+            "title": "Score",
+            "type": "number"
+          },
+          "score_meaning": {
+            "title": "Score Meaning",
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "accepted",
+              "review_required",
+              "rejected"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "thresholds": {
+            "additionalProperties": {
+              "type": "number"
+            },
+            "title": "Thresholds",
+            "type": "object"
+          }
+        },
+        "required": [
+          "plate",
+          "status",
+          "score",
+          "margin",
+          "reasons",
+          "policy",
+          "contributions",
+          "alternatives",
+          "independent_frames",
+          "thresholds",
+          "score_meaning"
+        ],
+        "title": "ConsensusData",
+        "type": "object"
+      },
+      "Contribution": {
+        "additionalProperties": true,
+        "properties": {
+          "frame_id": {
+            "title": "Frame Id",
+            "type": "string"
+          },
+          "input_score": {
+            "title": "Input Score",
+            "type": "number"
+          },
+          "normalized": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Normalized",
+            "type": "array"
+          },
+          "raw": {
+            "title": "Raw",
+            "type": "string"
+          }
+        },
+        "required": [
+          "frame_id",
+          "raw",
+          "normalized",
+          "input_score"
+        ],
+        "title": "Contribution",
+        "type": "object"
+      },
       "Control": {
         "additionalProperties": false,
         "properties": {
@@ -84,6 +508,61 @@
           "action"
         ],
         "title": "Control",
+        "type": "object"
+      },
+      "CountData": {
+        "additionalProperties": true,
+        "properties": {
+          "accepted_plates": {
+            "title": "Accepted Plates",
+            "type": "integer"
+          },
+          "camera_id": {
+            "title": "Camera Id",
+            "type": "string"
+          },
+          "count_rate_per_minute": {
+            "title": "Count Rate Per Minute",
+            "type": "number"
+          },
+          "coverage_state": {
+            "enum": [
+              "fresh",
+              "stale"
+            ],
+            "title": "Coverage State",
+            "type": "string"
+          },
+          "lane_id": {
+            "title": "Lane Id",
+            "type": "string"
+          },
+          "passages": {
+            "title": "Passages",
+            "type": "integer"
+          },
+          "recognition_coverage": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Recognition Coverage"
+          }
+        },
+        "required": [
+          "camera_id",
+          "lane_id",
+          "passages",
+          "accepted_plates",
+          "recognition_coverage",
+          "count_rate_per_minute",
+          "coverage_state"
+        ],
+        "title": "CountData",
         "type": "object"
       },
       "Decision": {
@@ -172,6 +651,84 @@
           }
         },
         "title": "HTTPValidationError",
+        "type": "object"
+      },
+      "HealthData": {
+        "additionalProperties": true,
+        "properties": {
+          "status": {
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "status"
+        ],
+        "title": "HealthData",
+        "type": "object"
+      },
+      "HealthResponse": {
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/HealthData"
+          }
+        },
+        "required": [
+          "data"
+        ],
+        "title": "HealthResponse",
+        "type": "object"
+      },
+      "InferredLink": {
+        "additionalProperties": true,
+        "properties": {
+          "elapsed_seconds": {
+            "title": "Elapsed Seconds",
+            "type": "number"
+          },
+          "observed": {
+            "const": false,
+            "title": "Observed",
+            "type": "boolean"
+          },
+          "routes": {
+            "items": {
+              "$ref": "#/components/schemas/Route"
+            },
+            "title": "Routes",
+            "type": "array"
+          },
+          "score": {
+            "title": "Score",
+            "type": "number"
+          },
+          "source": {
+            "title": "Source",
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "plausible",
+              "ambiguous"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "target": {
+            "title": "Target",
+            "type": "string"
+          }
+        },
+        "required": [
+          "source",
+          "target",
+          "elapsed_seconds",
+          "observed",
+          "routes",
+          "score",
+          "status"
+        ],
+        "title": "InferredLink",
         "type": "object"
       },
       "Input": {
@@ -282,6 +839,126 @@
         "title": "Input",
         "type": "object"
       },
+      "JourneyData": {
+        "additionalProperties": true,
+        "properties": {
+          "alternatives": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "title": "Alternatives",
+            "type": "array"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "inferred_links": {
+            "items": {
+              "$ref": "#/components/schemas/InferredLink"
+            },
+            "title": "Inferred Links",
+            "type": "array"
+          },
+          "limitations": {
+            "title": "Limitations",
+            "type": "string"
+          },
+          "missing_coverage": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "title": "Missing Coverage",
+            "type": "array"
+          },
+          "observed_nodes": {
+            "items": {
+              "$ref": "#/components/schemas/ObservedNode"
+            },
+            "title": "Observed Nodes",
+            "type": "array"
+          },
+          "rejected_links": {
+            "items": {
+              "$ref": "#/components/schemas/RejectedLink"
+            },
+            "title": "Rejected Links",
+            "type": "array"
+          },
+          "result_version": {
+            "title": "Result Version",
+            "type": "integer"
+          },
+          "review_candidates": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "title": "Review Candidates",
+            "type": "array"
+          },
+          "run_id": {
+            "title": "Run Id",
+            "type": "string"
+          },
+          "scoring_policy": {
+            "title": "Scoring Policy",
+            "type": "string"
+          },
+          "source_mode": {
+            "const": "synthetic",
+            "title": "Source Mode",
+            "type": "string"
+          },
+          "truncated": {
+            "title": "Truncated",
+            "type": "boolean"
+          },
+          "window_end": {
+            "format": "date-time",
+            "title": "Window End",
+            "type": "string"
+          },
+          "window_start": {
+            "format": "date-time",
+            "title": "Window Start",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "run_id",
+          "source_mode",
+          "result_version",
+          "scoring_policy",
+          "window_start",
+          "window_end",
+          "observed_nodes",
+          "inferred_links",
+          "rejected_links",
+          "review_candidates",
+          "alternatives",
+          "missing_coverage",
+          "truncated",
+          "limitations"
+        ],
+        "title": "JourneyData",
+        "type": "object"
+      },
+      "JourneyResponse": {
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/JourneyData"
+          }
+        },
+        "required": [
+          "data"
+        ],
+        "title": "JourneyResponse",
+        "type": "object"
+      },
       "Login": {
         "additionalProperties": false,
         "properties": {
@@ -299,6 +976,240 @@
           "password"
         ],
         "title": "Login",
+        "type": "object"
+      },
+      "ObservationData": {
+        "additionalProperties": true,
+        "properties": {
+          "captured_at": {
+            "format": "date-time",
+            "title": "Captured At",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "inference_origin": {
+            "const": "mock_candidates",
+            "title": "Inference Origin",
+            "type": "string"
+          },
+          "machine": {
+            "$ref": "#/components/schemas/ConsensusData"
+          },
+          "passage_id": {
+            "title": "Passage Id",
+            "type": "string"
+          },
+          "plate": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Plate"
+          },
+          "policy": {
+            "title": "Policy",
+            "type": "string"
+          },
+          "processed_at": {
+            "format": "date-time",
+            "title": "Processed At",
+            "type": "string"
+          },
+          "run_id": {
+            "title": "Run Id",
+            "type": "string"
+          },
+          "source_mode": {
+            "const": "synthetic",
+            "title": "Source Mode",
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "accepted",
+              "review_required",
+              "rejected"
+            ],
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "passage_id",
+          "run_id",
+          "plate",
+          "status",
+          "captured_at",
+          "processed_at",
+          "machine",
+          "policy",
+          "source_mode",
+          "inference_origin"
+        ],
+        "title": "ObservationData",
+        "type": "object"
+      },
+      "ObservationListResponse": {
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/ObservationPage"
+          }
+        },
+        "required": [
+          "data"
+        ],
+        "title": "ObservationListResponse",
+        "type": "object"
+      },
+      "ObservationPage": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/ObservedNode"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "offset": {
+            "title": "Offset",
+            "type": "integer"
+          },
+          "total": {
+            "title": "Total",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "items",
+          "total",
+          "offset"
+        ],
+        "title": "ObservationPage",
+        "type": "object"
+      },
+      "ObservationResponse": {
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/ObservationData"
+          }
+        },
+        "required": [
+          "data"
+        ],
+        "title": "ObservationResponse",
+        "type": "object"
+      },
+      "ObservedNode": {
+        "additionalProperties": true,
+        "properties": {
+          "camera_id": {
+            "title": "Camera Id",
+            "type": "string"
+          },
+          "captured_at": {
+            "format": "date-time",
+            "title": "Captured At",
+            "type": "string"
+          },
+          "evidence_id": {
+            "title": "Evidence Id",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "inference_origin": {
+            "const": "mock_candidates",
+            "title": "Inference Origin",
+            "type": "string"
+          },
+          "lane_id": {
+            "title": "Lane Id",
+            "type": "string"
+          },
+          "machine": {
+            "$ref": "#/components/schemas/ConsensusData"
+          },
+          "observed": {
+            "const": true,
+            "title": "Observed",
+            "type": "boolean"
+          },
+          "passage_id": {
+            "title": "Passage Id",
+            "type": "string"
+          },
+          "plate": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Plate"
+          },
+          "policy": {
+            "title": "Policy",
+            "type": "string"
+          },
+          "processed_at": {
+            "format": "date-time",
+            "title": "Processed At",
+            "type": "string"
+          },
+          "run_id": {
+            "title": "Run Id",
+            "type": "string"
+          },
+          "score": {
+            "title": "Score",
+            "type": "number"
+          },
+          "source_mode": {
+            "const": "synthetic",
+            "title": "Source Mode",
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "accepted",
+              "review_required",
+              "rejected"
+            ],
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "passage_id",
+          "run_id",
+          "plate",
+          "status",
+          "captured_at",
+          "processed_at",
+          "machine",
+          "policy",
+          "source_mode",
+          "inference_origin",
+          "camera_id",
+          "lane_id",
+          "score",
+          "evidence_id",
+          "observed"
+        ],
+        "title": "ObservedNode",
         "type": "object"
       },
       "Reading": {
@@ -349,6 +1260,41 @@
           "duplicate"
         ],
         "title": "Receipt",
+        "type": "object"
+      },
+      "RejectedLink": {
+        "additionalProperties": true,
+        "properties": {
+          "elapsed_seconds": {
+            "title": "Elapsed Seconds",
+            "type": "number"
+          },
+          "observed": {
+            "const": false,
+            "title": "Observed",
+            "type": "boolean"
+          },
+          "reason": {
+            "title": "Reason",
+            "type": "string"
+          },
+          "source": {
+            "title": "Source",
+            "type": "string"
+          },
+          "target": {
+            "title": "Target",
+            "type": "string"
+          }
+        },
+        "required": [
+          "source",
+          "target",
+          "elapsed_seconds",
+          "observed",
+          "reason"
+        ],
+        "title": "RejectedLink",
         "type": "object"
       },
       "Result": {
@@ -423,6 +1369,33 @@
         "title": "Role",
         "type": "string"
       },
+      "Route": {
+        "additionalProperties": true,
+        "properties": {
+          "baseline_seconds": {
+            "title": "Baseline Seconds",
+            "type": "integer"
+          },
+          "cameras": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Cameras",
+            "type": "array"
+          },
+          "distance_m": {
+            "title": "Distance M",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "cameras",
+          "distance_m",
+          "baseline_seconds"
+        ],
+        "title": "Route",
+        "type": "object"
+      },
       "RunCreate": {
         "additionalProperties": false,
         "properties": {
@@ -436,6 +1409,94 @@
           "scenario"
         ],
         "title": "RunCreate",
+        "type": "object"
+      },
+      "RunData": {
+        "additionalProperties": true,
+        "properties": {
+          "clock": {
+            "format": "date-time",
+            "title": "Clock",
+            "type": "string"
+          },
+          "cursor": {
+            "title": "Cursor",
+            "type": "integer"
+          },
+          "graph": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "title": "Graph",
+            "type": "array"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "scenario": {
+            "title": "Scenario",
+            "type": "string"
+          },
+          "source_mode": {
+            "const": "synthetic",
+            "title": "Source Mode",
+            "type": "string"
+          },
+          "state": {
+            "enum": [
+              "paused",
+              "playing",
+              "delivered"
+            ],
+            "title": "State",
+            "type": "string"
+          },
+          "version": {
+            "title": "Version",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "scenario",
+          "source_mode",
+          "state",
+          "cursor",
+          "version",
+          "clock",
+          "graph"
+        ],
+        "title": "RunData",
+        "type": "object"
+      },
+      "RunListResponse": {
+        "properties": {
+          "data": {
+            "items": {
+              "$ref": "#/components/schemas/RunData"
+            },
+            "title": "Data",
+            "type": "array"
+          }
+        },
+        "required": [
+          "data"
+        ],
+        "title": "RunListResponse",
+        "type": "object"
+      },
+      "RunResponse": {
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/RunData"
+          }
+        },
+        "required": [
+          "data"
+        ],
+        "title": "RunResponse",
         "type": "object"
       },
       "TrajectoryQuery": {
@@ -606,7 +1667,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/AlertListResponse"
                 }
               }
             },
@@ -734,7 +1795,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/AnalyticsResponse"
                 }
               }
             },
@@ -887,7 +1948,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/CameraListResponse"
                 }
               }
             },
@@ -1002,7 +2063,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/RunListResponse"
                 }
               }
             },
@@ -1041,7 +2102,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/RunResponse"
                 }
               }
             },
@@ -1080,7 +2141,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/RunResponse"
                 }
               }
             },
@@ -1140,7 +2201,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/RunResponse"
                 }
               }
             },
@@ -1290,7 +2351,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/HealthResponse"
                 }
               }
             },
@@ -1308,7 +2369,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/HealthResponse"
                 }
               }
             },
@@ -1481,7 +2542,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ObservationListResponse"
                 }
               }
             },
@@ -1520,7 +2581,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/ObservationResponse"
                 }
               }
             },
@@ -1618,7 +2679,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Result"
+                  "$ref": "#/components/schemas/JourneyResponse"
                 }
               }
             },

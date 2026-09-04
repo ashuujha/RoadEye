@@ -10,7 +10,7 @@ from roadeye import models as m
 from roadeye import services as s
 from roadeye.config import settings
 from roadeye.db import SessionLocal, engine, now
-from sqlalchemy import text
+from sqlalchemy import select, text
 
 from apps.api.main import app
 
@@ -307,3 +307,64 @@ def test_scope_provenance_and_evidence_failures(client, tmp_path):
         assert client.get("/v1/evidence/" + evidence_id).status_code == 404
     finally:
         settings.evidence_root = original
+
+
+def test_invalid_windows_idempotent_commands_and_watch_expiry(client):
+    command_key = str(uuid4())
+    first = post(client, "/v1/demo/runs", {"scenario": "normal_journey"}, command_key)
+    second = post(client, "/v1/demo/runs", {"scenario": "normal_journey"}, command_key)
+    assert first["id"] == second["id"]
+    assert (
+        client.post(
+            "/v1/demo/runs",
+            json={"scenario": "unreadable_plate"},
+            headers={"Idempotency-Key": command_key},
+        ).status_code
+        == 409
+    )
+    assert (
+        client.get(
+            "/v1/analytics/summary", params={"run_id": first["id"], "start": END, "end": START}
+        ).status_code
+        == 422
+    )
+    run_id = make_run(client, "watchlist_match", False)
+    watch = post(
+        client,
+        "/v1/watchlists",
+        {
+            "run_id": run_id,
+            "plate": "ZZ01AA0001",
+            "reason": "Expired synthetic entry",
+            "severity": "low",
+            "valid_from": "2026-01-15T07:00:00Z",
+            "valid_until": START,
+        },
+    )
+    login(client, "approver")
+    post(client, f"/v1/watchlists/{watch['id']}/approve", {})
+    login(client, "administrator")
+    post(client, f"/v1/demo/runs/{run_id}/control", {"action": "play"})
+    drain()
+    assert client.get("/v1/alerts", params={"run_id": run_id}).json()["data"] == []
+
+
+def test_database_immutability_and_heartbeat_interval_union(client):
+    from sqlalchemy.exc import DBAPIError
+
+    run_id = make_run(client, "normal_journey")
+    drain()
+    with SessionLocal() as db:
+        event_id = db.scalar(select(m.InputEvent.id).where(m.InputEvent.run_id == run_id))
+    for statement, params in [
+        ("UPDATE runs SET network = :value WHERE id = :id", {"value": "other", "id": run_id}),
+        (
+            "UPDATE input_events SET actor = :value WHERE id = :id",
+            {"value": "other", "id": event_id},
+        ),
+    ]:
+        with pytest.raises(DBAPIError), engine.begin() as connection:
+            connection.execute(text(statement), params)
+    camera = metrics(client, run_id)["camera_health"][0]
+    assert camera["heartbeat_covered_seconds"] == 240
+    assert camera["heartbeat_coverage_fraction"] == pytest.approx(240 / 3600)

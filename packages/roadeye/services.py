@@ -3,7 +3,7 @@ from datetime import datetime
 from pathlib import Path
 
 from fastapi import HTTPException
-from sqlalchemy import select
+from sqlalchemy import func, select, text
 from sqlalchemy.orm import Session
 
 from roadeye import models as m
@@ -53,6 +53,7 @@ def require_run(db: Session, run_id: str, lock: bool = False) -> m.Run:
 
 
 def seed(db: Session):
+    db.execute(text("SELECT pg_advisory_xact_lock(172)"))
     if db.get(m.Dataset, "synthetic-v1"):
         return
     manifest = json.loads((DATA / "manifest.json").read_text())
@@ -111,6 +112,11 @@ def ingest(db: Session, item: Input, actor: str, key: str, correlation: str) -> 
         if old.digest != fingerprint:
             raise HTTPException(409, "IDEMPOTENCY_PAYLOAD_CONFLICT")
         return {"input_id": old.id, "state": "durably_received", "duplicate": True}
+    count = db.scalar(
+        select(func.count()).select_from(m.InputEvent).where(m.InputEvent.run_id == run.id)
+    )
+    if count is not None and count >= 500:
+        raise HTTPException(422, "DEMO_RUN_INPUT_LIMIT_500")
     if not db.get(m.Camera, item.camera_id):
         raise HTTPException(422, "UNKNOWN_CAMERA")
     LocalEvidenceStore(settings.evidence_root).read(item.evidence_key)
@@ -156,7 +162,7 @@ def emit_next(db: Session, run: m.Run, count: int = 1) -> int:
         run.cursor += 1
         emitted += 1
     if run.cursor == len(events):
-        run.state = "completed"
+        run.state = "delivered"
     return emitted
 
 
@@ -340,7 +346,7 @@ def anomalies(db: Session, run: m.Run):
                     node["evidence_id"],
                 )
     # Only emit stale events once the scenario's inputs have been delivered/processed.
-    if run.state == "completed" and not db.scalar(
+    if run.state == "delivered" and not db.scalar(
         select(m.Job.id).where(m.Job.run_id == run.id, m.Job.state != "done")
     ):
         for camera in health(db, run):

@@ -11,8 +11,10 @@ from fastapi.encoders import jsonable_encoder
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+from pydantic import ValidationError
 from roadeye import analytics, auth
 from roadeye import models as m
+from roadeye import responses as r
 from roadeye import services as s
 from roadeye.config import settings
 from roadeye.contracts import (
@@ -52,6 +54,10 @@ Admin = Annotated[str, Depends(auth.admin)]
 Approver = Annotated[str, Depends(auth.approver)]
 Key = Annotated[str, Header(alias="Idempotency-Key", min_length=1, max_length=120)]
 logger = logging.getLogger("roadeye.api")
+logger.setLevel(logging.INFO)
+if not logger.handlers:
+    logger.addHandler(logging.StreamHandler())
+logger.propagate = False
 
 
 @app.middleware("http")
@@ -101,6 +107,7 @@ async def http_error(request, exc):
     )
 
 
+@app.exception_handler(ValidationError)
 @app.exception_handler(RequestValidationError)
 async def invalid(request, exc):
     return JSONResponse(
@@ -166,12 +173,12 @@ def local():
         raise HTTPException(404, "DEMO_DISABLED")
 
 
-@app.get("/v1/health/live", response_model=Result)
+@app.get("/v1/health/live", response_model=r.HealthResponse)
 def live():
     return output({"status": "alive", "source_mode": settings.source_mode})
 
 
-@app.get("/v1/health/ready", response_model=Result)
+@app.get("/v1/health/ready", response_model=r.HealthResponse)
 def ready(db: DB):
     db.execute(text("SELECT 1 FROM alembic_version"))
     return output(
@@ -207,7 +214,7 @@ def logout(request: Request, response: Response, db: DB, actor: User):
     return output({"logged_out": True})
 
 
-@app.get("/v1/cameras", response_model=Result)
+@app.get("/v1/cameras", response_model=r.CameraListResponse)
 def cameras(db: DB, actor: User):
     return output([s.serialize(c) for c in db.scalars(select(m.Camera).order_by(m.Camera.id))])
 
@@ -278,7 +285,7 @@ def scenarios(actor: User):
     return output(json.loads((s.DATA / "manifest.json").read_text()))
 
 
-@app.post("/v1/demo/runs", response_model=Result)
+@app.post("/v1/demo/runs", response_model=r.RunResponse)
 def create_run(body: RunCreate, db: DB, actor: Admin, key: Key):
     local()
 
@@ -290,7 +297,7 @@ def create_run(body: RunCreate, db: DB, actor: Admin, key: Key):
     return recorded(db, actor, "run.create", key, body.model_dump(), action)
 
 
-@app.get("/v1/demo/runs", response_model=Result)
+@app.get("/v1/demo/runs", response_model=r.RunListResponse)
 def runs(db: DB, actor: User):
     local()
     return output(
@@ -301,7 +308,7 @@ def runs(db: DB, actor: User):
     )
 
 
-@app.get("/v1/demo/runs/{run_id}", response_model=Result)
+@app.get("/v1/demo/runs/{run_id}", response_model=r.RunResponse)
 def status(run_id: str, db: DB, actor: User):
     local()
     run = s.require_run(db, run_id)
@@ -324,7 +331,7 @@ def status(run_id: str, db: DB, actor: User):
     )
 
 
-@app.post("/v1/demo/runs/{run_id}/control", response_model=Result)
+@app.post("/v1/demo/runs/{run_id}/control", response_model=r.RunResponse)
 def control(run_id: str, body: Control, db: DB, actor: Admin, key: Key):
     local()
 
@@ -361,7 +368,7 @@ def inputs(body: Input, db: DB, actor: Admin, request: Request, key: Key):
     return result
 
 
-@app.get("/v1/observations", response_model=Result)
+@app.get("/v1/observations", response_model=r.ObservationListResponse)
 def observations(
     run_id: str,
     start: datetime,
@@ -384,7 +391,7 @@ def observations(
     return output({"items": rows[offset : offset + limit], "total": len(rows), "offset": offset})
 
 
-@app.get("/v1/observations/{observation_id}", response_model=Result)
+@app.get("/v1/observations/{observation_id}", response_model=r.ObservationResponse)
 def observation(observation_id: str, db: DB, actor: Investigator, request: Request):
     row = db.get(m.Observation, observation_id)
     if not row:
@@ -433,7 +440,7 @@ def evidence(evidence_id: str, db: DB, actor: Investigator, request: Request):
     )
 
 
-@app.post("/v1/trajectories", response_model=Result)
+@app.post("/v1/trajectories", response_model=r.JourneyResponse)
 def trajectories(body: TrajectoryQuery, db: DB, actor: Investigator, request: Request):
     forms = normalize(body.plate)
     if not forms:
@@ -458,7 +465,7 @@ def journey(query_id: str, db: DB, actor: Investigator):
     return output({**s.serialize(row), "stale": row.version != run.version})
 
 
-@app.get("/v1/analytics/{metric}", response_model=Result)
+@app.get("/v1/analytics/{metric}", response_model=r.AnalyticsResponse)
 def metrics(metric: str, run_id: str, start: datetime, end: datetime, db: DB, actor: User):
     if metric not in ("summary", "counts", "od", "travel_times"):
         raise HTTPException(404, "METRIC_NOT_FOUND")
@@ -519,7 +526,7 @@ def watch_action(watch_id: str, action: str, db: DB, actor: Approver, key: Key):
     return recorded(db, actor, f"watch:{watch_id}", key, {"action": action}, apply)
 
 
-@app.get("/v1/alerts", response_model=Result)
+@app.get("/v1/alerts", response_model=r.AlertListResponse)
 def alerts(run_id: str, db: DB, actor: Investigator, limit: int = Query(100, ge=1, le=200)):
     return output(
         [

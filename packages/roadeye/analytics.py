@@ -1,4 +1,5 @@
 from collections import defaultdict
+from datetime import datetime, timedelta
 
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session
@@ -33,6 +34,36 @@ def summary(db: Session, window: Window) -> dict:
     accepted = sum(o["status"] == "accepted" for o in observations)
     total = sum(p[2] for p in passages)
     camera_health = health(db, run)
+    heartbeat_inputs = db.scalars(
+        select(m.InputEvent)
+        .join(m.Job, m.Job.id == m.InputEvent.id)
+        .where(m.InputEvent.run_id == run.id, m.Job.state == "done")
+    ).all()
+    for camera_status in camera_health:
+        intervals = []
+        for event in heartbeat_inputs:
+            payload = event.payload
+            if payload["kind"] != "heartbeat" or payload["camera_id"] != camera_status["camera_id"]:
+                continue
+            captured = datetime.fromisoformat(payload["captured_at"])
+            left, right = (
+                max(window.start, captured),
+                min(window.end, captured + timedelta(seconds=120)),
+            )
+            if left < right:
+                intervals.append((left, right))
+        covered = 0.0
+        covered_until = window.start
+        for left, right in sorted(intervals):
+            covered += max(0.0, (right - max(left, covered_until)).total_seconds())
+            covered_until = max(covered_until, right)
+        camera_status["heartbeat_covered_seconds"] = covered
+        camera_status["heartbeat_coverage_fraction"] = (
+            covered / (window.end - window.start).total_seconds()
+        )
+        camera_status["coverage_meaning"] = (
+            "Union of 120-second heartbeat validity intervals, not measured physical uptime"
+        )
     counts = []
     for camera in db.scalars(select(m.Camera).order_by(m.Camera.id)):
         number = next((n for c, lane, n in passages if c == camera.id), 0)
