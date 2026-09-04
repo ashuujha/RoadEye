@@ -1,9 +1,9 @@
 # Delivered boundaries and remaining limitations
 
-- All passages, candidates, timestamps, network coordinates and plate identifiers are synthetic. No detector/OCR model runs. Recognition accuracy and real-world tracking are unmeasured.
+- Existing synthetic scenarios still use supplied candidates. The optional Delhi recorded run now uses actual local vehicle/plate detection and OCR; its UTC anchor is assigned and its camera has no geographic coordinates. Recognition accuracy and physical tracking/counting accuracy remain unmeasured. See recorded_video_demo.md for actual results.
 - One preregistered fictional six-camera network, three zones, one forward lane per camera; camera metadata and edges can be configured. This is not a general multi-tenant network provisioning UI.
 - The supported illustrative plate shape is AA00AA0000. Raw values and positional O/0/I/1 alternatives are retained; complete jurisdiction-specific plate validation is not implemented.
-- OCR input is a complete immutable batch per passage, not open-ended streaming frame accumulation. The real adapter must define passage finalization before integration.
+- OCR input is a complete immutable batch per passage, not open-ended streaming frame accumulation. The recorded adapter finalizes a tracked crossing after a one-second detection gap or interval end; live streaming finalization remains future work.
 - Trajectories are bounded candidate graphs. Identical text is not physical identity; multiple plausible continuations/road paths are retained. Alternatives and weak matches are excluded from definite flow. Same-camera repeated sightings produce a review indicator, not proof of a completed road loop.
 - Windows are at most 24 h, candidate limit 200, run input limit 500. Analytics are suitable for compact demonstrations, not benchmarked city-scale loads. JSON stores nested contributions/query results; relational keys/constraints own persistence.
 - Camera freshness is evaluated at the historical run clock. Heartbeat-covered duration is the union of 120 s validity intervals, not measured physical uptime. There is no live wall-clock camera monitoring because live adapters do not exist.

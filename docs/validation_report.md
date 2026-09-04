@@ -57,9 +57,15 @@ Initial test collection lacked root package discovery; configured pytest pythonp
 - `docker compose version` failed with `/bin/bash: docker: command not found` (exit 127). `sudo -n true` reported interactive authentication required. Compose image builds/startup and container-specific behavior are **not verified**; native execution is not claimed equivalent.
 - Future Compose/CI target PostgreSQL 17/PostGIS 3.5 and Node 22.15. Native checks used PostgreSQL 18/PostGIS 3.6 and Node 24; the container matrix remains to be executed.
 - GitHub Actions was not run. The workflow exists for future local-to-remote handoff; nothing was pushed.
-- Backup/restore commands, target-hardware capacity, real detector/OCR integration, actual camera feeds and real recognition/tracking evaluation were not executed.
+- At the original synthetic milestone, backup/restore, target-hardware capacity, real detector/OCR integration, camera feeds and recognition/tracking evaluation had not been executed. The follow-up below now verifies recorded detector/OCR integration; the other operational/evaluation checks remain outstanding.
 - Browser tests cover the essential normal journey and permission boundary; they do not claim every possible UI transition or accessibility certification.
 
 ## Interpretation
 
 The native connected system and deterministic core behavior are verified. Synthetic candidate confidence, scenario success and passing tests do not establish real recognition accuracy or physical vehicle identity. Read `limitations.md` and `real_data_integration.md` before moving beyond this local phase.
+
+## Recorded-video follow-up (native environment)
+
+The subsequent recorded-video extension ran actual CPU vehicle detection, plate-specific detection and crop OCR on the provided Delhi clip. It produced 25 counted passages in [0,60), with 2 accepted, 6 review-required and 17 rejected machine observations; recognition accuracy is unmeasured. The original synthetic-only conclusions above describe the earlier milestone. See [recorded-video results](recorded_video_demo.md) for source/model hashes, measured runtimes, crop inspection, full recovery/replay verification and current limitations. Neither whole-clip inference, hosted CI nor Docker execution is claimed.
+
+Current follow-up gates: `make validate` passed with writable temporary uv cache and native PostgreSQL configuration: 39 Pytest tests, 1 Vitest test, Ruff formatting/lint, mypy, TypeScript, generated-client consistency, production web build, synthetic process E2E and all 4 Chromium checks. The recorded acceptance script separately passed forced process interruption, recovery, duplicate replay and 99 authorized evidence retrievals; 39 retained PNG crops were also checked pixel-for-pixel against source PTS, with 25 anchor mappings checked.

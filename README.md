@@ -6,7 +6,7 @@ SIH2026172 · Bharat Electronics Limited
 
 A backend-first engineering MVP: real PostgreSQL persistence, durable processing, conservative plate consensus, constrained camera journeys, traffic analytics, evidence-linked alerts, review and audit. The React console shows actual API results.
 
-**All demonstration inputs are synthetic. OCR candidates are supplied by a mock adapter. No model runs, camera feeds, real vehicle attribution, or recognition-accuracy claims are involved.** The engineering handbook was unavailable in the initially empty repository.
+**Synthetic scenarios remain supplied mock inputs. The optional Recorded video view now runs actual local vehicle detection, plate detection and OCR on the provided Delhi recording. Recognition accuracy remains unmeasured.**
 
 ## Start locally
 
@@ -72,3 +72,16 @@ make browser
 - `scripts`: setup, replay driver, process E2E, fixture and contract generation.
 
 Start with [PRD](PRD.md), [architecture](architecture.md), [API guide](docs/api.md), [operations](docs/operations.md), and [real-data handoff](docs/real_data_integration.md). See [limitations](docs/limitations.md) before interpreting outputs. No license grant has been inferred or added.
+
+## Recorded Delhi video — native judge slice
+
+The existing synthetic judge runbook is unchanged. For the recorded slice, use [the exact native startup, processing and review instructions](docs/recorded_video_demo.md). Keep `delhi_anpr.mp4` local at `data/recorded_real/delhi_anpr.mp4`; it and downloaded weights/evidence are excluded from Git.
+
+```bash
+make recorded-setup
+# Set ROADEYE_RECORDED_ENABLED=true in your local API and worker environments.
+# With the native services running:
+make recorded-demo
+```
+
+In the console, sign in as administrator → **Recorded video** → **Process first 60 seconds** → select/inspect a passage. View original frames, lossless plate crops, raw OCR, consensus reasons and separate vehicle/accepted-plate counts. This is one recorded camera with assigned replay time, no geographic calibration, and no inferred routes/speed/congestion. A high model score is not measured accuracy.
