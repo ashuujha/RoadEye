@@ -43,7 +43,7 @@ jobs:
           cache-dependency-path: apps/web/package-lock.json
       - name: Locked dependencies
         run: |
-          uv sync --frozen
+          uv sync --frozen --extra recorded
           npm ci --prefix apps/web
       - name: Clean database migration
         run: uv run alembic upgrade head

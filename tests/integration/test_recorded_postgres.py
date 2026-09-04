@@ -139,3 +139,40 @@ def test_run_scope_and_server_authorization(monkeypatch):
             ).status_code
             == 422
         )
+
+
+def test_registered_camera_does_not_break_synthetic_counts_and_missing_evidence(
+    monkeypatch, tmp_path
+):
+    from roadeye import analytics
+    from roadeye.contracts import Window
+
+    monkeypatch.setattr(settings, "recorded_evidence_root", tmp_path)
+    with SessionLocal.begin() as db:
+        s.seed(db)
+        if not db.get(m.Camera, "REAL_C1"):
+            db.add(m.Camera(id="REAL_C1", name="Uncalibrated", zone_id=None, x=None, y=None))
+        synthetic = s.create_run(db, "normal_journey")
+        result = analytics.summary(
+            db,
+            Window(
+                run_id=synthetic.id, start=synthetic.clock, end=synthetic.clock + timedelta(hours=1)
+            ),
+        )
+        assert len(result["counts"]) == 6
+        assert all(c["camera_id"] != "REAL_C1" for c in result["counts"])
+        run_id, job_id = video_fixture(db)
+        db.flush()
+        db.get(m.Job, job_id).state = "poison"
+        db.add(
+            m.Evidence(
+                run_id=run_id,
+                object_key="missing.png",
+                digest="test-missing-object",
+                size=10,
+                media_type="image/png",
+                source_mode="recorded_real",
+            )
+        )
+        db.flush()
+        assert status(db, run_id)["missing_evidence"] == 1

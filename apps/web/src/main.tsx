@@ -10,12 +10,14 @@ import { client, key, unwrap } from "./api";
 import { Table, Json, State, Network } from "./components";
 import type { components } from "./api.generated";
 import "./style.css";
+import { RecordedVideo } from "./RecordedVideo";
 
 type RecordData = Record<string, any>;
 const queryClient = new QueryClient({
   defaultOptions: { queries: { retry: false, refetchInterval: 3000 } },
 });
 const pages = [
+  "Recorded video",
   "Overview",
   "Scenario runner",
   "Observation inspector",
@@ -27,7 +29,7 @@ const pages = [
 
 function App() {
   const qc = useQueryClient();
-  const [page, setPage] = useState(pages[0]);
+  const [page, setPage] = useState("Overview");
   const [actor, setActor] =
     useState<components["schemas"]["Role"]>("administrator");
   const [password, setPassword] = useState("");
@@ -191,7 +193,11 @@ function App() {
           <strong>RoadEye</strong>
           <span>Engineering console · SIH2026172</span>
         </div>
-        <span className="synthetic">SYNTHETIC INPUT · MOCK OCR CANDIDATES</span>
+        <span className="synthetic">
+          {page === "Recorded video"
+            ? "RECORDED FOOTAGE · REAL MODEL INFERENCE"
+            : "SYNTHETIC INPUT · MOCK OCR CANDIDATES"}
+        </span>
       </header>
       {!loggedIn ? (
         <main className="login">
@@ -272,45 +278,54 @@ function App() {
               Sign out / switch actor
             </button>
             <p className="meta">
-              Fictional network · no real vehicle attribution · no live feeds
+              {page === "Recorded video"
+                ? "One recorded camera · no geographic calibration · no live feeds"
+                : "Fictional network · no real vehicle attribution · no live feeds"}
             </p>
           </aside>
           <main>
-            <div className="scope">
-              <label>
-                Selected run
-                <select
-                  aria-label="Selected run"
-                  value={runId}
-                  onChange={(e) => chooseRun(e.target.value)}
-                >
-                  <option value="">Choose a run</option>
-                  {runs.data?.map((r) => (
-                    <option key={r.id} value={r.id}>
-                      {r.scenario} · {r.id.slice(0, 8)}
-                    </option>
-                  ))}
-                </select>
-              </label>
-              <label>
-                UTC window start
-                <input
-                  value={start}
-                  onChange={(e) => setStart(e.target.value)}
-                />
-              </label>
-              <label>
-                UTC window end
-                <input value={end} onChange={(e) => setEnd(e.target.value)} />
-              </label>
-            </div>
+            {page !== "Recorded video" && (
+              <div className="scope">
+                <label>
+                  Selected run
+                  <select
+                    aria-label="Selected run"
+                    value={runId}
+                    onChange={(e) => chooseRun(e.target.value)}
+                  >
+                    <option value="">Choose a run</option>
+                    {runs.data?.map((r) => (
+                      <option key={r.id} value={r.id}>
+                        {r.scenario} · {r.id.slice(0, 8)}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+                <label>
+                  UTC window start
+                  <input
+                    value={start}
+                    onChange={(e) => setStart(e.target.value)}
+                  />
+                </label>
+                <label>
+                  UTC window end
+                  <input value={end} onChange={(e) => setEnd(e.target.value)} />
+                </label>
+              </div>
+            )}
             <h1>{page}</h1>
-            <p className="meta">
-              Half-open capture-time window · Historical synthetic replay ·{" "}
-              {runId
-                ? `Run ${runId}`
-                : "Select or create a run to inspect results."}
-            </p>
+            {page === "Recorded video" && (
+              <RecordedVideo actor={me.data.actor} />
+            )}
+            {page !== "Recorded video" && (
+              <p className="meta">
+                Half-open capture-time window · Historical synthetic replay ·{" "}
+                {runId
+                  ? `Run ${runId}`
+                  : "Select or create a run to inspect results."}
+              </p>
+            )}
             <p
               role="status"
               className={
@@ -908,11 +923,14 @@ function App() {
                 />
               </>
             )}
-            {!runId && !["Scenario runner", "Overview"].includes(page) && (
-              <p className="empty">
-                No run selected. Create one in Scenario runner.
-              </p>
-            )}
+            {!runId &&
+              !["Scenario runner", "Overview", "Recorded video"].includes(
+                page,
+              ) && (
+                <p className="empty">
+                  No run selected. Create one in Scenario runner.
+                </p>
+              )}
           </main>
         </div>
       )}

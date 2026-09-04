@@ -49,3 +49,39 @@ test('viewer sees server permission denial and empty scope', async ({ page }) =>
   await page.getByLabel('Selected run').selectOption({ index: 1 });
   await expect(page.getByRole('alert').filter({ hasText: 'Permission denied' })).toBeVisible();
 });
+
+test('recorded view denies viewer access', async ({ page }) => {
+  await page.goto('/');
+  await page.getByLabel('Local actor').selectOption('viewer');
+  await page.getByLabel('Local password').fill(password());
+  await page.getByRole('button', { name: 'Sign in', exact: true }).click();
+  await page.getByRole('button', { name: 'Recorded video', exact: true }).click();
+  await expect(page.getByRole('alert').filter({ hasText: 'Investigator or administrator' })).toBeVisible();
+});
+
+test('recorded real model results expose original frame and physical crop', async ({ page }) => {
+  test.skip(!process.env.ROADEYE_RECORDED_RUN, 'Requires an actual completed local model run; no mock footage or answers');
+  const errors: string[] = [];
+  page.on('pageerror', error => errors.push(error.message));
+  await page.goto('/');
+  await page.getByLabel('Local password').fill(password());
+  await page.getByRole('button', { name: 'Sign in', exact: true }).click();
+  await page.getByRole('button', { name: 'Recorded video', exact: true }).click();
+  await expect(page.getByText('Recorded footage — real model inference', { exact: true })).toBeVisible();
+  await page.getByLabel('Recorded run', { exact: true }).selectOption(process.env.ROADEYE_RECORDED_RUN!);
+  await expect(page.getByRole('heading', { name: 'Processing: completed' })).toBeVisible();
+  await page.getByRole('button', { name: 'Inspect passage', exact: true }).first().click();
+  const frame = page.getByRole('img', { name: 'Original recorded frame at vehicle crossing' });
+  await expect(frame).toBeVisible();
+  await expect.poll(async () => frame.evaluate((image: HTMLImageElement) => image.naturalWidth)).toBe(1272);
+  const crop = page.getByRole('img', { name: /Physical plate crop at/ }).first();
+  await expect(crop).toBeVisible();
+  const source = (await crop.getAttribute('src'))!;
+  const response = await page.request.get(source);
+  expect(response.status()).toBe(200);
+  expect(['image/jpeg', 'image/png']).toContain(response.headers()['content-type']);
+  await expect(page.getByRole('button', { name: 'Replay same run (duplicate check)' })).toBeEnabled();
+  await expect(page.getByLabel('Selected run', { exact: true })).toHaveCount(0);
+  await page.screenshot({ path: '/tmp/roadeye-recorded-console.png', fullPage: true });
+  expect(errors).toEqual([]);
+});

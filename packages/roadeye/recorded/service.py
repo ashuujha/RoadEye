@@ -8,7 +8,7 @@ from uuid import UUID, uuid5
 
 from fastapi import HTTPException
 from pydantic import AwareDatetime, Field
-from sqlalchemy import func, select
+from sqlalchemy import func, select, text
 
 from roadeye import models as m
 from roadeye import services as s
@@ -59,6 +59,7 @@ def create(db, body: VideoCreate, actor: str) -> dict:
         models = verify_models(settings.model_root)
     except (ImportError, ValueError) as exc:
         raise HTTPException(503, str(exc)) from exc
+    db.execute(text("SELECT pg_advisory_xact_lock(173)"))
     dataset_id = f"recorded:{recording['sha256']}"
     if not db.get(m.Dataset, dataset_id):
         db.add(m.Dataset(id=dataset_id, manifest=recording))
@@ -167,6 +168,18 @@ def status(db, run_id: str) -> dict:
         if job.attempts == 0
         else "processing"
     )
+    assets = list(db.scalars(select(m.Evidence).where(m.Evidence.run_id == run_id)))
+    missing = 0
+    for asset in assets:
+        path = settings.recorded_evidence_root / asset.object_key
+        try:
+            missing += not path.is_file() or path.stat().st_size != asset.size
+        except OSError:
+            missing += 1
+    failed_jobs = [
+        {"id": row.id, "state": row.state, "attempts": row.attempts, "error": row.error}
+        for row in db.scalars(select(m.Job).where(m.Job.run_id == run_id, m.Job.error.is_not(None)))
+    ]
     return {
         "run_id": run_id,
         "recording_id": task.recording_id,
@@ -174,7 +187,11 @@ def status(db, run_id: str) -> dict:
         "inference_origin": "model_inference",
         "state": state,
         "attempts": job.attempts,
-        "error": job.error,
+        "error": job.error or (failed_jobs[0]["error"] if failed_jobs else None),
+        "failed_jobs": failed_jobs,
+        "evidence_objects": len(assets),
+        "missing_evidence": missing,
+        "evidence_check": "current file presence and size; digest verified on retrieval",
         "config": task.config,
         "progress": task.progress,
         "jobs": counts,

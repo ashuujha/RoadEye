@@ -1,7 +1,7 @@
 .PHONY: setup up migrate seed-demo demo test lint typecheck validate down generate client-check browser
 setup:
 	python3 scripts/setup.py
-	uv sync --frozen --python 3.12
+	uv sync --frozen --extra recorded --python 3.12
 	cd apps/web && npm ci
 up:
 	docker compose up --build -d
@@ -33,3 +33,9 @@ validate: lint typecheck test client-check
 	$(MAKE) browser
 down:
 	docker compose down
+
+recorded-setup:
+	uv sync --frozen --extra recorded
+	uv run python -m scripts.download_models
+recorded-demo:
+	uv run python -m scripts.recorded_video --seconds 60
