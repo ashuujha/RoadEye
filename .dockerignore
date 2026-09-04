@@ -1,0 +1,10 @@
+.git
+.env
+.venv
+.runtime
+**/node_modules
+**/__pycache__
+**/dist
+**/.pytest_cache
+**/test-results
+**/ground_truth

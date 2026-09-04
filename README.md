@@ -1,0 +1,74 @@
+# RoadEye
+
+**City-Wide AI Engine for Multi-Camera ANPR Trajectory Tracking and Urban Traffic Analytics**
+
+SIH2026172 · Bharat Electronics Limited
+
+A backend-first engineering MVP: real PostgreSQL persistence, durable processing, conservative plate consensus, constrained camera journeys, traffic analytics, evidence-linked alerts, review and audit. The React console shows actual API results.
+
+**All demonstration inputs are synthetic. OCR candidates are supplied by a mock adapter. No model runs, camera feeds, real vehicle attribution, or recognition-accuracy claims are involved.** The engineering handbook was unavailable in the initially empty repository.
+
+## Start locally
+
+Prerequisites: Docker with Compose v2, Python 3.12 through [uv](https://docs.astral.sh/uv/), Node 22.15+ and npm. Nothing is published or deployed.
+
+```bash
+make setup
+make up
+make demo
+```
+
+`setup` creates a unique ignored `.env` without overwriting existing configuration, installs locked backend/frontend dependencies, and leaves secrets out of bundles. `up` starts PostgreSQL/PostGIS, applies migrations, then starts API, worker and console. Read the local `ROADEYE_DEMO_PASSWORD` from `.env` to sign in as administrator at **http://localhost:5173**. API docs: **http://localhost:8000/docs**. Use localhost consistently for the configured CORS origin.
+
+`make demo` creates and processes a normal journey through HTTP. Select its run in the console. Expected: three passages, three accepted observations, C1 → C2 → C3, two 60-second links. The full [seven-minute judge runbook](docs/demo_runbook.md) includes evidence, ambiguity, rejection, watchlists and recovery.
+
+```bash
+make down  # stops only this Compose project; preserves database volume
+```
+
+No Docker volume reset command is provided. To reset a scenario, create a new scoped run; replay redelivers original IDs into the existing run and preserves counts/history.
+
+## Native development / verified fallback
+
+With a real PostgreSQL/PostGIS database available, set `ROADEYE_DATABASE_URL` in `.env`, then:
+
+```bash
+make setup
+make migrate
+uv run uvicorn apps.api.main:app --host 127.0.0.1 --port 8000 --no-access-log
+# Separate terminal:
+uv run python -m apps.worker.main
+# Separate terminal:
+cd apps/web && npm run dev -- --host 127.0.0.1
+```
+
+The task environment lacked Docker and sudo privileges. The API, worker and console were executed natively against an isolated PostgreSQL 18.6 / PostGIS 3.6.2 instance. **Compose startup itself remains unverified here.** See [validation report](docs/validation_report.md) for exact checks and limitations; a workflow file is not evidence that hosted CI passed.
+
+## Verify
+
+Use an isolated database; integration tests create uniquely scoped synthetic runs and intentionally exercise failing jobs. Stop background workers during integration/process recovery tests.
+
+```bash
+make lint
+make typecheck
+make test
+make client-check
+cd apps/web && npm run build && npx playwright install chromium
+# With API running and no other worker:
+uv run python -m scripts.e2e
+# With API/frontend still running, browser check starts its own worker:
+make browser
+```
+
+`make validate` runs those checks in sequence; it requires API/frontend running and manages its own process E2E worker. The browser step also starts and stops its own worker. For a running Compose stack: `docker compose stop worker`, run validation, then `docker compose start worker`. `make generate` regenerates the API contract and TypeScript client; commit both generated files when changing schemas.
+
+## Repository map
+
+- `packages/roadeye`: contracts, relational models, ingestion/services, consensus, graph reconstruction, analytics, jobs, authentication, evidence.
+- `apps/api`, `apps/worker`, `apps/web`: runtime entrypoints and connected console.
+- `migrations`: explicit Alembic schema and immutability protections.
+- `data/synthetic`: compact input fixtures and manifest; tests alone consume `ground_truth`.
+- `tests`: domain, PostgreSQL integration and actual-browser checks.
+- `scripts`: setup, replay driver, process E2E, fixture and contract generation.
+
+Start with [PRD](PRD.md), [architecture](architecture.md), [API guide](docs/api.md), [operations](docs/operations.md), and [real-data handoff](docs/real_data_integration.md). See [limitations](docs/limitations.md) before interpreting outputs. No license grant has been inferred or added.

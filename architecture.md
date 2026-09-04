@@ -34,3 +34,34 @@ Graph reconstruction hard-rejects disconnected, reversed and implausibly fast/sl
 Evidence storage validates relative object keys and digests; protected retrieval returns honest missing-object errors. Backup includes database and object directory at a consistent checkpoint. S3 migration replaces the store interface using the same digest/object metadata, with private objects and authenticated delivery. Orphan cleanup must compare keys to metadata after a grace period; it is never an indiscriminate directory deletion.
 
 Local authentication is explicitly enabled by configuration, uses server-side expiring sessions and role checks, and must be replaced by production identity. Local login secrets are environment configuration, never browser constants. Cookie writes require a same-origin/custom-header boundary. Synthetic runs do not become live on replay. Real modes fail at startup until adapters exist. Model confidence is a heuristic input, not calibrated accuracy. PostGIS is installed for the future, but fictional schematic coordinates are not geographic coordinates.
+
+## Implemented refinements
+
+Durable receipt now records evidence digest/size/type/key in the same transaction as input and outbox insertion. Keys cannot silently change content within a run. Database triggers protect input/machine rows, audit history and run graph/provenance from updates. Core API payloads have typed response schemas; extensible inspection metadata remains JSON. Readiness requires the current migration head and a working PostGIS function.
+
+```mermaid
+stateDiagram-v2
+  [*] --> pending: atomic receipt
+  pending --> leased: claim + token + deadline
+  leased --> done: effects + completion commit
+  leased --> pending: failure / retry backoff
+  leased --> leased: expired lease reclaimed with new token
+  leased --> poison: attempts exhausted
+  poison --> pending: administrator retry after repair
+```
+
+```mermaid
+erDiagram
+  RUN ||--o{ INPUT_EVENT : scopes
+  INPUT_EVENT ||--|| JOB : schedules
+  RUN ||--o{ EVIDENCE_ASSET : owns
+  INPUT_EVENT ||--o| VEHICLE_PASSAGE : counts
+  VEHICLE_PASSAGE ||--o| OBSERVATION : recognizes
+  OBSERVATION ||--o{ REVISION : preserves
+  OBSERVATION ||--o{ ALERT : supports
+  RUN ||--o{ TRAJECTORY_QUERY : versions
+```
+
+Heartbeat freshness uses the run clock; window coverage unions the 120-second validity intervals from processed heartbeat inputs. This is a declared coverage proxy, not physical uptime. Query execution locks the run during snapshot construction to keep versions/results consistent with processing and review transactions.
+
+Container builds use a pinned uv binary with `uv sync --frozen --no-dev`, following the [official uv Docker integration](https://docs.astral.sh/uv/guides/integration/docker/) and [lock/sync behavior](https://docs.astral.sh/uv/concepts/projects/sync/). The uv pin matches the locally exercised 0.12.1 lockfile tooling. Docker execution remains a separate unverified runtime check in this environment.

@@ -28,3 +28,18 @@ MVP: one fictional network, supplied mock OCR candidates, bounded query reconstr
 The handbook was not available in the initial empty repository. Six cameras use fictional schematic coordinates; no spatial query requires PostGIS geometry. PostgreSQL/PostGIS remains the database deployment. Passage IDs come from the source; repeated independent IDs cannot be magically deduplicated. OCR records declare a complete reading batch; additional readings use a new input revision, not mutation. Timing and confidence thresholds are provisional. Bounded graph queries may return truncated results explicitly. Historical run clocks are separate from wall clock. Camera coverage uses synthetic heartbeat freshness, not measured physical uptime.
 
 Runtime dependencies: Python 3.12, PostgreSQL/PostGIS, Node, Docker Compose. Docker absence blocks Compose verification, not a license to substitute SQLite. Tests use real PostgreSQL. Recognition and linking correctness on synthetic fixtures establishes software behavior only.
+
+## Executable traceability
+
+| Requirements | Concrete checks |
+|---|---|
+| R01, R07 | `test_duplicate_concurrency_conflict_and_replay`, `test_lease_reclaim_idempotent_handler_poison_and_restart`, `test_receipt_evidence_metadata_and_transaction_rollback`, `scripts.e2e` |
+| R02, R05 | `test_scenario_outcomes` (all 12 named fixtures), `test_database_immutability_and_heartbeat_interval_union` |
+| R03 | `test_normalize`, `test_consensus_boundary_duplicate_and_unsupported` |
+| R04 | `test_directed_impossible_collision_and_branch`, normal/impossible/ambiguous/collision scenario assertions |
+| R06 | `test_watchlist_roles_validity_suppression_and_audit`, `test_invalid_windows_idempotent_commands_and_watch_expiry`, review-version test |
+| R08 | `test_scope_provenance_and_evidence_failures`, viewer/evidence denial assertions, Chromium viewer test |
+| R09 | `tests/e2e/console.spec.ts`, frontend type/build checks, OpenAPI consistency |
+| R10 | `test_late_version_and_review_preserve_machine`, direct database immutability test, clean-migration/PostGIS test |
+
+Acceptance is measured against compact synthetic inputs only. See `docs/validation_report.md` for the executed environment/results and `docs/review.md` for findings fixed during independent review.

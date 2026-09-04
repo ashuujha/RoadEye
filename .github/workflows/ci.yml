@@ -1,0 +1,74 @@
+name: RoadEye validation
+on:
+  pull_request:
+  push:
+    branches: [main]
+permissions:
+  contents: read
+concurrency:
+  group: roadeye-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  validate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    services:
+      postgres:
+        image: postgis/postgis:17-3.5
+        env:
+          POSTGRES_USER: roadeye
+          POSTGRES_PASSWORD: ci-only-password
+          POSTGRES_DB: roadeye
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U roadeye -d roadeye"
+          --health-interval 3s --health-timeout 3s --health-retries 20
+    env:
+      ROADEYE_DATABASE_URL: postgresql+psycopg://roadeye:ci-only-password@localhost:5432/roadeye
+      ROADEYE_DEMO_ENABLED: 'true'
+      ROADEYE_DEMO_PASSWORD: ci-synthetic-only-password
+      ROADEYE_SOURCE_MODE: synthetic
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: astral-sh/setup-uv@v6
+        with:
+          version: '0.12.1'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22.15.0'
+          cache: npm
+          cache-dependency-path: apps/web/package-lock.json
+      - name: Locked dependencies
+        run: |
+          uv sync --frozen
+          npm ci --prefix apps/web
+      - name: Clean database migration
+        run: uv run alembic upgrade head
+      - name: Lint and types
+        run: |
+          make lint
+          make typecheck
+      - name: Domain, PostgreSQL and frontend tests
+        run: make test
+      - name: Generated contract consistency and production build
+        run: |
+          make client-check
+          npm run build --prefix apps/web
+      - name: Install browser
+        run: cd apps/web && npx playwright install --with-deps chromium
+      - name: Start actual API and frontend
+        run: |
+          uv run uvicorn apps.api.main:app --host 127.0.0.1 --port 8000 --no-access-log >/tmp/roadeye-api.log 2>&1 &
+          npm run dev --prefix apps/web -- --host 127.0.0.1 >/tmp/roadeye-web.log 2>&1 &
+          for attempt in $(seq 1 30); do
+            if curl --fail --silent http://127.0.0.1:8000/v1/health/ready >/dev/null && curl --fail --silent http://127.0.0.1:5173 >/dev/null; then exit 0; fi
+            sleep 1
+          done
+          exit 1
+      - name: Separate-process recovery and HTTP E2E
+        run: uv run python -m scripts.e2e
+      - name: Actual Chromium console checks
+        run: make browser
