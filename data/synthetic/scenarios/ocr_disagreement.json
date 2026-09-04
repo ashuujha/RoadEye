@@ -1,0 +1,258 @@
+[
+  {
+    "schema_version": "1",
+    "event_id": "caf7dd12-7656-50d2-b93b-ad2ed1a3e363",
+    "kind": "heartbeat",
+    "camera_id": "C1",
+    "lane_id": "C1-L1",
+    "captured_at": "2026-01-15T08:00:00+00:00",
+    "passage_id": "initial",
+    "readings": [],
+    "input_confidence": 1,
+    "quality": 1,
+    "evidence_key": "plate-card.svg",
+    "source_mode": "synthetic",
+    "inference_origin": "mock_candidates",
+    "dataset_version": "1"
+  },
+  {
+    "schema_version": "1",
+    "event_id": "abfabd32-d1b8-5d85-8255-3906b2a27009",
+    "kind": "heartbeat",
+    "camera_id": "C2",
+    "lane_id": "C2-L1",
+    "captured_at": "2026-01-15T08:00:00+00:00",
+    "passage_id": "initial",
+    "readings": [],
+    "input_confidence": 1,
+    "quality": 1,
+    "evidence_key": "plate-card.svg",
+    "source_mode": "synthetic",
+    "inference_origin": "mock_candidates",
+    "dataset_version": "1"
+  },
+  {
+    "schema_version": "1",
+    "event_id": "e0801d43-37d3-5ccb-a58a-39d0e2a390e5",
+    "kind": "heartbeat",
+    "camera_id": "C3",
+    "lane_id": "C3-L1",
+    "captured_at": "2026-01-15T08:00:00+00:00",
+    "passage_id": "initial",
+    "readings": [],
+    "input_confidence": 1,
+    "quality": 1,
+    "evidence_key": "plate-card.svg",
+    "source_mode": "synthetic",
+    "inference_origin": "mock_candidates",
+    "dataset_version": "1"
+  },
+  {
+    "schema_version": "1",
+    "event_id": "98dedbe8-3a01-5adb-af96-c5d1527e70ce",
+    "kind": "heartbeat",
+    "camera_id": "C4",
+    "lane_id": "C4-L1",
+    "captured_at": "2026-01-15T08:00:00+00:00",
+    "passage_id": "initial",
+    "readings": [],
+    "input_confidence": 1,
+    "quality": 1,
+    "evidence_key": "plate-card.svg",
+    "source_mode": "synthetic",
+    "inference_origin": "mock_candidates",
+    "dataset_version": "1"
+  },
+  {
+    "schema_version": "1",
+    "event_id": "b64b816b-0740-5bb6-82fc-91a9c08e909a",
+    "kind": "heartbeat",
+    "camera_id": "C5",
+    "lane_id": "C5-L1",
+    "captured_at": "2026-01-15T08:00:00+00:00",
+    "passage_id": "initial",
+    "readings": [],
+    "input_confidence": 1,
+    "quality": 1,
+    "evidence_key": "plate-card.svg",
+    "source_mode": "synthetic",
+    "inference_origin": "mock_candidates",
+    "dataset_version": "1"
+  },
+  {
+    "schema_version": "1",
+    "event_id": "fc4766a3-be67-56e0-b173-08dca42e9c10",
+    "kind": "heartbeat",
+    "camera_id": "C6",
+    "lane_id": "C6-L1",
+    "captured_at": "2026-01-15T08:00:00+00:00",
+    "passage_id": "initial",
+    "readings": [],
+    "input_confidence": 1,
+    "quality": 1,
+    "evidence_key": "plate-card.svg",
+    "source_mode": "synthetic",
+    "inference_origin": "mock_candidates",
+    "dataset_version": "1"
+  },
+  {
+    "schema_version": "1",
+    "event_id": "d6cb8952-b2f8-52d8-94f5-2b5aee2e7e5e",
+    "kind": "passage",
+    "camera_id": "C2",
+    "lane_id": "C2-L1",
+    "captured_at": "2026-01-15T08:00:00+00:00",
+    "passage_id": "p1",
+    "readings": [],
+    "input_confidence": 1,
+    "quality": 1,
+    "evidence_key": "plate-card.svg",
+    "source_mode": "synthetic",
+    "inference_origin": "mock_candidates",
+    "dataset_version": "1"
+  },
+  {
+    "schema_version": "1",
+    "event_id": "9a4dd5c8-0ff2-56b4-bc86-55e470f70dc3",
+    "kind": "ocr",
+    "camera_id": "C2",
+    "lane_id": "C2-L1",
+    "captured_at": "2026-01-15T08:00:00+00:00",
+    "passage_id": "p1",
+    "readings": [
+      {
+        "frame_id": "f1",
+        "candidates": [
+          {
+            "text": "ZZ01AA0001",
+            "confidence": 0.9
+          },
+          {
+            "text": "ZZ01AA000I",
+            "confidence": 0.85
+          }
+        ]
+      },
+      {
+        "frame_id": "f1",
+        "candidates": [
+          {
+            "text": "ZZ01AA0001",
+            "confidence": 0.9
+          }
+        ]
+      },
+      {
+        "frame_id": "f2",
+        "candidates": [
+          {
+            "text": "ZZ01AA0002",
+            "confidence": 0.9
+          }
+        ]
+      }
+    ],
+    "input_confidence": 1,
+    "quality": 1,
+    "evidence_key": "plate-card.svg",
+    "source_mode": "synthetic",
+    "inference_origin": "mock_candidates",
+    "dataset_version": "1"
+  },
+  {
+    "schema_version": "1",
+    "event_id": "b5c826cc-da51-53a0-a236-fcc1ec6b5618",
+    "kind": "heartbeat",
+    "camera_id": "C1",
+    "lane_id": "C1-L1",
+    "captured_at": "2026-01-15T08:00:00+00:00",
+    "passage_id": "final",
+    "readings": [],
+    "input_confidence": 1,
+    "quality": 1,
+    "evidence_key": "plate-card.svg",
+    "source_mode": "synthetic",
+    "inference_origin": "mock_candidates",
+    "dataset_version": "1"
+  },
+  {
+    "schema_version": "1",
+    "event_id": "0680545d-a776-5275-8075-1f9aafe26000",
+    "kind": "heartbeat",
+    "camera_id": "C2",
+    "lane_id": "C2-L1",
+    "captured_at": "2026-01-15T08:00:00+00:00",
+    "passage_id": "final",
+    "readings": [],
+    "input_confidence": 1,
+    "quality": 1,
+    "evidence_key": "plate-card.svg",
+    "source_mode": "synthetic",
+    "inference_origin": "mock_candidates",
+    "dataset_version": "1"
+  },
+  {
+    "schema_version": "1",
+    "event_id": "2942af8a-996f-5af9-a3d1-bc405118caa6",
+    "kind": "heartbeat",
+    "camera_id": "C3",
+    "lane_id": "C3-L1",
+    "captured_at": "2026-01-15T08:00:00+00:00",
+    "passage_id": "final",
+    "readings": [],
+    "input_confidence": 1,
+    "quality": 1,
+    "evidence_key": "plate-card.svg",
+    "source_mode": "synthetic",
+    "inference_origin": "mock_candidates",
+    "dataset_version": "1"
+  },
+  {
+    "schema_version": "1",
+    "event_id": "0d777b60-aa0a-5411-8685-d1512d8d709f",
+    "kind": "heartbeat",
+    "camera_id": "C4",
+    "lane_id": "C4-L1",
+    "captured_at": "2026-01-15T08:00:00+00:00",
+    "passage_id": "final",
+    "readings": [],
+    "input_confidence": 1,
+    "quality": 1,
+    "evidence_key": "plate-card.svg",
+    "source_mode": "synthetic",
+    "inference_origin": "mock_candidates",
+    "dataset_version": "1"
+  },
+  {
+    "schema_version": "1",
+    "event_id": "ef8d9e39-0126-579a-8b75-6d82bd69d7cb",
+    "kind": "heartbeat",
+    "camera_id": "C5",
+    "lane_id": "C5-L1",
+    "captured_at": "2026-01-15T08:00:00+00:00",
+    "passage_id": "final",
+    "readings": [],
+    "input_confidence": 1,
+    "quality": 1,
+    "evidence_key": "plate-card.svg",
+    "source_mode": "synthetic",
+    "inference_origin": "mock_candidates",
+    "dataset_version": "1"
+  },
+  {
+    "schema_version": "1",
+    "event_id": "13289cf4-d060-56f9-a627-ce7e5bdcb3a4",
+    "kind": "heartbeat",
+    "camera_id": "C6",
+    "lane_id": "C6-L1",
+    "captured_at": "2026-01-15T08:00:00+00:00",
+    "passage_id": "final",
+    "readings": [],
+    "input_confidence": 1,
+    "quality": 1,
+    "evidence_key": "plate-card.svg",
+    "source_mode": "synthetic",
+    "inference_origin": "mock_candidates",
+    "dataset_version": "1"
+  }
+]

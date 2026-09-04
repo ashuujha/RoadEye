@@ -1,0 +1,90 @@
+{
+  "dataset_version": "1",
+  "schema_version": "1",
+  "seed": 172,
+  "source_mode": "synthetic",
+  "inference_origin": "mock_candidates",
+  "event_time_start": "2026-01-15T08:00:00+00:00",
+  "event_time_end": "2026-01-15T08:18:01+00:00",
+  "coordinate_system": "fictional local schematic units; not geographic installations",
+  "scenarios": {
+    "normal_journey": {
+      "purpose": "normal journey",
+      "expected_coverage": "six explicit heartbeat sources; C6 deliberately stale in outage"
+    },
+    "watchlist_match": {
+      "purpose": "watchlist match",
+      "expected_coverage": "six explicit heartbeat sources; C6 deliberately stale in outage"
+    },
+    "duplicate_delivery": {
+      "purpose": "duplicate delivery",
+      "expected_coverage": "six explicit heartbeat sources; C6 deliberately stale in outage"
+    },
+    "late_arrival": {
+      "purpose": "late arrival",
+      "expected_coverage": "six explicit heartbeat sources; C6 deliberately stale in outage"
+    },
+    "worker_recovery": {
+      "purpose": "worker recovery",
+      "expected_coverage": "six explicit heartbeat sources; C6 deliberately stale in outage"
+    },
+    "ocr_disagreement": {
+      "purpose": "ocr disagreement",
+      "expected_coverage": "six explicit heartbeat sources; C6 deliberately stale in outage"
+    },
+    "unreadable_plate": {
+      "purpose": "unreadable plate",
+      "expected_coverage": "six explicit heartbeat sources; C6 deliberately stale in outage"
+    },
+    "impossible_travel": {
+      "purpose": "impossible travel",
+      "expected_coverage": "six explicit heartbeat sources; C6 deliberately stale in outage"
+    },
+    "ambiguous_branch": {
+      "purpose": "ambiguous branch",
+      "expected_coverage": "six explicit heartbeat sources; C6 deliberately stale in outage"
+    },
+    "plate_collision": {
+      "purpose": "plate collision",
+      "expected_coverage": "six explicit heartbeat sources; C6 deliberately stale in outage"
+    },
+    "camera_outage": {
+      "purpose": "camera outage",
+      "expected_coverage": "six explicit heartbeat sources; C6 deliberately stale in outage"
+    },
+    "congestion_proxy": {
+      "purpose": "congestion proxy",
+      "expected_coverage": "six explicit heartbeat sources; C6 deliberately stale in outage"
+    }
+  },
+  "files": {
+    "cameras.json": "1acdbf5d0f18fb7af4577953977d93792dba870f896041aa24cbeafc92561fd5",
+    "evidence/plate-card.svg": "d01225be86585944b163ddc7c01e5bc641267716b7c2c83ead53de9591f5ecc5",
+    "graph.json": "abc7cf0846b5723ba9dddaa118c7099a43f2b134aac64e0e00b10c66eb0ba194",
+    "ground_truth/ambiguous_branch.json": "1eaeb9dad72320d3c8aa352b957c05eeb639699dc3959f1b57460e2534539a1f",
+    "ground_truth/camera_outage.json": "6c249e7a8442a51733ea7a6e8c00ecade2b1bb611194a5b5e362182ce599f17a",
+    "ground_truth/congestion_proxy.json": "042d9ff44c647d5f95589160467344923180351afa93bb4afb2b12cfd2108c67",
+    "ground_truth/duplicate_delivery.json": "1eaeb9dad72320d3c8aa352b957c05eeb639699dc3959f1b57460e2534539a1f",
+    "ground_truth/impossible_travel.json": "7013c5c2e1676b1175dce8c65f9bcf12d1146aae1c280af8046c46ff3e483f5b",
+    "ground_truth/late_arrival.json": "1eaeb9dad72320d3c8aa352b957c05eeb639699dc3959f1b57460e2534539a1f",
+    "ground_truth/normal_journey.json": "1eaeb9dad72320d3c8aa352b957c05eeb639699dc3959f1b57460e2534539a1f",
+    "ground_truth/ocr_disagreement.json": "4ac21fb29d8362d5b8be68cee8e03eec83e6336ff17fc63414ce73c3fff78ac9",
+    "ground_truth/plate_collision.json": "7013c5c2e1676b1175dce8c65f9bcf12d1146aae1c280af8046c46ff3e483f5b",
+    "ground_truth/unreadable_plate.json": "b1985c47ef016f9732b7a81b9075ce1c8175144baeb44b69f7eb192d5a000d55",
+    "ground_truth/watchlist_match.json": "6c249e7a8442a51733ea7a6e8c00ecade2b1bb611194a5b5e362182ce599f17a",
+    "ground_truth/worker_recovery.json": "1eaeb9dad72320d3c8aa352b957c05eeb639699dc3959f1b57460e2534539a1f",
+    "scenarios/ambiguous_branch.json": "8b9d8180ec43d7b99a53b925c61d43ed0e914b4979b9261587496dd6e0319763",
+    "scenarios/camera_outage.json": "483d2cf96ae64dab075417a4f94bf4791bc28bcbfb2b2ec3dcb9f6b829c67d21",
+    "scenarios/congestion_proxy.json": "bad40a018fb7a412856c8155937047caea5d8c40f34969c6e1a8fababb77264a",
+    "scenarios/duplicate_delivery.json": "e37d0a4ea6fd99f3704b38a25df4afb4cb99b58cdce201c31a071a2aa891d422",
+    "scenarios/impossible_travel.json": "2c85d76ea7645906c0c22cbb9244e1cb5026ab5681708133e9257585278f42b8",
+    "scenarios/late_arrival.json": "bf0638760a98752d7d11b6a0810953e8464106d384e1866ebe54da1d06e162e2",
+    "scenarios/normal_journey.json": "de69f02e91ff6d7545f94cecc5a1cbda329317cec58e71d97a9cf11615876146",
+    "scenarios/ocr_disagreement.json": "0244e7a14db233b63039b35614594b0a6a94fdcaaf7966ac1d3f25605b0b6a6d",
+    "scenarios/plate_collision.json": "167d4c52dd6eb1518e17ad14cc85314ede10aed450b09370bac6a5a1146ea576",
+    "scenarios/unreadable_plate.json": "0ae286cc94d0b66c6625f833ecc49145f6a1bdc25eca3edf4b17840673e0e465",
+    "scenarios/watchlist_match.json": "688c506428ad3eadfdd2d3ea328830166e3f196d422c0b1fb291a25738cb6ebd",
+    "scenarios/worker_recovery.json": "0366ebeb9fb5e18c7d74b0830fc584cc397d74322a5f2ecb4de7c694b0c895c4"
+  },
+  "limitations": "Invented identifiers, no real vehicle attribution, not training data, no recognition accuracy measurement"
+}

@@ -1,0 +1,50 @@
+[
+  {
+    "source": "C1",
+    "target": "C2",
+    "distance_m": 1000,
+    "min_seconds": 30,
+    "max_seconds": 600,
+    "baseline_seconds": 60
+  },
+  {
+    "source": "C2",
+    "target": "C3",
+    "distance_m": 1000,
+    "min_seconds": 30,
+    "max_seconds": 600,
+    "baseline_seconds": 60
+  },
+  {
+    "source": "C2",
+    "target": "C4",
+    "distance_m": 1000,
+    "min_seconds": 30,
+    "max_seconds": 600,
+    "baseline_seconds": 60
+  },
+  {
+    "source": "C3",
+    "target": "C5",
+    "distance_m": 1000,
+    "min_seconds": 30,
+    "max_seconds": 600,
+    "baseline_seconds": 60
+  },
+  {
+    "source": "C4",
+    "target": "C5",
+    "distance_m": 1000,
+    "min_seconds": 30,
+    "max_seconds": 600,
+    "baseline_seconds": 60
+  },
+  {
+    "source": "C5",
+    "target": "C6",
+    "distance_m": 1000,
+    "min_seconds": 30,
+    "max_seconds": 600,
+    "baseline_seconds": 60
+  }
+]
