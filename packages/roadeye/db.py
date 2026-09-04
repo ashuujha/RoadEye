@@ -7,7 +7,9 @@ from sqlalchemy.orm import Session, sessionmaker
 from roadeye.config import settings
 from roadeye.contracts import Clock
 
-engine = create_engine(settings.database_url, pool_pre_ping=True)
+engine = create_engine(
+    settings.database_url, pool_pre_ping=True, connect_args={"options": "-c timezone=UTC"}
+)
 SessionLocal = sessionmaker(engine, expire_on_commit=False)
 
 

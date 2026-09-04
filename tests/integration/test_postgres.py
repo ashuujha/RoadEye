@@ -1,6 +1,6 @@
 import json
 from concurrent.futures import ThreadPoolExecutor
-from datetime import timedelta
+from datetime import datetime, timedelta
 from uuid import uuid4
 
 import pytest
@@ -203,6 +203,10 @@ def test_late_version_and_review_preserve_machine(client):
         drain()
     first = query(client, run_id)
     assert len(first["observed_nodes"]) == 2
+    assert all(
+        datetime.fromisoformat(n["captured_at"]).utcoffset() == timedelta(0)
+        for n in first["observed_nodes"]
+    )
     post(client, f"/v1/demo/runs/{run_id}/control", {"action": "play"})
     drain()
     second = query(client, run_id)
@@ -368,3 +372,23 @@ def test_database_immutability_and_heartbeat_interval_union(client):
     camera = metrics(client, run_id)["camera_health"][0]
     assert camera["heartbeat_covered_seconds"] == 240
     assert camera["heartbeat_coverage_fraction"] == pytest.approx(240 / 3600)
+
+
+def test_receipt_evidence_metadata_and_transaction_rollback(client):
+    from roadeye.contracts import Input
+
+    run_id = make_run(client, "normal_journey", False)
+    payload = {**s.scenario_events("normal_journey")[0], "run_id": run_id}
+    with SessionLocal() as db:
+        receipt = s.ingest(db, Input.model_validate(payload), "administrator", "rollback", "test")
+        db.rollback()
+    with SessionLocal() as db:
+        assert db.get(m.InputEvent, receipt["input_id"]) is None
+        assert db.get(m.Job, receipt["input_id"]) is None
+        assert db.scalar(select(m.Evidence.id).where(m.Evidence.run_id == run_id)) is None
+    receipt = post(client, "/v1/inputs", payload)
+    with SessionLocal() as db:
+        asset = db.scalar(select(m.Evidence).where(m.Evidence.run_id == run_id))
+        assert asset and len(asset.digest) == 64 and asset.size > 0
+        assert db.get(m.Job, receipt["input_id"]).state == "pending"
+    drain()

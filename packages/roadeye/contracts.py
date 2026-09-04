@@ -1,6 +1,6 @@
 """Public contracts; mock candidates are supplied, never inferred from evidence images."""
 
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from enum import StrEnum
 from typing import Literal, Protocol
 from uuid import UUID
@@ -77,6 +77,8 @@ class Window(Model):
 
     @model_validator(mode="after")
     def ordered(self):
+        self.start = self.start.astimezone(timezone.utc)
+        self.end = self.end.astimezone(timezone.utc)
         if self.end <= self.start or (self.end - self.start).total_seconds() > 86400:
             raise ValueError("Window must be positive and at most 24 hours")
         return self

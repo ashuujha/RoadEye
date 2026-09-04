@@ -18,7 +18,11 @@ def test_clean_migration_and_postgis():
         hide_password=False
     )
     with psycopg.connect(admin_url, autocommit=True) as connection:
-        connection.execute(sql.SQL("CREATE DATABASE {} ENCODING 'UTF8' TEMPLATE template0").format(sql.Identifier(name)))
+        connection.execute(
+            sql.SQL("CREATE DATABASE {} ENCODING 'UTF8' TEMPLATE template0").format(
+                sql.Identifier(name)
+            )
+        )
         try:
             target = base.set(database=name).render_as_string(hide_password=False)
             result = subprocess.run(

@@ -5,7 +5,9 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
-    model_config = SettingsConfigDict(env_prefix="ROADEYE_", env_file=".env", extra="ignore")
+    model_config = SettingsConfigDict(
+        env_prefix="ROADEYE_", env_file=".env", extra="ignore", hide_input_in_errors=True
+    )
     database_url: str = "postgresql+psycopg://roadeye:roadeye@localhost:5432/roadeye"
     demo_enabled: bool = False
     source_mode: str = "synthetic"

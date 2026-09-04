@@ -1,5 +1,5 @@
 import json
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 
 from fastapi import HTTPException
@@ -18,7 +18,11 @@ DATA = Path(__file__).resolve().parents[2] / "data" / "synthetic"
 
 def serialize(row) -> dict:
     return {
-        c.name: (v.isoformat() if isinstance(v := getattr(row, c.name), datetime) else v)
+        c.name: (
+            v.astimezone(timezone.utc).isoformat()
+            if isinstance(v := getattr(row, c.name), datetime)
+            else v
+        )
         for c in row.__table__.columns
     }
 
@@ -119,7 +123,26 @@ def ingest(db: Session, item: Input, actor: str, key: str, correlation: str) -> 
         raise HTTPException(422, "DEMO_RUN_INPUT_LIMIT_500")
     if not db.get(m.Camera, item.camera_id):
         raise HTTPException(422, "UNKNOWN_CAMERA")
-    LocalEvidenceStore(settings.evidence_root).read(item.evidence_key)
+    content = LocalEvidenceStore(settings.evidence_root).read(item.evidence_key)
+    asset = db.scalar(
+        select(m.Evidence).where(
+            m.Evidence.run_id == run.id, m.Evidence.object_key == item.evidence_key
+        )
+    )
+    if asset and (asset.digest != digest(content) or asset.size != len(content)):
+        raise HTTPException(409, "EVIDENCE_KEY_CONTENT_CHANGED")
+    if not asset:
+        db.add(
+            m.Evidence(
+                run_id=run.id,
+                object_key=item.evidence_key,
+                digest=digest(content),
+                size=len(content),
+                media_type="image/svg+xml",
+            )
+        )
+        db.flush()
+
     # OCR/passages are immutable contracts per camera-local passage.
     existing = db.scalars(select(m.InputEvent).where(m.InputEvent.run_id == run.id))
     for prior in existing:

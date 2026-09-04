@@ -390,7 +390,7 @@ function App() {
                     ))}
                   </div>
                 )}
-                <State query={run} />
+                {runId && <State query={run} />}
                 {run.data && (
                   <>
                     <Table

@@ -180,7 +180,9 @@ def live():
 
 @app.get("/v1/health/ready", response_model=r.HealthResponse)
 def ready(db: DB):
-    db.execute(text("SELECT 1 FROM alembic_version"))
+    revision = db.scalar(text("SELECT version_num FROM alembic_version"))
+    if revision != "20260905_immutable":
+        raise HTTPException(503, "MIGRATIONS_NOT_CURRENT")
     return output(
         {
             "status": "ready",

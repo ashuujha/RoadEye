@@ -88,3 +88,13 @@ def test_windows_and_percentiles():
         )
     assert percentile([60, 60, 180, 180], 0.5) == 120
     assert percentile([60, 60, 180, 180], 0.9) == 180
+
+
+def test_real_mode_fails_without_exposing_configuration_secret():
+    from roadeye.config import Settings
+
+    secret = "test-only-sensitive-config"
+    with pytest.raises(ValidationError) as error:
+        Settings(source_mode="recorded_real", demo_enabled=True, demo_password=secret)
+    assert "Real input adapters are unavailable" in str(error.value)
+    assert secret not in str(error.value)
