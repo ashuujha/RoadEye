@@ -7,6 +7,15 @@ dependencies = [
   "pydantic-settings==2.9.1", "sqlalchemy==2.0.41", "alembic==1.15.2",
   "psycopg[binary]==3.2.9",
 ]
+
+[project.optional-dependencies]
+recorded = [
+    "av==15.1.0",
+    "numpy==2.2.6",
+    "onnxruntime==1.22.1",
+    "opencv-python-headless==4.11.0.86",
+    "pillow==11.2.1",
+]
 [dependency-groups]
 dev = ["pytest==8.3.5", "httpx==0.28.1", "ruff==0.11.10", "mypy==1.15.0"]
 [build-system]

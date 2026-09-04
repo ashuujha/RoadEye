@@ -12,3 +12,6 @@ dist/
 playwright-report/
 test-results/
 *.tsbuildinfo
+# Local third-party recordings, model weights and generated real evidence
+/data/recorded_real/*.mp4
+/models/

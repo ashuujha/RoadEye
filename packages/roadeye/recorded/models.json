@@ -1,0 +1,23 @@
+{
+  "plate": {
+    "url": "https://huggingface.co/morsetechlab/yolov11-license-plate-detection/resolve/251a30d7daedca065f56e04b0af04052c907c68f/license-plate-finetune-v1n.onnx",
+    "sha256": "693133a1db97a3ba1e90068986f80afb72c3fcddb681e57181a89a9a3dc351d6",
+    "size": 10481682,
+    "license": "AGPL-3.0",
+    "version": "MorseTech license-plate-finetune-v1n / Ultralytics 8.3.123"
+  },
+  "ocr": {
+    "url": "https://github.com/ankandrew/fast-plate-ocr/releases/download/arg-plates/cct_xs_v2_global.onnx",
+    "sha256": "8031afb5fdc6b4d80462c9d542f1284ebd2cfddf5dbacd62609848d7e2855f44",
+    "size": 3344292,
+    "license": "MIT repository; see upstream release and model limitations",
+    "version": "fast-plate-ocr cct-xs-v2-global"
+  },
+  "vehicle": {
+    "url": "https://raw.githubusercontent.com/espressif/esp-dl/b60cb949afe06421b0ddb43ad5236adeb75ef9e6/models/coco_detect/models/yolo11n.onnx",
+    "sha256": "86e83b38579dcd491bbc0ad5a13065451ef09a12a1012a513a06a1caf409cc67",
+    "size": 10546627,
+    "license": "AGPL-3.0",
+    "version": "Ultralytics YOLO11n export 8.3.96"
+  }
+}

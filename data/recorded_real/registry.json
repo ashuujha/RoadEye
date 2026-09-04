@@ -1,0 +1,17 @@
+{
+  "delhi_anpr": {
+    "title": "Delhi roadside recording (source attribution pending)",
+    "path": "data/recorded_real/delhi_anpr.mp4",
+    "sha256": "bef435656f050df576aedd5ac694824b9425a40b33072ef1213e377910cf1f96",
+    "source_url": null,
+    "license": "Unknown; provided locally. Redistribution permission not established.",
+    "duration_seconds": 304.04,
+    "width": 1272,
+    "height": 720,
+    "fps": 25,
+    "frames": 7601,
+    "camera_id": "REAL_C1",
+    "capture_time": "unknown; overlay not interpreted",
+    "source_mode": "recorded_real"
+  }
+}
