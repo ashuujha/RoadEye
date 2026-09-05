@@ -85,3 +85,9 @@ make recorded-demo
 ```
 
 In the console, sign in as administrator → **Recorded video** → **Process first 60 seconds** → select/inspect a passage. View original frames, lossless plate crops, raw OCR, consensus reasons and separate vehicle/accepted-plate counts. This is one recorded camera with assigned replay time, no geographic calibration, and no inferred routes/speed/congestion. A high model score is not measured accuracy.
+
+## Fresh audit and independent review
+
+The [progress audit](docs/progress_audit.md) distinguishes working backend features from real-world validation. Read the [recognition investigation](docs/recognition_error_analysis.md), [dataset decision](docs/dataset_decision.md) and [prioritized next steps](docs/next_steps.md). No evidence currently supports a 90% recognition claim.
+
+The Recorded video view now includes an authenticated source-video timeline, vehicle/plate overlays, blank independent transcription/readability forms, missed-vehicle markers and durable review revisions. Start with the [numbered human-review instructions](docs/recorded_video_demo.md#independent-human-review-after-this-audit). Labels do not alter inference. The original run remains unchanged; a separate versioned cadence rerun has 25 predicted passages, 2 accepted, 8 review-required and 15 rejected, with accuracy still unmeasured. Keep the Indian recording; RoundaboutHD acquisition is deferred until the isolated experiment is ready.

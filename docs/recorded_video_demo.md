@@ -60,7 +60,7 @@ For another machine, replace the database URL with its own PostgreSQL/PostGIS UR
 
 Open **http://localhost:5173**, sign in as administrator using the existing local password from ignored `.env`, select **Recorded video**, then **Process first 60 seconds**. The created run is selected automatically. Wait for **Processing: completed**. Click **Inspect passage** for a row; original crossing frame, plate crops, their supporting frames, raw strings and consensus are linked through authenticated evidence retrieval. Investigator can inspect; viewer and approver cannot inspect footage. No model credentials are in the frontend.
 
-The reviewed run retained for this handoff is `fe25474a-fa66-404d-9213-7013e3ca687f`. Select it in **Recorded run** to inspect without processing again. The separate synthetic run selector and fictional map do not appear in this view.
+The original inference run retained for this handoff is `fe25474a-fa66-404d-9213-7013e3ca687f`. Select it in **Recorded run** to inspect without processing again. The separate synthetic run selector and fictional map do not appear in this view.
 
 ## Commands to repeat, review and extend
 
@@ -74,14 +74,14 @@ With the services running:
 # Reprocess the SAME run; stable receipts retain original business effects:
 .venv/bin/python -m scripts.recorded_video --run fe25474a-fa66-404d-9213-7013e3ca687f --replay
 # Export a blank human-label table; contains sensitive local observations, so keep ignored:
-.venv/bin/python -m scripts.recorded_video --run fe25474a-fa66-404d-9213-7013e3ca687f --export .runtime/recorded-review.csv
+.venv/bin/python -m scripts.recorded_video --run fe25474a-fa66-404d-9213-7013e3ca687f --export .runtime/recorded-review-new-export.csv
 # After reviewing the initial results, process the whole clip in a NEW run:
 .venv/bin/python -m scripts.recorded_video --seconds 304.04
 ```
 
 Whole-clip processing is implemented through the same duration parameter but **has not been executed in this task**. The console intentionally starts only the first 60 seconds. A missing file, changed source/model digest, unavailable optional dependency or failed job is an explicit error; there is no mock fallback. A completed run's replay button is safe for duplicate demonstration. Failed runs may be retried after repairing the cause; active leases prevent an overlapping manual replay. A worker crash is automatically recovered after the configured lease expires (default 30 seconds).
 
-The CSV contains passage/evidence IDs, clip time, machine output, and empty `human_plate`, `human_readability`, `human_notes` columns. Label using original pixels, preferably before exposing the machine string to annotators. CSV export does not change the database. Existing investigator review endpoints can subsequently store decisions with actor and reason, preserving the machine result.
+The CSV contains passage/evidence IDs, clip time, machine output, and empty `human_plate`, `human_readability`, `human_notes` columns. Label using original pixels, preferably before exposing the machine string to annotators. CSV export does not change the database. For independent evaluation, use the new recorded evaluation form described below; operational observation corrections are a different workflow and must not be treated as ground truth. CSV edits are not automatically imported. Do not overwrite an existing labelled CSV.
 
 ## Measured results on this recording
 
@@ -119,7 +119,7 @@ export ROADEYE_DATABASE_URL=postgresql+psycopg://roadeye@127.0.0.1:55432/roadeye
 .venv/bin/python -m scripts.recorded_acceptance
 ```
 
-This creates another independent 60-second run and checks durable receipt/conflicts, partial-publication crash recovery, duplicate identities/totals, source isolation, ROI coordinates, every evidence asset and viewer denial. It writes an ignored detailed report to `.runtime/recorded-inspection/acceptance.json`. No OCR answers or ground-truth fixtures drive this check.
+This creates another independent 60-second run and checks durable receipt/conflicts, partial-publication crash recovery, duplicate identities/totals, source isolation, ROI coordinates, every evidence asset and viewer denial. It now writes a run-specific ignored report to `.runtime/recorded-inspection/acceptance-<run-id>.json`; `--report <path>` selects an explicit path. Earlier `acceptance.json` artifacts remain historical reports. No OCR answers or ground-truth fixtures drive this check.
 
 For browser checks, set `ROADEYE_RECORDED_RUN` to a completed actual run. CI skips that one footage-dependent test unless this variable is supplied; private footage and weights are not committed or automatically downloaded in CI. The ordinary synthetic browser and recorded permission tests run without footage. Hosted CI and Docker execution remain unverified in this environment.
 
@@ -134,3 +134,33 @@ The complete documented `make validate` target also passed with the native datab
 `REAL_C1-L1` is a virtual counting corridor for this MVP, not a surveyed physical lane. The input quality/confidence multipliers remain neutral 1.0; they are not measured image quality or recognition accuracy. Detector/OCR raw scores and crop sizes are retained for inspection.
 
 The final maintained acceptance script was rerun after adding the source-pixel assertions: run `d4cdcbca-c53a-4671-ab6c-0d86d88a921c`, 39 exact crop/PTS checks, 99 verified evidence objects, and all recovery/replay assertions passed in 86.44 seconds. The earlier reviewed run above remains available for the judge handoff.
+
+## Independent human review after this audit
+
+Audited 2026-09-05, baseline `ce06494`, delivered code `13759e8`. Use the native startup commands above; apply `.venv/bin/alembic upgrade head` before restarting the API. No new weights or dataset are needed on this machine. API, frontend and PostgreSQL suffice for reviewing completed runs; start the worker only when processing new/replayed inputs.
+
+1. Open **http://localhost:5173** and sign in as **investigator** or **administrator** with the existing local password. Select **Recorded video**. Select original run `fe25474a-fa66-404d-9213-7013e3ca687f` in **Recorded run**. Do not press replay to begin labelling.
+2. In **Independent human review**, use the source-video player and **Seek clip seconds** to inspect **all of [0,60)**. Use pause, seek increments of 0.04 seconds and the source frames. The count rule is a vehicle's detected bottom edge crossing y=300 downward in the 1272×720 original frame after at least two detections. REAL_C1-L1 is a virtual corridor. For human truth, count actual distinct downward crossings at that line; vehicles already below the line at interval start and vehicles that never cross it are outside this count definition. Do not equate this with all vehicles visible anywhere in the frame.
+3. Before consulting OCR predictions, independently record the actual plate when fully readable from source pixels. Choose **Fully readable**, **Partially readable**, or **Unreadable**. The full transcription field starts blank and is enabled only for fully readable labels. Partial characters belong in notes; never guess missing characters. Use other nearby source frames to resolve readability; stop if it remains uncertain.
+4. For each predicted row, click **Inspect passage**, then **View selected passage in source**. Inspect its crossing frame/vehicle box and all retained crop frames, plate boxes and lossless crops. Raw candidates/scores, normalization, contributions, reasons and model/policy metadata are available below. Older runs lack vehicle boxes at crop-frame times; their crossing vehicle box is shown only at the correct crossing frame. The source player supplies additional frames that were not retained as evidence.
+5. Enter **Reviewer name**, **Vehicle assessment** (valid unique / duplicate / incorrect / not decided), **Plate detection assessment**, readability, independent transcription where justified, and notes. Click **Save passage evaluation**. The confirmation means the label was saved to PostgreSQL; it does not change the original observation. The local actor and self-reported name are retained. Repeat for **all 25 predictions**, including rejected and no-crop passages. Keep ambiguous cases undecided pending adjudication.
+6. While surveying the source, identify any real crossing with no matching predicted passage. Pause at its time, set **Vehicle assessment** to valid, fill readability/notes, and click **Add missed vehicle at current time**. Create one marker per actual missed vehicle. Do not create a marker for an existing prediction merely because OCR failed. To revise/withdraw a marker, select it in **Missed marker to revise**, verify/seek its source time, enter the corrected assessment/notes and click **Revise selected missed marker**. Choosing incorrect withdraws it from the missed-vehicle count while preserving its revision history.
+7. Only after reviewing the entire run interval and marking all missing crossings, check **I reviewed the entire run interval…**, enter your reviewer name, and click **Record timeline coverage**. Every unresolved vehicle/readability label still prevents complete recognition metrics. This declaration is an auditable human assertion, not automatic proof of recall.
+8. Expand **Review coverage and explicitly defined metrics** and **Independent labels and revision identities**. `null` means not yet measured, not zero. Read the [metric definitions](recognition_error_analysis.md#metrics-available-after-human-review). Revised labels supersede earlier labels for calculations; earlier database rows remain immutable. The console shows latest labels; audit history records revision actions.
+9. Independently inspect the separate v2 run `d7d83f8c-76ef-40fc-8c20-30c53f772ca9` for before/after comparison. Do not assume track IDs identify the same physical vehicle without checking source time/evidence. Do not copy inference results or treat adjacent video as an untouched evaluation split.
+
+**Review state at handoff:** no real-run human labels were entered by the assistant. The existing CSV still has 25 unreviewed rows. Ground-truth count, recall, exact recognition accuracy and false accepts remain unmeasured. Automated tests create labels only on explicitly isolated test records, never on the Delhi evidence runs.
+
+### Reproduce the audit without changing the original run
+
+```bash
+export ROADEYE_DATABASE_URL=postgresql+psycopg://roadeye@127.0.0.1:55432/roadeye
+.venv/bin/python -m scripts.audit_recorded fe25474a-fa66-404d-9213-7013e3ca687f --output .runtime/audit/original-check.json
+# API running, recorded enabled, no competing worker; creates a SEPARATE run:
+export ROADEYE_RECORDED_ENABLED=true
+.venv/bin/python -m scripts.recorded_acceptance --report .runtime/audit/new-check.json
+```
+
+The original audit reproduced 99 evidence digests, 39 exact source crops/OCR outputs and all 25 decisions. The v2 cadence fix retained 42 crops /102 verified evidence objects; 25 passages, 22 plate-proposal passages, **2 accepted /8 review /15 rejected /0 pending**. Recovered/replay inference attempts took 25.758/25.272 seconds on CPU. The full crash/replay check took 88.986 seconds. This is improved inspectability, **not measured improvement in recognition accuracy**. See [progress audit](progress_audit.md) for all executed checks and blocked Docker/GPU/hosted/labelled evaluation gates.
+
+The first minute is now development data. Reserve a different interval as explained in [recognition analysis](recognition_error_analysis.md#development-and-evaluation-boundary); start-window support is not yet implemented. Whole-clip processing remains an available zero-based duration option, not an executed or untouched evaluation benchmark. Keep the original synthetic judge runbook: it demonstrates multi-camera rules using synthetic inputs; this one-camera recorded view demonstrates actual local inference only.

@@ -1,6 +1,6 @@
 # RoadEye requirements — SIH2026172
 
-Bharat Electronics Limited problem: inspect city-wide ANPR sightings, plausible camera journeys and traffic patterns. Users are investigators, traffic analysts, administrators and separate watchlist approvers. This repository implements a local synthetic engineering demonstration; recognition accuracy is not measured.
+Bharat Electronics Limited problem: inspect city-wide ANPR sightings, plausible camera journeys and traffic patterns. Users are investigators, traffic analysts, administrators and separate watchlist approvers. This repository implements a local engineering demonstration with synthetic multi-camera scenarios and optional actual recognition from one recorded camera; recognition accuracy is not measured.
 
 ## Scope and acceptance
 
@@ -21,7 +21,7 @@ Investigator journey: sign in, select a synthetic run, process inputs, inspect c
 
 ## Boundaries
 
-MVP: one fictional network, supplied mock OCR candidates, bounded query reconstruction, local identities and evidence. Beta: authorized synchronized footage, evaluated detector/OCR, validated camera graph and calibrated policies. Production: external identity/MFA, retention policy, operational hardening, hardware/load evaluation and audited deployment. No real feed access, training, owner lookup, face recognition, public deployment or measured AI accuracy in this phase.
+MVP: one fictional network with supplied mock OCR candidates, bounded query reconstruction, local identities and evidence; an optional isolated REAL_C1 recorded-video pipeline and independent human-review interface. Beta: authorized synchronized footage, evaluated detector/OCR, validated camera graph and calibrated policies. Production: external identity/MFA, retention policy, operational hardening, hardware/load evaluation and audited deployment. No live feed access, training, owner lookup, face recognition, public deployment or measured AI accuracy in this phase.
 
 ## Assumptions and risks
 
@@ -42,4 +42,13 @@ Runtime dependencies: Python 3.12, PostgreSQL/PostGIS, Node, Docker Compose. Doc
 | R09 | `tests/e2e/console.spec.ts`, frontend type/build checks, OpenAPI consistency |
 | R10 | `test_late_version_and_review_preserve_machine`, direct database immutability test, clean-migration/PostGIS test |
 
-Acceptance is measured against compact synthetic inputs only. See `docs/validation_report.md` for the executed environment/results and `docs/review.md` for findings fixed during independent review.
+Original scenario acceptance is measured against compact synthetic inputs; the later recorded slice verifies actual inference, persistence and pixel provenance, not recognition accuracy. See `docs/validation_report.md` for the executed environment/results and `docs/review.md` for findings fixed during independent review.
+
+## Recorded extension acceptance (audited 2026-09-05)
+
+| ID | Requirement | Delivered gate / remaining boundary |
+|---|---|---|
+| R11 | Registered recorded video through actual detector/tracker/plate crop OCR | `scripts.recorded_acceptance` and `scripts.audit_recorded`: first 60 s, durable recovery/replay and exact source-pixel checks; real cross-camera accuracy remains untested |
+| R12 | Independent recognition evaluation and source-timeline review | `test_evaluation_postgres`, unit evaluation denominators and Chromium source-video seek; labels separate from machine outputs; human completion is outstanding |
+
+See [requirement-by-requirement audit](docs/progress_audit.md) for validation mode, acceptance gates and remaining work. The >90% Indian full-plate target requires a representative, independently labelled, locked evaluation; no synthetic confidence or acceptance total satisfies it.

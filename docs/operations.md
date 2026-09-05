@@ -26,12 +26,16 @@ Example for the named Compose project:
 mkdir -p .runtime/backup
 docker compose stop worker
 docker compose exec -T db pg_dump -U roadeye -Fc roadeye > .runtime/backup/roadeye.dump
-cp -a data/synthetic/evidence .runtime/backup/evidence
+cp -a data/synthetic/evidence .runtime/backup/synthetic-evidence
+# For recorded-capable native installations, also preserve the configured
+# ROADEYE_RECORDED_EVIDENCE_ROOT, source recording, registry and model manifest.
+# Default recorded evidence directory (if present):
+cp -a .runtime/evidence .runtime/backup/recorded-evidence
 docker compose start worker
 ```
 
 For a consistent backup, also pause writes/source controls while taking both snapshots. Restore into a new empty database with `pg_restore -U roadeye -d <new_database>`, restore the matching object directory, point a stopped stack at it, run migrations/readiness, and reconcile counts/digests before use. Do not overwrite unrelated databases. These backup commands are documented procedures, not a claimed backup/restore drill.
 
-Future writable evidence should use content-addressed keys and atomic temporary-file rename before domain reference. A periodic orphan report can compare object keys to evidence_assets; delete only unreferenced objects older than a documented grace period after operator review. No automatic cleanup is implemented. An S3-compatible store can implement EvidenceStore.read with private bucket access, identical metadata/digest checks and authorization through API; neither MinIO nor paid services are required now.
+Recorded writable evidence now uses content-addressed keys and atomic temporary-file rename before domain reference. The immutable original MP4 and its registry digest must be preserved separately from extracted evidence. Independent labels live in PostgreSQL and belong in the protected database backup. A periodic orphan report can compare object keys to evidence_assets; delete only unreferenced objects older than a documented grace period after operator review. No automatic cleanup is implemented. An S3-compatible store can implement EvidenceStore.read with private bucket access, identical metadata/digest checks and authorization through API; neither MinIO nor paid services are required now.
 
 No public deployment, remote push, enforcement action, external camera feed or dataset download belongs to these operations.
