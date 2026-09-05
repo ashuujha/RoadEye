@@ -7,84 +7,79 @@ import {
   useQueryClient,
 } from "@tanstack/react-query";
 import { client, key, unwrap } from "./api";
-import { Table, Json, State, Network } from "./components";
+import { State } from "./components";
 import type { components } from "./api.generated";
 import "./style.css";
-import { RecordedVideo } from "./RecordedVideo";
+
+// Components
+import { AppShell, type PageId } from "./components/AppShell";
+import { EvidenceDrawer } from "./components/EvidenceDrawer";
+
+// Workspace Views
+import { OverviewView } from "./views/OverviewView";
+import { CameraWorkspaceView } from "./views/CameraWorkspaceView";
+import { TrajectoryView } from "./views/TrajectoryView";
+import { ReviewWorkbenchView } from "./views/ReviewWorkbenchView";
+import { AlertsView } from "./views/AlertsView";
+import { AnalyticsView } from "./views/AnalyticsView";
+import { SystemView } from "./views/SystemView";
 
 type RecordData = Record<string, any>;
+
 const queryClient = new QueryClient({
   defaultOptions: { queries: { retry: false, refetchInterval: 3000 } },
 });
-const pages = [
-  "Recorded video",
-  "Overview",
-  "Scenario runner",
-  "Observation inspector",
-  "Trajectory explorer",
-  "Analytics",
-  "Alerts and review",
-  "Audit and system",
-];
 
 function App() {
   const qc = useQueryClient();
-  const [page, setPage] = useState("Overview");
-  const [actor, setActor] =
-    useState<components["schemas"]["Role"]>("administrator");
+  const [page, setPage] = useState<PageId>("Overview");
+  const [actor, setActor] = useState<components["schemas"]["Role"]>("administrator");
   const [password, setPassword] = useState("");
   const [runId, setRunId] = useState("");
-  const [scenario, setScenario] = useState("normal_journey");
-  const [plate, setPlate] = useState("ZZ01AA0001");
   const [start, setStart] = useState("2026-01-15T08:00:00Z");
   const [end, setEnd] = useState("2026-01-15T09:00:00Z");
-  const [selected, setSelected] = useState("");
+  const [selectedObsId, setSelectedObsId] = useState<string | null>(null);
   const [journey, setJourney] = useState<RecordData | null>(null);
   const [message, setMessage] = useState("");
   const [busy, setBusy] = useState(false);
-  const [reason, setReason] = useState("Synthetic scenario review");
-  const [classification, setClassification] = useState<
-    "true" | "false" | "uncertain"
-  >("uncertain");
-  const [reviewStatus, setReviewStatus] = useState<
-    "accepted" | "review_required" | "rejected"
-  >("review_required");
-  const [includeReview, setIncludeReview] = useState(false);
+
+  // Authentication query
   const me = useQuery({
     queryKey: ["me"],
-    queryFn: async () =>
-      unwrap(await client.GET("/v1/auth/me")).data as RecordData,
+    queryFn: async () => unwrap(await client.GET("/v1/auth/me")).data as RecordData,
   });
   const loggedIn = !!me.data;
+
+  // Domain queries
   const runs = useQuery({
     queryKey: ["runs"],
     enabled: loggedIn,
-    queryFn: async () =>
-      unwrap(await client.GET("/v1/demo/runs")).data as RecordData[],
+    queryFn: async () => unwrap(await client.GET("/v1/demo/runs")).data as RecordData[],
   });
+
   const manifest = useQuery({
     queryKey: ["manifest"],
     enabled: loggedIn,
-    queryFn: async () =>
-      unwrap(await client.GET("/v1/demo/scenarios")).data as RecordData,
+    queryFn: async () => unwrap(await client.GET("/v1/demo/scenarios")).data as RecordData,
   });
+
   const cameras = useQuery({
     queryKey: ["cameras"],
     enabled: loggedIn,
-    queryFn: async () =>
-      unwrap(await client.GET("/v1/cameras")).data as RecordData[],
+    queryFn: async () => unwrap(await client.GET("/v1/cameras")).data as RecordData[],
   });
+
   const graph = useQuery({
     queryKey: ["graph"],
     enabled: loggedIn,
-    queryFn: async () =>
-      unwrap(await client.GET("/v1/graph")).data as RecordData,
+    queryFn: async () => unwrap(await client.GET("/v1/graph")).data as RecordData,
   });
+
   const health = useQuery({
     queryKey: ["health"],
-    queryFn: async () =>
-      unwrap(await client.GET("/v1/health/ready")).data as RecordData,
+    queryFn: async () => unwrap(await client.GET("/v1/health/ready")).data as RecordData,
   });
+
   const run = useQuery({
     queryKey: ["run", runId],
     enabled: loggedIn && !!runId,
@@ -95,6 +90,7 @@ function App() {
         }),
       ).data as RecordData,
   });
+
   const metrics = useQuery({
     queryKey: ["metrics", runId, start, end],
     enabled: loggedIn && !!runId,
@@ -108,12 +104,10 @@ function App() {
         }),
       ).data as RecordData,
   });
+
   const observations = useQuery({
     queryKey: ["observations", runId, start, end],
-    enabled:
-      loggedIn &&
-      !!runId &&
-      ["Observation inspector", "Alerts and review"].includes(page),
+    enabled: loggedIn && !!runId,
     queryFn: async () =>
       unwrap(
         await client.GET("/v1/observations", {
@@ -121,19 +115,10 @@ function App() {
         }),
       ).data as RecordData,
   });
-  const detail = useQuery({
-    queryKey: ["detail", selected],
-    enabled: !!selected && loggedIn,
-    queryFn: async () =>
-      unwrap(
-        await client.GET("/v1/observations/{observation_id}", {
-          params: { path: { observation_id: selected } },
-        }),
-      ).data as RecordData,
-  });
+
   const alerts = useQuery({
     queryKey: ["alerts", runId],
-    enabled: loggedIn && !!runId && page === "Alerts and review",
+    enabled: loggedIn && !!runId,
     queryFn: async () =>
       unwrap(
         await client.GET("/v1/alerts", {
@@ -141,9 +126,10 @@ function App() {
         }),
       ).data as RecordData[],
   });
+
   const watches = useQuery({
     queryKey: ["watches", runId],
-    enabled: loggedIn && !!runId && page === "Alerts and review",
+    enabled: loggedIn && !!runId,
     queryFn: async () =>
       unwrap(
         await client.GET("/v1/watchlists", {
@@ -151,61 +137,203 @@ function App() {
         }),
       ).data as RecordData[],
   });
+
   const audit = useQuery({
     queryKey: ["audit", runId],
-    enabled: loggedIn && !!runId && page === "Audit and system",
+    enabled: loggedIn && !!runId,
     queryFn: async () =>
       unwrap(
         await client.GET("/v1/audit", { params: { query: { run_id: runId } } }),
       ).data as RecordData[],
   });
+
   const jobs = useQuery({
     queryKey: ["jobs", runId],
-    enabled: loggedIn && !!runId && page === "Audit and system",
+    enabled: loggedIn && !!runId,
     queryFn: async () =>
       unwrap(
         await client.GET("/v1/jobs", { params: { query: { run_id: runId } } }),
       ).data as RecordData[],
   });
+
+  // Action wrapper with error tracking and query invalidation
   async function action(work: () => Promise<unknown>) {
     setBusy(true);
     setMessage("");
     try {
       await work();
       await qc.invalidateQueries();
-      setMessage("Backend operation completed.");
+      setMessage("Backend operation completed successfully.");
     } catch (e) {
       setMessage(e instanceof Error ? e.message : String(e));
     } finally {
       setBusy(false);
     }
   }
-  function chooseRun(id: string) {
-    setRunId(id);
-    setSelected("");
-    setJourney(null);
+
+  // Trajectory Query Handler
+  async function handleQueryTrajectory({ plate, includeReview }: { plate: string; includeReview: boolean }) {
+    if (!runId) {
+      setMessage("Please choose an execution run before querying trajectories.");
+      return;
+    }
+    await action(async () => {
+      const res = unwrap(
+        await client.POST("/v1/trajectories", {
+          body: {
+            run_id: runId,
+            start,
+            end,
+            plate,
+            include_review: includeReview,
+            limit: 100,
+          },
+        }),
+      ).data as RecordData;
+      setJourney(res);
+    });
   }
-  const m = metrics.data;
-  return (
-    <>
-      <header>
-        <div>
-          <strong>RoadEye</strong>
-          <span>Engineering console · SIH2026172</span>
-        </div>
-        <span className="synthetic">
-          {page === "Recorded video"
-            ? "RECORDED FOOTAGE · REAL MODEL INFERENCE"
-            : "SYNTHETIC INPUT · MOCK OCR CANDIDATES"}
-        </span>
-      </header>
-      {!loggedIn ? (
+
+  // Review Workbench Handler
+  async function handleSubmitReview(
+    obsId: string,
+    rev: { status: string; plate: string | null; reason: string },
+  ) {
+    await action(async () => {
+      unwrap(
+        await client.POST("/v1/observations/{observation_id}/reviews", {
+          params: {
+            path: { observation_id: obsId },
+            header: key(),
+          },
+          body: {
+            plate: rev.status === "rejected" ? null : rev.plate,
+            status: rev.status as any,
+            reason: rev.reason,
+          },
+        }),
+      );
+    });
+  }
+
+  // Alert Acknowledgment Handler
+  async function handleAcknowledgeAlert(
+    alertId: string,
+    classification: string,
+    notes: string,
+  ) {
+    await action(async () => {
+      unwrap(
+        await client.POST("/v1/alerts/{alert_id}/acknowledge", {
+          params: {
+            path: { alert_id: alertId },
+            header: key(),
+          },
+          body: {
+            classification: classification as any,
+            notes,
+          },
+        }),
+      );
+    });
+  }
+
+  // Watchlist Creation Handler
+  async function handleCreateWatchlist(watch: {
+    plate: string;
+    reason: string;
+    severity: string;
+    start: string;
+    end: string;
+  }) {
+    if (!runId) return;
+    await action(async () => {
+      unwrap(
+        await client.POST("/v1/watchlists", {
+          params: { header: key() },
+          body: {
+            run_id: runId,
+            plate: watch.plate,
+            reason: watch.reason,
+            severity: watch.severity as any,
+            valid_from: watch.start,
+            valid_until: watch.end,
+          },
+        }),
+      );
+    });
+  }
+
+  // Watchlist Action Handler
+  async function handleWatchlistAction(watchId: string, actionName: "approve" | "revoke") {
+    await action(async () => {
+      unwrap(
+        await client.POST("/v1/watchlists/{watch_id}/{action}", {
+          params: {
+            header: key(),
+            path: { watch_id: watchId, action: actionName },
+          },
+        }),
+      );
+    });
+  }
+
+  // Scenario Runner Handlers
+  async function handleCreateRun(scenario: string) {
+    await action(async () => {
+      const created = unwrap(
+        await client.POST("/v1/demo/runs", {
+          params: { header: key() },
+          body: { scenario },
+        }),
+      ).data as RecordData;
+      setRunId(created.id);
+      setJourney(null);
+    });
+  }
+
+  async function handleControlRun(actionName: "play" | "pause" | "step" | "replay" | "retry") {
+    if (!runId) return;
+    await action(async () => {
+      unwrap(
+        await client.POST("/v1/demo/runs/{run_id}/control", {
+          params: {
+            path: { run_id: runId },
+            header: key(),
+          },
+          body: { action: actionName },
+        }),
+      );
+    });
+  }
+
+  // Auto-select first run if none selected
+  if (loggedIn && !runId && runs.data && runs.data.length > 0) {
+    setRunId(runs.data[0].id);
+  }
+
+  /* =========================================================================
+     1. UNMODIFIED LOGIN PAGE (Explicitly Preserved & Out of Scope)
+     ========================================================================= */
+  if (!loggedIn) {
+    return (
+      <>
+        <header className="login-header">
+          <div>
+            <strong>RoadEye</strong>
+            <span>Engineering console · SIH2026172</span>
+          </div>
+          <span className="synthetic-banner-unauth">
+            SYNTHETIC INPUT · MOCK OCR CANDIDATES
+          </span>
+        </header>
+
         <main className="login">
           <h1>Local demonstration sign in</h1>
           <p>
-            Processing and persistence are real. Recognition accuracy is
-            unmeasured.
+            Processing and persistence are real. Recognition accuracy is unmeasured.
           </p>
+
           <form
             onSubmit={(e) => {
               e.preventDefault();
@@ -225,13 +353,12 @@ function App() {
                 value={actor}
                 onChange={(e) => setActor(e.target.value as typeof actor)}
               >
-                {["administrator", "investigator", "viewer", "approver"].map(
-                  (a) => (
-                    <option key={a}>{a}</option>
-                  ),
-                )}
+                {["administrator", "investigator", "viewer", "approver"].map((a) => (
+                  <option key={a}>{a}</option>
+                ))}
               </select>
             </label>
+
             <label>
               Local password
               <input
@@ -241,707 +368,166 @@ function App() {
                 required
               />
             </label>
+
             <button disabled={busy}>Sign in</button>
           </form>
+
           <p role="alert">{message}</p>
           <p>
-            Use the local password from your ignored .env file. Each actor has
-            separate server-enforced permissions.
+            Use the local password from your ignored .env file. Each actor has separate
+            server-enforced permissions.
           </p>
           <State query={health} />
         </main>
-      ) : (
-        <div className="layout">
-          <aside>
-            <nav aria-label="Console views">
-              {pages.map((p) => (
-                <button
-                  key={p}
-                  className={page === p ? "active" : ""}
-                  onClick={() => setPage(p)}
-                >
-                  {p}
-                </button>
-              ))}
-            </nav>
-            <p>
-              Actor: <b>{me.data.actor}</b>
-            </p>
-            <button
-              onClick={() =>
-                action(async () => {
-                  unwrap(await client.POST("/v1/auth/logout"));
-                  qc.clear();
-                })
-              }
-            >
-              Sign out / switch actor
-            </button>
-            <p className="meta">
-              {page === "Recorded video"
-                ? "One recorded camera · no geographic calibration · no live feeds"
-                : "Fictional network · no real vehicle attribution · no live feeds"}
-            </p>
-          </aside>
-          <main>
-            {page !== "Recorded video" && (
-              <div className="scope">
-                <label>
-                  Selected run
-                  <select
-                    aria-label="Selected run"
-                    value={runId}
-                    onChange={(e) => chooseRun(e.target.value)}
-                  >
-                    <option value="">Choose a run</option>
-                    {runs.data?.map((r) => (
-                      <option key={r.id} value={r.id}>
-                        {r.scenario} · {r.id.slice(0, 8)}
-                      </option>
-                    ))}
-                  </select>
-                </label>
-                <label>
-                  UTC window start
-                  <input
-                    value={start}
-                    onChange={(e) => setStart(e.target.value)}
-                  />
-                </label>
-                <label>
-                  UTC window end
-                  <input value={end} onChange={(e) => setEnd(e.target.value)} />
-                </label>
-              </div>
-            )}
-            <h1>{page}</h1>
-            {page === "Recorded video" && (
-              <RecordedVideo actor={me.data.actor} />
-            )}
-            {page !== "Recorded video" && (
-              <p className="meta">
-                Half-open capture-time window · Historical synthetic replay ·{" "}
-                {runId
-                  ? `Run ${runId}`
-                  : "Select or create a run to inspect results."}
-              </p>
-            )}
-            <p
-              role="status"
-              className={
-                message.includes("failed") || message.includes("denied")
-                  ? "error"
-                  : ""
-              }
-            >
-              {busy ? "Waiting for backend…" : message}
-            </p>
-            {page === "Scenario runner" && (
-              <>
-                <h2>Run deterministic inputs</h2>
-                <State query={manifest} />
-                <label>
-                  Scenario
-                  <select
-                    aria-label="Scenario"
-                    value={scenario}
-                    onChange={(e) => setScenario(e.target.value)}
-                  >
-                    {Object.keys(manifest.data?.scenarios || {}).map((s) => (
-                      <option key={s} value={s}>
-                        {s}
-                      </option>
-                    ))}
-                  </select>
-                </label>
-                <button
-                  disabled={busy}
-                  onClick={() =>
-                    action(async () => {
-                      const created = unwrap(
-                        await client.POST("/v1/demo/runs", {
-                          params: { header: key() },
-                          body: { scenario },
-                        }),
-                      ).data as RecordData;
-                      chooseRun(created.id);
-                    })
-                  }
-                >
-                  Create run
-                </button>
-                <p>
-                  Creation stores a paused run. Play delivers fixed events; the
-                  separate worker processes durable jobs. Pause stops delivery,
-                  while received work drains.
-                </p>
-                {runId && (
-                  <div className="controls">
-                    {(
-                      ["play", "pause", "step", "replay", "retry"] as const
-                    ).map((a) => (
-                      <button
-                        key={a}
-                        disabled={busy}
-                        onClick={() =>
-                          action(async () =>
-                            unwrap(
-                              await client.POST(
-                                "/v1/demo/runs/{run_id}/control",
-                                {
-                                  params: {
-                                    path: { run_id: runId },
-                                    header: key(),
-                                  },
-                                  body: { action: a },
-                                },
-                              ),
-                            ),
-                          )
-                        }
-                      >
-                        {a}
-                      </button>
-                    ))}
-                  </div>
-                )}
-                {runId && <State query={run} />}
-                {run.data && (
-                  <>
-                    <Table
-                      rows={[run.data]}
-                      columns={[
-                        "scenario",
-                        "state",
-                        "cursor",
-                        "total_events",
-                        "version",
-                        "jobs",
-                        "clock",
-                      ]}
-                    />
-                    <p>
-                      Replay redelivers original event IDs into this run; counts
-                      should remain unchanged. Create a new run for a clean
-                      reset.
-                    </p>
-                  </>
-                )}
-              </>
-            )}
-            {page === "Overview" && (
-              <>
-                <State query={health} />
-                <Table rows={health.data ? [health.data] : []} />
-                {runId && (
-                  <>
-                    <State query={run} />
-                    <Table
-                      rows={run.data ? [run.data] : []}
-                      columns={[
-                        "source_mode",
-                        "scenario",
-                        "state",
-                        "jobs",
-                        "version",
-                        "processing_lag_seconds",
-                        "clock",
-                      ]}
-                    />
-                    <State query={metrics} />
-                    {m && (
-                      <>
-                        <Table
-                          rows={[m]}
-                          columns={[
-                            "vehicle_passages",
-                            "accepted_plates",
-                            "recognition_coverage",
-                            "review_required",
-                            "rejected",
-                            "ocr_pending",
-                          ]}
-                        />
-                        <h2>Camera coverage</h2>
-                        <Table rows={m.camera_health} />
-                      </>
-                    )}
-                  </>
-                )}
-                <Network
-                  cameras={cameras.data || []}
-                  edges={graph.data?.edges || []}
-                />
-              </>
-            )}
-            {page === "Observation inspector" && runId && (
-              <>
-                <State query={observations} />
-                <Table
-                  rows={observations.data?.items}
-                  columns={[
-                    "id",
-                    "camera_id",
-                    "captured_at",
-                    "plate",
-                    "status",
-                    "score",
-                    "inference_origin",
-                  ]}
-                />
-                <label>
-                  Inspect observation
-                  <select
-                    value={selected}
-                    onChange={(e) => setSelected(e.target.value)}
-                  >
-                    <option value="">Choose an observation</option>
-                    {observations.data?.items.map((o: RecordData) => (
-                      <option key={o.id} value={o.id}>
-                        {o.camera_id} · {o.plate || "unreadable"} ·{" "}
-                        {o.id.slice(0, 8)}
-                      </option>
-                    ))}
-                  </select>
-                </label>
-                {selected && (
-                  <>
-                    <State query={detail} />
-                    {detail.data && (
-                      <>
-                        <h2>Machine decision: {detail.data.status}</h2>
-                        <p>
-                          Reasons: {detail.data.machine.reasons.join(", ")} ·
-                          Policy: {detail.data.policy}
-                        </p>
-                        <p>
-                          Score: {detail.data.machine.score} — heuristic, not
-                          accuracy.
-                        </p>
-                        <Table rows={detail.data.machine.contributions} />
-                        <a
-                          target="_blank"
-                          rel="noreferrer"
-                          href={`/v1/evidence/${detail.data.passage.evidence_id}`}
-                        >
-                          Open supporting synthetic evidence
-                        </a>
-                        <img
-                          className="evidence"
-                          alt="Synthetic evidence illustration; candidates supplied separately"
-                          src={`/v1/evidence/${detail.data.passage.evidence_id}`}
-                        />
-                        <Json
-                          value={detail.data.original_input}
-                          label="Original input, receipt time and provenance"
-                        />
-                        <Json
-                          value={detail.data.revisions}
-                          label="Append-only review revisions"
-                        />
-                      </>
-                    )}
-                  </>
-                )}
-              </>
-            )}
-            {page === "Trajectory explorer" && runId && (
-              <>
-                <form
-                  onSubmit={(e) => {
-                    e.preventDefault();
-                    action(async () =>
-                      setJourney(
-                        unwrap(
-                          await client.POST("/v1/trajectories", {
-                            body: {
-                              run_id: runId,
-                              start,
-                              end,
-                              plate,
-                              include_review: includeReview,
-                              limit: 100,
-                            },
-                          }),
-                        ).data as RecordData,
-                      ),
-                    );
-                  }}
-                >
-                  <label>
-                    Plate query
-                    <input
-                      value={plate}
-                      onChange={(e) => setPlate(e.target.value)}
-                    />
-                  </label>
-                  <label className="check">
-                    <input
-                      type="checkbox"
-                      checked={includeReview}
-                      onChange={(e) => setIncludeReview(e.target.checked)}
-                    />
-                    Include review candidates
-                  </label>
-                  <button disabled={busy}>Reconstruct journey</button>
-                </form>
-                {journey ? (
-                  <>
-                    <p
-                      className={
-                        run.data?.version !== journey.result_version
-                          ? "error"
-                          : "meta"
-                      }
-                    >
-                      Result version {journey.result_version} ·{" "}
-                      {run.data?.version !== journey.result_version
-                        ? "STALE — run changed; query again"
-                        : "Current run version"}{" "}
-                      · {journey.scoring_policy}
-                    </p>
-                    <Network
-                      cameras={cameras.data || []}
-                      edges={run.data?.graph || []}
-                      links={journey.inferred_links}
-                      nodes={journey.observed_nodes}
-                    />
-                    <h2>Observed camera sightings</h2>
-                    <Table
-                      rows={journey.observed_nodes}
-                      columns={[
-                        "camera_id",
-                        "captured_at",
-                        "plate",
-                        "status",
-                        "id",
-                      ]}
-                    />
-                    {journey.observed_nodes.map((o: RecordData) => (
-                      <a
-                        className="evidence-link"
-                        key={o.id}
-                        target="_blank"
-                        href={`/v1/evidence/${o.evidence_id}`}
-                      >
-                        Evidence at {o.camera_id}
-                      </a>
-                    ))}
-                    <h2>Inferred links</h2>
-                    <Table
-                      rows={journey.inferred_links}
-                      columns={[
-                        "source",
-                        "target",
-                        "elapsed_seconds",
-                        "status",
-                        "routes",
-                      ]}
-                    />
-                    <h2>Ambiguous alternatives</h2>
-                    <Table rows={journey.alternatives} />
-                    <h2>Rejected links</h2>
-                    <Table
-                      rows={journey.rejected_links}
-                      columns={[
-                        "source",
-                        "target",
-                        "elapsed_seconds",
-                        "reason",
-                      ]}
-                    />
-                    <h2>Review candidates</h2>
-                    <Table rows={journey.review_candidates} />
-                    <Json
-                      value={journey.missing_coverage}
-                      label="Missing coverage"
-                    />
-                    <p>{journey.limitations}</p>
-                  </>
-                ) : (
-                  <p className="empty">
-                    Submit a query to reconstruct stored sightings.
-                  </p>
-                )}
-              </>
-            )}
-            {page === "Analytics" && runId && (
-              <>
-                <State query={metrics} />
-                {m && (
-                  <>
-                    <Table
-                      rows={[m]}
-                      columns={[
-                        "vehicle_passages",
-                        "accepted_plates",
-                        "recognition_coverage",
-                        "sample_size",
-                        "status",
-                        "result_version",
-                      ]}
-                    />
-                    <h2>Observed passage counts and recognition</h2>
-                    <Table rows={m.counts} />
-                    <div className="bars">
-                      {m.counts.map((c: RecordData) => (
-                        <div key={c.camera_id}>
-                          <span>
-                            {c.camera_id} · {c.coverage_state}
-                          </span>
-                          <meter
-                            min="0"
-                            max={Math.max(
-                              1,
-                              ...m.counts.map((x: RecordData) => x.passages),
-                            )}
-                            value={c.passages}
-                          />
-                          <span>{c.passages} passages</span>
-                        </div>
-                      ))}
-                    </div>
-                    <h2>Camera flow</h2>
-                    <Table rows={m.flow} />
-                    <h2>Enrolled-camera origin / destination</h2>
-                    <Table rows={m.od} />
-                    <h2>Travel time and congestion proxy</h2>
-                    <Table rows={m.travel_times} />
-                    <ul>
-                      {m.limitations.map((l: string) => (
-                        <li key={l}>{l}</li>
-                      ))}
-                    </ul>
-                  </>
-                )}
-              </>
-            )}
-            {page === "Alerts and review" && runId && (
-              <>
-                <h2>Watchlist lifecycle</h2>
-                <p>
-                  Create as investigator/administrator; sign in as the separate
-                  approver to approve. Approval scans existing accepted
-                  observations as well as future ones.
-                </p>
-                <label>
-                  Synthetic plate
-                  <input
-                    value={plate}
-                    onChange={(e) => setPlate(e.target.value)}
-                  />
-                </label>
-                <label>
-                  Reason / resolution notes
-                  <input
-                    value={reason}
-                    onChange={(e) => setReason(e.target.value)}
-                  />
-                </label>
-                <button
-                  disabled={busy}
-                  onClick={() =>
-                    action(async () =>
-                      unwrap(
-                        await client.POST("/v1/watchlists", {
-                          params: { header: key() },
-                          body: {
-                            run_id: runId,
-                            plate,
-                            reason,
-                            severity: "medium",
-                            valid_from: start,
-                            valid_until: end,
-                          },
-                        }),
-                      ),
-                    )
-                  }
-                >
-                  Create watchlist draft
-                </button>
-                <State query={watches} />
-                <Table rows={watches.data} />
-                {watches.data?.map((w) => (
-                  <div key={w.id}>
-                    {w.plate} · {w.status}{" "}
-                    {(["approve", "revoke"] as const).map((a) => (
-                      <button
-                        key={a}
-                        disabled={busy}
-                        onClick={() =>
-                          action(async () =>
-                            unwrap(
-                              await client.POST(
-                                "/v1/watchlists/{watch_id}/{action}",
-                                {
-                                  params: {
-                                    header: key(),
-                                    path: { watch_id: w.id, action: a },
-                                  },
-                                },
-                              ),
-                            ),
-                          )
-                        }
-                      >
-                        {a} {w.id.slice(0, 8)}
-                      </button>
-                    ))}
-                  </div>
-                ))}
-                <h2>Evidence-linked alerts</h2>
-                <State query={alerts} />
-                <Table rows={alerts.data} />
-                <label>
-                  Scenario classification
-                  <select
-                    value={classification}
-                    onChange={(e) =>
-                      setClassification(e.target.value as typeof classification)
-                    }
-                  >
-                    {["true", "false", "uncertain"].map((c) => (
-                      <option key={c}>{c}</option>
-                    ))}
-                  </select>
-                </label>
-                {alerts.data?.map((a) => (
-                  <div key={a.id}>
-                    <button
-                      disabled={busy}
-                      onClick={() =>
-                        action(async () =>
-                          unwrap(
-                            await client.POST(
-                              "/v1/alerts/{alert_id}/acknowledge",
-                              {
-                                params: {
-                                  path: { alert_id: a.id },
-                                  header: key(),
-                                },
-                                body: { classification, notes: reason },
-                              },
-                            ),
-                          ),
-                        )
-                      }
-                    >
-                      Acknowledge {a.kind}
-                    </button>
-                    {a.evidence_id && (
-                      <a target="_blank" href={`/v1/evidence/${a.evidence_id}`}>
-                        Supporting evidence
-                      </a>
-                    )}
-                  </div>
-                ))}
-                <h2>Observation review</h2>
-                <State query={observations} />
-                <label>
-                  Observation
-                  <select
-                    value={selected}
-                    onChange={(e) => setSelected(e.target.value)}
-                  >
-                    <option value="">Choose observation</option>
-                    {observations.data?.items.map((o: RecordData) => (
-                      <option key={o.id} value={o.id}>
-                        {o.camera_id} · {o.plate} · {o.status}
-                      </option>
-                    ))}
-                  </select>
-                </label>
-                <label>
-                  Revised status
-                  <select
-                    value={reviewStatus}
-                    onChange={(e) =>
-                      setReviewStatus(e.target.value as typeof reviewStatus)
-                    }
-                  >
-                    {["accepted", "review_required", "rejected"].map((s) => (
-                      <option key={s}>{s}</option>
-                    ))}
-                  </select>
-                </label>
-                <button
-                  disabled={busy || !selected}
-                  onClick={() =>
-                    action(async () =>
-                      unwrap(
-                        await client.POST(
-                          "/v1/observations/{observation_id}/reviews",
-                          {
-                            params: {
-                              path: { observation_id: selected },
-                              header: key(),
-                            },
-                            body: {
-                              plate: reviewStatus === "rejected" ? null : plate,
-                              status: reviewStatus,
-                              reason,
-                            },
-                          },
-                        ),
-                      ),
-                    )
-                  }
-                >
-                  Save review revision
-                </button>
-              </>
-            )}
-            {page === "Audit and system" && runId && (
-              <>
-                <h2>Durable worker jobs</h2>
-                <State query={jobs} />
-                <Table
-                  rows={jobs.data}
-                  columns={[
-                    "id",
-                    "state",
-                    "attempts",
-                    "available_at",
-                    "lease_until",
-                    "processed_at",
-                    "error",
-                  ]}
-                />
-                <h2>Audit history</h2>
-                <State query={audit} />
-                <Table
-                  rows={audit.data}
-                  columns={[
-                    "actor",
-                    "operation",
-                    "target",
-                    "created_at",
-                    "correlation_id",
-                    "details",
-                  ]}
-                />
-              </>
-            )}
-            {!runId &&
-              !["Scenario runner", "Overview", "Recorded video"].includes(
-                page,
-              ) && (
-                <p className="empty">
-                  No run selected. Create one in Scenario runner.
-                </p>
-              )}
-          </main>
-        </div>
+      </>
+    );
+  }
+
+  /* =========================================================================
+     2. AUTHENTICATED ROADEYE AFTERGLOW OPERATIONS WORKSPACE
+     ========================================================================= */
+  const pendingReviewCount = metrics.data?.review_required || 0;
+  const pendingAlertsCount = alerts.data?.filter((a) => a.status === "new" || a.status === "pending").length || 0;
+  const sourceModeLabel = page === "Cameras"
+    ? "RECORDED FOOTAGE · REAL MODEL INFERENCE"
+    : "SYNTHETIC INPUT · MOCK OCR";
+
+  return (
+    <AppShell
+      currentPage={page}
+      onNavigate={(p) => setPage(p)}
+      actor={me.data.actor}
+      sourceMode={sourceModeLabel}
+      pendingReviewCount={pendingReviewCount}
+      pendingAlertsCount={pendingAlertsCount}
+      onSignOut={() =>
+        action(async () => {
+          unwrap(await client.POST("/v1/auth/logout"));
+          qc.clear();
+        })
+      }
+    >
+      {/* 1. Overview Workspace */}
+      {page === "Overview" && (
+        <OverviewView
+          runId={runId}
+          onRunChange={(id) => {
+            setRunId(id);
+            setJourney(null);
+          }}
+          runs={runs.data || []}
+          start={start}
+          end={end}
+          onStartChange={setStart}
+          onEndChange={setEnd}
+          cameras={cameras.data || []}
+          graphEdges={graph.data?.edges || []}
+          healthData={health.data}
+          runData={run.data}
+          metricsData={metrics.data}
+          observationsData={observations.data}
+          alertsData={alerts.data || []}
+          onSelectObservation={(id) => setSelectedObsId(id)}
+          onNavigate={(p) => setPage(p)}
+          isFetching={observations.isFetching}
+        />
       )}
-      <footer>
-        RoadEye · Bharat Electronics Limited problem statement SIH2026172 ·
-        Synthetic inputs validate software behavior, not real-world recognition
-        or tracking.
-      </footer>
-    </>
+
+      {/* 2. Cameras & Recorded Video Workspace */}
+      {page === "Cameras" && (
+        <CameraWorkspaceView
+          actor={me.data.actor}
+          cameras={cameras.data || []}
+          onSelectObservation={(id) => setSelectedObsId(id)}
+        />
+      )}
+
+      {/* 3. Vehicles & Trajectory Explorer */}
+      {page === "Vehicles" && (
+        <TrajectoryView
+          runId={runId}
+          start={start}
+          end={end}
+          cameras={cameras.data || []}
+          graphEdges={graph.data?.edges || []}
+          journeyData={journey}
+          onQueryTrajectory={handleQueryTrajectory}
+          onSelectObservation={(id) => setSelectedObsId(id)}
+          busy={busy}
+          message={message}
+        />
+      )}
+
+      {/* 4. Analytics Workspace */}
+      {page === "Analytics" && (
+        <AnalyticsView
+          runId={runId}
+          metricsData={metrics.data}
+        />
+      )}
+
+      {/* 5. Alerts & Watchlists Workspace */}
+      {page === "Alerts" && (
+        <AlertsView
+          runId={runId}
+          actor={me.data.actor}
+          alerts={alerts.data || []}
+          watchlists={watches.data || []}
+          onAcknowledgeAlert={handleAcknowledgeAlert}
+          onCreateWatchlist={handleCreateWatchlist}
+          onWatchlistAction={handleWatchlistAction}
+          onSelectObservation={(id) => setSelectedObsId(id)}
+          busy={busy}
+          message={message}
+        />
+      )}
+
+      {/* 6. Review Workbench */}
+      {page === "Review" && (
+        <ReviewWorkbenchView
+          runId={runId}
+          observations={observations.data?.items || []}
+          onSelectObservation={(id) => setSelectedObsId(id)}
+          onSubmitReview={handleSubmitReview}
+          busy={busy}
+          message={message}
+        />
+      )}
+
+      {/* 7. System, Audit & Scenario Runner (Utility Pages) */}
+      {(page === "System" || page === "Audit" || page === "Scenario runner") && (
+        <SystemView
+          initialSubTab={page === "Audit" ? "audit" : page === "Scenario runner" ? "runner" : "system"}
+          healthData={health.data}
+          jobsData={jobs.data || []}
+          auditData={audit.data || []}
+          manifestData={manifest.data}
+          runData={run.data}
+          runId={runId}
+          onChooseRun={(id) => {
+            setRunId(id);
+            setJourney(null);
+          }}
+          onCreateRun={handleCreateRun}
+          onControlRun={handleControlRun}
+          busy={busy}
+          message={message}
+        />
+      )}
+
+      {/* Reusable Evidence Drawer (Accessible from any observation) */}
+      <EvidenceDrawer
+        observationId={selectedObsId}
+        onClose={() => setSelectedObsId(null)}
+        onOpenReview={(id) => {
+          setSelectedObsId(null);
+          setPage("Review");
+        }}
+      />
+    </AppShell>
   );
 }
+
 createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <QueryClientProvider client={queryClient}>
