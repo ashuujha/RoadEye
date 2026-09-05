@@ -39,3 +39,7 @@ For a consistent backup, also pause writes/source controls while taking both sna
 Recorded writable evidence now uses content-addressed keys and atomic temporary-file rename before domain reference. The immutable original MP4 and its registry digest must be preserved separately from extracted evidence. Independent labels live in PostgreSQL and belong in the protected database backup. A periodic orphan report can compare object keys to evidence_assets; delete only unreferenced objects older than a documented grace period after operator review. No automatic cleanup is implemented. An S3-compatible store can implement EvidenceStore.read with private bucket access, identical metadata/digest checks and authorization through API; neither MinIO nor paid services are required now.
 
 No public deployment, remote push, enforcement action, external camera feed or dataset download belongs to these operations.
+
+## Observed source-video shutdown limitation
+
+During the 2026-09-05 audit, a retired API process remained waiting for old source-video connections after graceful shutdown. The updated API was already healthy; the retired process required forced termination. PostgreSQL and worker processing were preserved. Configure and exercise a finite Uvicorn graceful-shutdown timeout and client cancellation before operational deployment. The audit's successful worker recovery is not a claim that all HTTP streaming shutdown paths are hardened.
