@@ -226,6 +226,7 @@ def passages(db, run_id: str) -> list[dict]:
                 "original_frame_evidence_id": passage.evidence_id,
                 "observation": s.serialize(observation) if observation else None,
                 "inference": ocr.payload["metadata"] if ocr else None,
+                "passage_metadata": event.payload["metadata"],
                 "human_label": "",
                 "human_readability": "unreviewed",
             }

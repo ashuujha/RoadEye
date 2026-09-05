@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { client, key, unwrap } from "./api";
+import { RecordedReview, BoxFrame } from "./RecordedReview";
 import { Json, State } from "./components";
 type RecordData = Record<string, any>;
 
@@ -186,6 +187,12 @@ export function RecordedVideo({ actor }: { actor: string }) {
             value={status.data}
             label="Processing configuration, model hashes and durable status"
           />
+          <RecordedReview
+            key={runId}
+            runId={runId}
+            config={status.data.config}
+            passage={passage}
+          />
           <h2>Passages and human review</h2>
           <p>
             Inspect original pixels before labeling. OCR output is not ground
@@ -232,6 +239,21 @@ export function RecordedVideo({ actor }: { actor: string }) {
       {passage && (
         <article>
           <h2>Passage at {passage.relative_seconds.toFixed(2)} seconds</h2>
+          <BoxFrame
+            evidence={passage.original_frame_evidence_id}
+            boxes={
+              passage.passage_metadata?.vehicle_detection?.box
+                ? [
+                    {
+                      box: passage.passage_metadata.vehicle_detection.box,
+                      label: "Vehicle at crossing",
+                      color: "#1261a0",
+                    },
+                  ]
+                : []
+            }
+            label="Crossing frame with vehicle bounding box"
+          />
           <a
             target="_blank"
             href={`/v1/evidence/${passage.original_frame_evidence_id}`}
@@ -276,6 +298,32 @@ export function RecordedVideo({ actor }: { actor: string }) {
                 Raw OCR: <code>{sample.ocr.text || "(empty)"}</code> · Score:{" "}
                 {sample.ocr.confidence.toFixed(3)} (uncalibrated)
               </p>
+              <BoxFrame
+                evidence={sample.frame_evidence_id}
+                boxes={[
+                  {
+                    box: sample.plate_box,
+                    label: "Plate proposal",
+                    color: "#a04b00",
+                  },
+                  ...(sample.vehicle_box
+                    ? [
+                        {
+                          box: sample.vehicle_box,
+                          label: "Vehicle proposal",
+                          color: "#1261a0",
+                        },
+                      ]
+                    : []),
+                ]}
+                label={`Crop source frame at ${sample.relative_seconds}s`}
+              />
+              {!sample.vehicle_box && (
+                <p>
+                  This original run retained the vehicle box at crossing only;
+                  no same-frame vehicle box was stored for this crop.
+                </p>
+              )}
               <Json
                 value={sample}
                 label="Raw model slots, character scores, preprocessing and original coordinates"

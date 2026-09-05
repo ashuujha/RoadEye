@@ -10,7 +10,7 @@ from fastapi import Depends, FastAPI, Header, HTTPException, Query, Request, Res
 from fastapi.encoders import jsonable_encoder
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
+from fastapi.responses import FileResponse, JSONResponse
 from pydantic import ValidationError
 from roadeye import analytics, auth
 from roadeye import models as m
@@ -35,6 +35,7 @@ from roadeye.contracts import (
 from roadeye.db import now, session
 from roadeye.evidence import LocalEvidenceStore, digest, evidence_root
 from roadeye.plates import normalize
+from roadeye.recorded import review as evaluation
 from roadeye.recorded import service as video
 from sqlalchemy import func, select, text
 from sqlalchemy.exc import SQLAlchemyError
@@ -182,7 +183,7 @@ def live():
 @app.get("/v1/health/ready", response_model=r.HealthResponse)
 def ready(db: DB):
     revision = db.scalar(text("SELECT version_num FROM alembic_version"))
-    if revision != "20260906_recorded":
+    if revision != "20260907_labels":
         raise HTTPException(503, "MIGRATIONS_NOT_CURRENT")
     return output(
         {
@@ -703,4 +704,47 @@ def recorded_replay(run_id: str, db: DB, actor: Admin, key: Key):
         key,
         {},
         lambda: output(video.retry(db, run_id, actor)),
+    )
+
+
+@app.get("/v1/recordings/{recording_id}/video", response_class=FileResponse)
+def source_video(recording_id: str, db: DB, actor: Investigator, request: Request):
+    video.enabled()
+    entry = video.registered(recording_id)
+    from pathlib import Path
+
+    path = Path(entry["path"])
+    if not path.is_file():
+        raise HTTPException(404, "RECORDING_FILE_MISSING")
+    if digest(path.read_bytes()) != entry["sha256"]:
+        raise HTTPException(409, "RECORDING_DIGEST_MISMATCH")
+    s.audit(
+        db, actor, "recording.timeline_read", recording_id, correlation=request.state.correlation
+    )
+    db.commit()
+    return FileResponse(path, media_type="video/mp4", headers={"Cache-Control": "no-store"})
+
+
+@app.get("/v1/recorded/runs/{run_id}/evaluation", response_model=Result)
+def evaluation_read(run_id: str, db: DB, actor: Investigator):
+    video.enabled()
+    labels = evaluation.latest(db, run_id)
+    result = {"labels": labels, "metrics": evaluation.metrics(db, run_id)}
+    s.audit(db, actor, "evaluation.read", run_id, run_id)
+    db.commit()
+    return output(result)
+
+
+@app.post("/v1/recorded/runs/{run_id}/evaluation", response_model=Result)
+def evaluation_save(
+    run_id: str, body: evaluation.LabelRequest, db: DB, actor: Investigator, key: Key
+):
+    video.enabled()
+    return recorded(
+        db,
+        actor,
+        f"evaluation:{run_id}",
+        key,
+        body.model_dump(mode="json"),
+        lambda: output(evaluation.save(db, run_id, body, actor)),
     )

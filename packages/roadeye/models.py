@@ -286,3 +286,22 @@ class VideoTask(Base):
     recording_id: Mapped[str]
     config: Mapped[dict] = mapped_column(JSON)
     progress: Mapped[dict] = mapped_column(JSON, default=dict)
+
+
+class EvaluationLabel(Base):
+    """Append-only human evaluation; never consumed by inference or operational revisions."""
+
+    __tablename__ = "evaluation_labels"
+    id: Mapped[str] = mapped_column(String, primary_key=True, default=uid)
+    run_id: Mapped[str] = mapped_column(ForeignKey("runs.id"), index=True)
+    target: Mapped[str] = mapped_column(String)
+    revision: Mapped[int]
+    passage_id: Mapped[str | None] = mapped_column(ForeignKey("vehicle_passages.id"))
+    actor: Mapped[str]
+    reviewer_name: Mapped[str]
+    label: Mapped[dict] = mapped_column(JSON)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=now)
+    __table_args__ = (
+        UniqueConstraint("run_id", "target", "revision"),
+        CheckConstraint("revision > 0"),
+    )

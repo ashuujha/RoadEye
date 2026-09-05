@@ -416,6 +416,24 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/recorded/runs/{run_id}/evaluation": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Evaluation Read */
+        get: operations["evaluation_read_v1_recorded_runs__run_id__evaluation_get"];
+        put?: never;
+        /** Evaluation Save */
+        post: operations["evaluation_save_v1_recorded_runs__run_id__evaluation_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/v1/recorded/runs/{run_id}/passages": {
         parameters: {
             query?: never;
@@ -459,6 +477,23 @@ export interface paths {
         };
         /** Recordings */
         get: operations["recordings_v1_recordings_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/recordings/{recording_id}/video": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Source Video */
+        get: operations["source_video_v1_recordings__recording_id__video_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -961,6 +996,57 @@ export interface components {
         /** JourneyResponse */
         JourneyResponse: {
             data: components["schemas"]["JourneyData"];
+        };
+        /** LabelRequest */
+        LabelRequest: {
+            /**
+             * Confirmed Complete
+             * @default false
+             */
+            confirmed_complete: boolean;
+            /** End Seconds */
+            end_seconds?: number | null;
+            /**
+             * Kind
+             * @enum {string}
+             */
+            kind: "passage" | "missed_vehicle" | "timeline_coverage";
+            /**
+             * Notes
+             * @default
+             */
+            notes: string;
+            /**
+             * Passage Assessment
+             * @default uncertain
+             * @enum {string}
+             */
+            passage_assessment: "valid" | "duplicate" | "incorrect" | "uncertain";
+            /** Passage Id */
+            passage_id?: string | null;
+            /**
+             * Plate Detection
+             * @default uncertain
+             * @enum {string}
+             */
+            plate_detection: "correct" | "incorrect" | "missing" | "uncertain";
+            /**
+             * Readability
+             * @default not_assessed
+             * @enum {string}
+             */
+            readability: "readable" | "partial" | "unreadable" | "not_assessed";
+            /**
+             * Relative Seconds
+             * @default 0
+             */
+            relative_seconds: number;
+            /** Reviewer Name */
+            reviewer_name: string;
+            /** Target Id */
+            target_id?: string | null;
+            /** Transcription */
+            transcription?: string | null;
         };
         /** Login */
         Login: {
@@ -2129,6 +2215,74 @@ export interface operations {
             };
         };
     };
+    evaluation_read_v1_recorded_runs__run_id__evaluation_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                run_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Result"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    evaluation_save_v1_recorded_runs__run_id__evaluation_post: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+            };
+            path: {
+                run_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["LabelRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Result"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     recorded_passages_v1_recorded_runs__run_id__passages_get: {
         parameters: {
             query?: never;
@@ -2209,6 +2363,35 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["Result"];
+                };
+            };
+        };
+    };
+    source_video_v1_recordings__recording_id__video_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                recording_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
         };

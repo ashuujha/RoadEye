@@ -56,6 +56,7 @@ def video_fixture(db):
             recording_id="delhi_anpr",
             config={
                 "line_y": 300,
+                "duration_seconds": 60,
                 "models": {},
                 "manifest": {"path": "/nonexistent/roadeye-contract-recording"},
             },

@@ -80,6 +80,20 @@ test('recorded real model results expose original frame and physical crop', asyn
   const response = await page.request.get(source);
   expect(response.status()).toBe(200);
   expect(['image/jpeg', 'image/png']).toContain(response.headers()['content-type']);
+  await expect(page.getByLabel('Independent full transcription')).toHaveValue('');
+  await expect(page.getByLabel('Independent full transcription')).toBeDisabled();
+  await expect(page.getByRole('img', { name: 'Crossing frame with vehicle bounding box', exact: true })).toBeVisible();
+  const video = page.locator('video');
+  await expect.poll(() => video.evaluate((v: HTMLVideoElement) => v.readyState)).toBeGreaterThan(0);
+  await page.getByLabel('Seek clip seconds').fill('30');
+  await expect.poll(() => video.evaluate((v: HTMLVideoElement) => Math.abs(v.currentTime - 30))).toBeLessThan(.1);
+  await expect.poll(() => video.evaluate((v: HTMLVideoElement) => v.videoWidth)).toBe(1272);
+  await expect.poll(() => video.evaluate((v: HTMLVideoElement) => v.readyState), {timeout: 15000}).toBeGreaterThanOrEqual(2);
+  await expect.poll(() => video.evaluate((v: HTMLVideoElement) => v.seeking)).toBe(false);
+  const evaluation = await page.request.get(`/v1/recorded/runs/${process.env.ROADEYE_RECORDED_RUN}/evaluation`);
+  expect(evaluation.status()).toBe(200);
+  expect((await evaluation.json()).data.metrics.readable_only_full_plate_accuracy).toBeNull();
+  // Never manufacture human labels on an actual footage run during automation.
   await expect(page.getByRole('button', { name: 'Replay same run (duplicate check)' })).toBeEnabled();
   await expect(page.getByLabel('Selected run', { exact: true })).toHaveCount(0);
   await page.screenshot({ path: '/tmp/roadeye-recorded-console.png', fullPage: true });

@@ -997,6 +997,132 @@
         "title": "JourneyResponse",
         "type": "object"
       },
+      "LabelRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "confirmed_complete": {
+            "default": false,
+            "title": "Confirmed Complete",
+            "type": "boolean"
+          },
+          "end_seconds": {
+            "anyOf": [
+              {
+                "maximum": 305.0,
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "End Seconds"
+          },
+          "kind": {
+            "enum": [
+              "passage",
+              "missed_vehicle",
+              "timeline_coverage"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "notes": {
+            "default": "",
+            "maxLength": 1000,
+            "title": "Notes",
+            "type": "string"
+          },
+          "passage_assessment": {
+            "default": "uncertain",
+            "enum": [
+              "valid",
+              "duplicate",
+              "incorrect",
+              "uncertain"
+            ],
+            "title": "Passage Assessment",
+            "type": "string"
+          },
+          "passage_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Passage Id"
+          },
+          "plate_detection": {
+            "default": "uncertain",
+            "enum": [
+              "correct",
+              "incorrect",
+              "missing",
+              "uncertain"
+            ],
+            "title": "Plate Detection",
+            "type": "string"
+          },
+          "readability": {
+            "default": "not_assessed",
+            "enum": [
+              "readable",
+              "partial",
+              "unreadable",
+              "not_assessed"
+            ],
+            "title": "Readability",
+            "type": "string"
+          },
+          "relative_seconds": {
+            "default": 0,
+            "maximum": 305.0,
+            "minimum": 0.0,
+            "title": "Relative Seconds",
+            "type": "number"
+          },
+          "reviewer_name": {
+            "maxLength": 80,
+            "minLength": 2,
+            "title": "Reviewer Name",
+            "type": "string"
+          },
+          "target_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Target Id"
+          },
+          "transcription": {
+            "anyOf": [
+              {
+                "maxLength": 32,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Transcription"
+          }
+        },
+        "required": [
+          "kind",
+          "reviewer_name"
+        ],
+        "title": "LabelRequest",
+        "type": "object"
+      },
       "Login": {
         "additionalProperties": false,
         "properties": {
@@ -2860,6 +2986,103 @@
         "summary": "Recorded Status"
       }
     },
+    "/v1/recorded/runs/{run_id}/evaluation": {
+      "get": {
+        "operationId": "evaluation_read_v1_recorded_runs__run_id__evaluation_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "run_id",
+            "required": true,
+            "schema": {
+              "title": "Run Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Result"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Evaluation Read"
+      },
+      "post": {
+        "operationId": "evaluation_save_v1_recorded_runs__run_id__evaluation_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "run_id",
+            "required": true,
+            "schema": {
+              "title": "Run Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": true,
+            "schema": {
+              "maxLength": 120,
+              "minLength": 1,
+              "title": "Idempotency-Key",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LabelRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Result"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Evaluation Save"
+      }
+    },
     "/v1/recorded/runs/{run_id}/passages": {
       "get": {
         "operationId": "recorded_passages_v1_recorded_runs__run_id__passages_get",
@@ -2965,6 +3188,38 @@
           }
         },
         "summary": "Recordings"
+      }
+    },
+    "/v1/recordings/{recording_id}/video": {
+      "get": {
+        "operationId": "source_video_v1_recordings__recording_id__video_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "recording_id",
+            "required": true,
+            "schema": {
+              "title": "Recording Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Source Video"
       }
     },
     "/v1/trajectories": {

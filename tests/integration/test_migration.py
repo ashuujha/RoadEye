@@ -38,7 +38,7 @@ def test_clean_migration_and_postgis():
             with psycopg.connect(native) as check:
                 assert (
                     check.execute("SELECT version_num FROM alembic_version").fetchone()[0]
-                    == "20260906_recorded"
+                    == "20260907_labels"
                 )
                 assert (
                     check.execute("SELECT ST_Distance(ST_Point(0,0), ST_Point(3,4))").fetchone()[0]
