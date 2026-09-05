@@ -140,6 +140,13 @@ def relative_time(frame, start_pts: int, time_base) -> float:
     return float((frame.pts - start_pts) * time_base)
 
 
+def ocr_due(seconds: float, last: float, policy: str) -> bool:
+    # Exact 600ms PTS intervals can subtract to 0.5999999999999999.
+    # Keep old runs byte-for-byte replayable; v2 fixes only this numerical boundary.
+    epsilon = 1e-9 if policy == "recorded-onnx-v2" else 0.0
+    return seconds - last + epsilon >= 0.6
+
+
 def process_video(job_id: str, token: str) -> bool:
     started = time.monotonic()
     with SessionLocal.begin() as db:
@@ -187,7 +194,11 @@ def process_video(job_id: str, token: str) -> bool:
                     track["crossing_image"] = image.copy()
                 x, y, x2, y2 = detection["box"]
                 # Only useful nearby vehicle crops; expensive OCR at most every 0.6s/track.
-                if y2 < 200 or x2 - x < 120 or seconds - track.get("last_ocr", -10) < 0.6:
+                if (
+                    y2 < 200
+                    or x2 - x < 120
+                    or not ocr_due(seconds, track.get("last_ocr", -10), config["policy"])
+                ):
                     continue
                 track["last_ocr"] = seconds
                 vehicle_crop = image[max(top, y) : y2, x:x2]
@@ -208,6 +219,8 @@ def process_video(job_id: str, token: str) -> bool:
                         "image": image.copy(),
                         "rank": (px2 - px) * (py2 - py) * candidate["score"],
                     }
+                    if config["policy"] == "recorded-onnx-v2":
+                        sample["vehicle_box"] = detection["box"]
                     track["samples"].append(sample)
                     track["samples"] = sorted(
                         track["samples"], key=lambda a: (-a["rank"], a["pts"])

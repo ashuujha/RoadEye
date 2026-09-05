@@ -1,5 +1,6 @@
 """Actual-model PostgreSQL/HTTP crash, replay and evidence acceptance. No other worker may run."""
 
+import argparse
 import json
 import os
 import subprocess
@@ -17,6 +18,9 @@ from dotenv import load_dotenv
 
 
 def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--report", type=Path)
+    args = parser.parse_args()
     load_dotenv()
     worker = None
     started = time.monotonic()
@@ -173,9 +177,11 @@ def main():
                 checks="receipt conflict, crash recovery, duplicate identities/totals, provenance isolation, ROI mapping, authorized JPEG/PNG evidence, viewer denial passed",
                 wall_seconds=round(time.monotonic() - started, 3),
             )
-            Path(".runtime/recorded-inspection/acceptance.json").write_text(
-                json.dumps(report, indent=2)
+            destination = args.report or Path(
+                f".runtime/recorded-inspection/acceptance-{run_id}.json"
             )
+            destination.parent.mkdir(parents=True, exist_ok=True)
+            destination.write_text(json.dumps(report, indent=2))
             print(
                 json.dumps(
                     {

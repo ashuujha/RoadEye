@@ -97,7 +97,11 @@ def create(db, body: VideoCreate, actor: str) -> dict:
         "models": models,
         "sample_fps": 5,
         "crop_encoding": "png",
-        "policy": "recorded-onnx-v1",
+        "policy": "recorded-onnx-v2",
+        "code_digests": {
+            name: digest(Path(__file__).with_name(name).read_bytes())
+            for name in ("processing.py", "inference.py")
+        },
         "timestamp_basis": "decoded PTS relative to stream start",
     }
     payload = {
