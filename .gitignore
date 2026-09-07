@@ -1,0 +1,16 @@
+.venv/
+__pycache__/
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+build/
+dist/
+data/
+artifacts/
+AICity22_Track1_MTMC_Tracking/
+Kaggle Data/
+reports/private/
+*.sqlite
+*.sqlite3
+.env
+reports-environment-install.log

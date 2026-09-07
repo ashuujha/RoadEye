@@ -1,0 +1,12 @@
+{
+  "status": "PASS",
+  "cached_inference_without_gt_or_network": "PASS",
+  "deterministic_prediction_hashes": "PASS",
+  "prefix_invariance_decision_counts": {
+    "50.0": 120,
+    "100.0": 400,
+    "150.0": 902
+  },
+  "link_evidence_cutoff_checks": 60,
+  "association_seconds": 5.190994700067677
+}

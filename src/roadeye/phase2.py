@@ -1,91 +1,190 @@
-"""CPU appearance baseline and offline CityFlow association evaluator."""
+"""Phase 2 preparation and causal inference. Evaluation is a separate command."""
+
 from __future__ import annotations
-import csv, hashlib, json
-from dataclasses import dataclass, asdict
+
+import argparse
+import json
+import time
+from dataclasses import asdict
 from pathlib import Path
-from typing import Iterable
-import cv2
+
 import numpy as np
 
+from .association import associate, topology
+from .embeddings import download_weights, embed
+from .tracklets import (
+    camera_positions,
+    extract_crops,
+    load_tracklets,
+    sha256,
+    write_json,
+)
+
 ROOT = Path(__file__).resolve().parents[2]
-DATA = ROOT / "data/cityflow/AICity22_Track1_MTMC_Tracking"
 
-@dataclass(frozen=True)
-class Tracklet:
-    scenario: str; camera: str; local_id: int; first_s: float; last_s: float
-    embedding: list[float]; gt_ids: tuple[int, ...]; evidence_frame: int; evidence_path: str
 
-def _hist(image: np.ndarray) -> np.ndarray:
-    hsv=cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
-    h=cv2.calcHist([hsv],[0,1],None,[16,8],[0,180,0,256]).flatten().astype("float32")
-    n=np.linalg.norm(h); return h/n if n else h
+def configuration(path: Path) -> tuple[dict, dict]:
+    config = json.loads(path.read_text(encoding="utf-8"))
+    window = json.loads((ROOT / config["window"]).read_text(encoding="utf-8"))
+    if set(config["development_scenarios"]) & set(config["evaluation_scenarios"]):
+        raise ValueError("Development and evaluation scenarios overlap")
+    if window["scenario"] not in config["evaluation_scenarios"]:
+        raise ValueError("Run window is not in declared evaluation partition")
+    if config["cityflow_training"]:
+        raise ValueError("Phase 2 fallback does not train on CityFlow")
+    return config, window
 
-def _row(path: Path) -> Iterable[list[str]]:
-    for line in path.read_text(errors="ignore").splitlines():
-        p=line.split(",")
-        if len(p)>=6: yield p
 
-def _frame(video: Path, number: int) -> np.ndarray | None:
-    cap=cv2.VideoCapture(str(video)); cap.set(cv2.CAP_PROP_POS_FRAMES, max(0, number-1)); ok, im=cap.read(); cap.release(); return im if ok else None
+def prepare(config_path: Path, output: Path) -> dict:
+    config, window = configuration(config_path)
+    output.mkdir(parents=True, exist_ok=True)
+    root = ROOT / config["dataset_root"]
+    tracklets, sources = load_tracklets(root, window)
+    positions = camera_positions(root, window)
+    weights = ROOT / config["embedding"]["weights"]
+    signature = {
+        "config_sha256": sha256(config_path),
+        "window_sha256": sha256(ROOT / config["window"]),
+        "weights_sha256": sha256(weights),
+        "sources": sources,
+        "positions": positions,
+    }
+    ready = output / "prepared.json"
+    if ready.exists():
+        manifest = json.loads(ready.read_text())
+        if manifest["input_signature"] != signature:
+            raise ValueError("Cache input mismatch; choose a new output directory")
+        for name, digest in manifest["artifact_sha256"].items():
+            if sha256(output / name) != digest:
+                raise ValueError(f"Cache hash mismatch: {name}")
+        print("Verified prepared cache reused", flush=True)
+        return manifest
+    started = time.perf_counter()
+    samples, failures = extract_crops(
+        root, window, tracklets, output, config["embedding"]["samples_per_tracklet"]
+    )
+    crop_seconds = time.perf_counter() - started
+    started = time.perf_counter()
+    keys, matrix, model = embed(samples, output, config["embedding"], ROOT)
+    embedding_seconds = time.perf_counter() - started
+    np.savez_compressed(
+        output / "embeddings.npz", keys=np.array(keys), embeddings=matrix
+    )
+    metadata = {
+        t.key: {
+            "key": t.key,
+            "partition": t.partition,
+            "scenario": t.scenario,
+            "camera": t.camera,
+            "local_id": t.local_id,
+            "ready_s": samples[t.key][-1]["time_s"],
+            "samples": samples[t.key],
+        }
+        for t in tracklets
+        if t.key in samples
+    }
+    write_json(output / "tracklets.json", metadata)
+    write_json(output / "config.json", config)
+    write_json(output / "window.json", window)
+    write_json(output / "topology.json", topology(positions, config["association"]))
+    write_json(output / "excluded_tracklets.json", failures)
+    with (output / "observations.jsonl").open("w", encoding="utf-8") as stream:
+        for tracklet in tracklets:
+            for observation in tracklet.observations:
+                stream.write(json.dumps(asdict(observation), allow_nan=False) + "\n")
+    manifest = {
+        "schema_version": 2,
+        "input_signature": signature,
+        "model": model,
+        "baseline_tracklets": len(tracklets),
+        "embedded_tracklets": len(keys),
+        "baseline_observations": sum(len(t.observations) for t in tracklets),
+        "cameras": len(window["cameras"]),
+        "prefix_samples": sum(map(len, samples.values())),
+        "crop_seconds": crop_seconds,
+        "embedding_seconds": embedding_seconds,
+        "artifact_sha256": {
+            name: sha256(output / name)
+            for name in (
+                "embeddings.npz",
+                "tracklets.json",
+                "config.json",
+                "window.json",
+                "topology.json",
+                "observations.jsonl",
+                "excluded_tracklets.json",
+            )
+        },
+    }
+    write_json(ready, manifest)
+    return manifest
 
-def load_tracklets(start_s: float, end_s: float, scenario: str="S04", baseline_name: str="mtsc_deepsort_mask_rcnn.txt", max_tracklets: int = 30) -> list[Tracklet]:
-    offsets={r[0]:float(r[1]) for r in (x.split() for x in (DATA/'cam_timestamp'/f'{scenario}.txt').read_text().splitlines())}
-    out=[]
-    for camdir in sorted((DATA/'train'/scenario).glob('c*')):
-        cam=camdir.name; path=camdir/'mtsc'/baseline_name
-        if not path.exists(): continue
-        groups: dict[int,list[list[str]]]={}
-        for p in _row(path):
-            lid=int(p[1]); frame=int(p[0]); t=offsets[cam]+(frame-1)/10
-            if start_s<=t<=end_s: groups.setdefault(lid,[]).append(p)
-        for lid, rows in groups.items():
-            rows.sort(key=lambda p:int(p[0])); first,last=rows[0],rows[-1]
-            frame=int(rows[len(rows)//2][0]); im=_frame(camdir/'vdo.avi',frame)
-            if im is None: continue
-            x,y,w,h=map(float, rows[len(rows)//2][2:6]); crop=im[max(0,int(y)):max(1,int(y+h)),max(0,int(x)):max(1,int(x+w))]
-            if crop.size==0: continue
-            gtpath=camdir/'gt'/'gt.txt'; gids=set()
-            if gtpath.exists():
-                for g in _row(gtpath):
-                    if int(g[0])==frame and abs(float(g[2])-x)<3 and abs(float(g[3])-y)<3: gids.add(int(g[1]))
-            out.append(Tracklet(scenario,cam,lid,offsets[cam]+(int(first[0])-1)/10,offsets[cam]+(int(last[0])-1)/10,_hist(crop).tolist(),tuple(sorted(gids)),frame,str((camdir/'vdo.avi').relative_to(ROOT))))
-            if len(out) >= max_tracklets: return out
-    return out
 
-def associate(tracklets: list[Tracklet], max_gap_s: float=45.0, min_similarity: float=.72, margin: float=.03) -> tuple[list[dict],dict[str,str]]:
-    ordered=sorted(tracklets,key=lambda t:(t.first_s,t.camera,t.local_id)); groups=[]; links=[]
-    for t in ordered:
-        candidates=[]
-        for gi,g in enumerate(groups):
-            prev=g[-1]
-            if prev.camera==t.camera or t.first_s<prev.last_s or t.first_s-prev.last_s>max_gap_s: continue
-            sim=float(np.dot(prev.embedding,t.embedding)); candidates.append((sim,gi))
-        candidates.sort(reverse=True)
-        if candidates and candidates[0][0]>=min_similarity and (len(candidates)==1 or candidates[0][0]-candidates[1][0]>=margin):
-            sim,gi=candidates[0]; prev=groups[gi][-1]; groups[gi].append(t)
-            links.append({"from_camera":prev.camera,"from_local_id":prev.local_id,"to_camera":t.camera,"to_local_id":t.local_id,"similarity":sim,"temporal_gap_s":t.first_s-prev.last_s,"reason":"HSV appearance cosine + forward time + distinct camera"})
-        else: groups.append([t])
-    ids={f"{t.camera}:{t.local_id}":f"roadeye_{i:05d}" for i,g in enumerate(groups) for t in g}
-    return links,ids
+def run(
+    config_path: Path = ROOT / "configs/phase2.json",
+    output: Path = ROOT / "artifacts/phase2-repaired",
+) -> dict:
+    from .tracklets import Observation
 
-def evaluate(tracklets: list[Tracklet], ids: dict[str,str], links: list[dict]) -> dict:
-    by_global={};
-    for t in tracklets:
-        rid=ids.get(f'{t.camera}:{t.local_id}');
-        if rid: by_global.setdefault(rid,set()).update(t.gt_ids)
-    predicted_pairs=correct_pairs=0
-    for l in links:
-        predicted_pairs+=1
-        a=ids.get(f"{l['from_camera']}:{l['from_local_id']}"); b=ids.get(f"{l['to_camera']}:{l['to_local_id']}")
-        ga=next((t.gt_ids for t in tracklets if f'{t.camera}:{t.local_id}'==f"{l['from_camera']}:{l['from_local_id']}"),())
-        gb=next((t.gt_ids for t in tracklets if f'{t.camera}:{t.local_id}'==f"{l['to_camera']}:{l['to_local_id']}"),())
-        if set(ga)&set(gb): correct_pairs+=1
-    return {"tracklets":len(tracklets),"predicted_links":predicted_pairs,"correct_links":correct_pairs,"link_precision":correct_pairs/predicted_pairs if predicted_pairs else None,"global_ids":len(set(ids.values())),"gt_coverage_tracklets":sum(bool(t.gt_ids) for t in tracklets),"runtime_gt_used":False}
+    manifest = prepare(config_path, output)
+    config, _ = configuration(config_path)
+    metadata = json.loads((output / "tracklets.json").read_text())
+    with np.load(output / "embeddings.npz", allow_pickle=False) as stored:
+        embeddings = dict(
+            zip(stored["keys"].tolist(), stored["embeddings"], strict=True)
+        )
+    observations = [
+        Observation(**json.loads(line))
+        for line in (output / "observations.jsonl").read_text().splitlines()
+    ]
+    started = time.perf_counter()
+    result = associate(
+        observations,
+        metadata,
+        embeddings,
+        manifest["input_signature"]["positions"],
+        config["association"],
+    )
+    seconds = time.perf_counter() - started
+    for name, value in result.items():
+        write_json(output / f"{name}.json", value)
+    summary = {
+        "baseline_tracklets": manifest["baseline_tracklets"],
+        "embedded_tracklets": manifest["embedded_tracklets"],
+        "assigned_tracklets": len(result["assignments"]),
+        "predicted_links": len(result["links"]),
+        "global_ids": len(result["journeys"]),
+        "max_predicted_camera_coverage": max(
+            (j["camera_count"] for j in result["journeys"]), default=0
+        ),
+        "association_seconds": seconds,
+        "prepared_sha256": sha256(output / "prepared.json"),
+        "prediction_sha256": {name: sha256(output / f"{name}.json") for name in result},
+        "evaluation_status": "not_evaluated_by_runtime",
+    }
+    write_json(output / "run.json", summary)
+    print(json.dumps(summary, indent=2), flush=True)
+    return summary
 
-def run(start_s:float=10.1,end_s:float=204.044)->dict:
-    ts=load_tracklets(start_s,end_s); links,ids=associate(ts); metrics=evaluate(ts,ids,links)
-    out=ROOT/'artifacts/phase2'; out.mkdir(parents=True,exist_ok=True)
-    (out/'tracklets.json').write_text(json.dumps([asdict(t) for t in ts],indent=2)); (out/'links.json').write_text(json.dumps(links,indent=2)); (out/'global_ids.json').write_text(json.dumps(ids,indent=2)); (out/'metrics.json').write_text(json.dumps(metrics,indent=2))
-    return metrics
 
-if __name__=='__main__': print(json.dumps(run(),indent=2))
+def main() -> None:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "action", choices=["fetch-weights", "prepare", "run"], default="run", nargs="?"
+    )
+    parser.add_argument("--config", type=Path, default=ROOT / "configs/phase2.json")
+    parser.add_argument(
+        "--output", type=Path, default=ROOT / "artifacts/phase2-repaired"
+    )
+    args = parser.parse_args()
+    if args.action == "fetch-weights":
+        config, _ = configuration(args.config)
+        download_weights(ROOT / config["embedding"]["weights"])
+    elif args.action == "prepare":
+        print(json.dumps(prepare(args.config, args.output), indent=2))
+    else:
+        run(args.config, args.output)
+
+
+if __name__ == "__main__":
+    main()

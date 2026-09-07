@@ -22,3 +22,10 @@ The stated 90%+ plate accuracy is a target only. Report exact full-string accura
 ## Data decision
 CityFlow plates are not reliable Indian OCR evidence; therefore cross-camera identity is appearance-led and OCR is optional secondary evidence. Indian OCR is evaluated on a separate real Indian dataset. No labels or fabricated plates are used at runtime.
 
+## Current claim corrections
+
+The initial 30-tracklet Phase 2 run had zero matched GT tracklets. Its recorded `link_precision: 0.0` is invalid as an accuracy result; quality was unverified. The repaired evaluator must report null when no links are evaluable, and report unscored links separately from known incorrect links.
+
+The frozen S04 window was selected with GT camera coverage during feasibility. Results on it must be described as a fixed diagnostic subset, with no claim of unbiased held-out generalization. No CityFlow training or S04 threshold tuning is allowed in the repaired run. The originally requested six-camera demonstration is achieved only by predicted associations that can be checked against actual evidence; six-camera GT availability alone does not establish that success.
+
+The supplied data has approximate scenario GPS centers and calibration matrices, not exact surveyed camera GPS locations. Calibration-derived map positions must retain their approximate provenance. Indian ANPR remains separate and does not block the user-approved Phase 2 repair.

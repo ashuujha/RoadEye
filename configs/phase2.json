@@ -1,0 +1,33 @@
+{
+  "schema_version": 2,
+  "dataset_root": "data/cityflow",
+  "window": "configs/feasibility-window.json",
+  "evaluation_scope": "frozen_S04_diagnostic_selected_during_feasibility",
+  "development_scenarios": ["S01", "S03"],
+  "evaluation_scenarios": ["S04"],
+  "cityflow_training": false,
+  "threshold_selection": "fixed_before_repaired_run_no_S04_tuning",
+  "embedding": {
+    "kind": "resnet50_imagenet1k_v2",
+    "weights": "artifacts/models/resnet50-11ad3fa6.pth",
+    "samples_per_tracklet": 3,
+    "batch_size": 16,
+    "cpu_threads": 4
+  },
+  "association": {
+    "min_similarity": 0.85,
+    "margin": 0.03,
+    "max_gap_s": 45.0,
+    "max_camera_distance_m": 1500.0,
+    "overlap_distance_m": 150.0,
+    "max_speed_mps": 40.0,
+    "clock_tolerance_s": 2.0,
+    "position_tolerance_m": 100.0
+  },
+  "evaluation": {
+    "iou_threshold": 0.5,
+    "min_matched_observations": 3,
+    "min_observation_coverage": 0.5,
+    "min_identity_purity": 0.8
+  }
+}

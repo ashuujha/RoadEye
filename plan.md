@@ -14,3 +14,8 @@
 
 Hard gates: verify actual CityFlow camera coverage and Indian transcription/test capacity before implementation; stop for user direction on either failure. Never use ground truth at runtime or fabricate journeys. Allow up to 1 hour for Roboflow/IEEE checks, 6 hours for transcription review, and 3 hours for portable setup. Cut extra model variants, supplementary datasets, further tuning, and presentation polish first. Never cut evaluation, provenance, uncertainty, or CPU rehearsal.
 
+## Current checkpoint — Phase 2 repair
+
+The user explicitly approved Phase 2 independently of the Indian OCR gate. The original Phase 2 smoke result did not constitute a valid evaluation; the repaired code now processes the full frozen S04 window, isolates GT, makes causal decisions, and emits measured diagnostic results. See `reports/phase2-audit.md` and `reports/phase2-metrics.json`.
+
+Foundation checks pass, but the six-camera predicted-journey goal is still unmet: the longest fully scored consistent group covers two cameras. Do not silently advance to hours 18–24 or spend the later fine-tuning allocation. Stop for the user's direction on a bounded Re-ID improvement checkpoint and fresh evaluation plan. All future phases retain the local audit/commit/explicit-clearance workflow in `agents.md`.

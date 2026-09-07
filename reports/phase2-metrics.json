@@ -1,0 +1,110 @@
+{
+  "scope": "frozen_S04_diagnostic_selected_during_feasibility",
+  "scenario": "S04",
+  "window_start_s": 10.1,
+  "window_end_s": 204.044,
+  "baseline_tracklets": 1723,
+  "baseline_observations": 137687,
+  "mapping_counts": {
+    "unmatched": 1387,
+    "matched": 218,
+    "ambiguous": 118
+  },
+  "gt_rows_in_window": 22770,
+  "gt_camera_visits": 310,
+  "recovered_gt_camera_visits": 205,
+  "gt_camera_visit_coverage": 0.6612903225806451,
+  "association": {
+    "status": "MEASURED",
+    "predicted_links": 60,
+    "evaluable_links": 10,
+    "correct_links": 6,
+    "incorrect_links": 4,
+    "unscored_links": 50,
+    "link_precision_on_evaluable_links": 0.6,
+    "link_evaluation_coverage": 0.16666666666666666,
+    "all_link_precision_lower_bound": 0.1,
+    "all_link_precision_upper_bound": 0.9333333333333333,
+    "labeled_assigned_tracklets": 218,
+    "predicted_cross_camera_pairs_on_labeled_tracklets": 10,
+    "true_cross_camera_pairs_on_labeled_tracklets": 435,
+    "correct_cross_camera_pairs": 6,
+    "pairwise_global_id_precision": 0.6,
+    "pairwise_global_id_recall": 0.013793103448275862
+  },
+  "group_quality": {
+    "counts": {
+      "unscored": 1305,
+      "fully_scored_consistent": 191,
+      "partially_scored": 13,
+      "mixed_gt_identities": 4
+    },
+    "max_fully_scored_consistent_camera_coverage": 2,
+    "scope": "consistency_under_IoU_coverage_purity_mapping_protocol"
+  },
+  "appearance_retrieval": {
+    "queries_with_prior_cross_camera_positive": 148,
+    "queries_without_prior_positive": 70,
+    "rank1_correct": 25,
+    "rank1": 0.16891891891891891,
+    "map": 0.16346479876600242,
+    "scope": "labeled_gallery_only_at_prefix_ready_time_no_topology_filter"
+  },
+  "max_predicted_camera_coverage": 4,
+  "global_ids": 1513,
+  "model": {
+    "model": "resnet50_imagenet1k_v2",
+    "trained_for_vehicle_reid": false,
+    "description": "ImageNet ResNet-50 generic appearance fallback; no CityFlow training",
+    "weights_sha256": "11ad3fa62ca79e40addfd354a8ec4b7c75143b3038b8d2a807fbc68deab379ca",
+    "weights_source": "https://download.pytorch.org/models/resnet50-11ad3fa6.pth",
+    "torch": "2.4.1+cpu",
+    "torchvision": "0.19.1+cpu",
+    "device": "cpu",
+    "dimensions": 2048,
+    "sampling": "first_K_observations_in_window; mean_of_normalized_prefix_features",
+    "transforms": "ImageClassification(\n    crop_size=[224]\n    resize_size=[232]\n    mean=[0.485, 0.456, 0.406]\n    std=[0.229, 0.224, 0.225]\n    interpolation=InterpolationMode.BILINEAR\n)"
+  },
+  "gt_sha256": {
+    "c016": "4e2ce5701ff965e21170a0416aca280e144da121d973c9fed9d3a2bbb699492b",
+    "c017": "c7716c940e0da7b8db6613e83e28807b3f038bf8a3757dc8a23085bab1d0b839",
+    "c018": "1c7ee07d9df9269f3404d809073be18adb55a61b88875572785eadb98e1cc6ed",
+    "c019": "8cba7eecf52b010c467bb7cbbff83ce61ed2f128f55df04ad026bad34580cced",
+    "c020": "96575d5dc214273ca0f8aa771790f8529b7a138af88145db57f4bef5eef2e82b",
+    "c021": "d598764ab9fdd95cafabb788b586ac4d85501acb0b73823a9161da84ddffd522",
+    "c022": "d19f6693d7cb6b97cc26b00decb0d1e647d28e05b336d4555ec4e5f21343a71b",
+    "c023": "452ddcf3e4febce8b9e7814e4a1489826de4d58030de7fa8c7d33d1a0a962f05",
+    "c024": "479a83bfa8b3f74dddd2183128fe3815966932a9dda96a905961b12425401214",
+    "c025": "94f500fbdcf4f09fd7ce0e52480e5b77c19f0105f254afea52f1f4a29ddaebcf",
+    "c026": "a18c4f01b56d7f6fb95562d0358af7d8952f01b6673ab8b410a792be54807d2f",
+    "c027": "144514cc329f7d4af7d7ff08eb2bae504ad88b8bd82dda682421695c91d87ff7",
+    "c028": "5302551d7d24d9187980be0a81bdbd1243c61f8f93e55f7a30b93924a781dbd6",
+    "c029": "914b1c265a8b8698361bd42b134c2af64cfbeb374cfd2a5369d00a18fa984dc3",
+    "c030": "35fde3c468a158cd305a727381115d374c976e1b9fb2a6a16f784451b14582ee",
+    "c031": "bddfc7f91481cb719153b4a48dc3654fa469ca59f2b84847aca138ae0b999413",
+    "c032": "226c2bdde810164d012ce0b5ec20fbd97244dc4d02c08b093d6e2ac4114cd4f6",
+    "c033": "18c9850a576d3fdf6ed99e55ec0f82cfa15f30985bceb2678e74a86aaae4c0b2",
+    "c034": "1621c34e561ec52ba811b327c3517dcb48f35a6bd75e4932ee0174c25f482da9",
+    "c035": "8f712c1c31e7754f88886cad032ea58d3a4c315a9bb7d3b689453ed5869bf4f8",
+    "c036": "2c8d7df21825e6c54cdc30103892c4cfa790e1b5a05838eae82488ee0b77c8ab",
+    "c037": "a2e1ec6872d6a36130314531e9ae2ae5d0d654e6eb0ada299a3949344b24be4e",
+    "c038": "e065295209664b014d092f3ef9d15517e72719959177aef3e086caf992318718",
+    "c039": "b004183a64f55776966d1ae34f3689fde5c07c15beac7749478051ff1242069a",
+    "c040": "97b2fcbeeb5e050a33df9de69c20f3394d48c895b0e142e23d8265f60234e32a"
+  },
+  "run_sha256": "9c0ed71aecf75a83cbef4b761beafafc4925b20f222276a03bd2bb40578c97fe",
+  "evaluation_policy": {
+    "iou_threshold": 0.5,
+    "min_matched_observations": 3,
+    "min_observation_coverage": 0.5,
+    "min_identity_purity": 0.8
+  },
+  "limitations": [
+    "S04 window was selected with labels at feasibility, not an unbiased held-out benchmark",
+    "No CityFlow training or threshold tuning in this run; S01/S03 reserved for development",
+    "CityFlow labels are partial; unscored links are unknown, not incorrect",
+    "Generic ImageNet appearance model, not vehicle-specialized Re-ID",
+    "Baseline MTSC upstream causal behavior and training provenance are not independently audited",
+    "Approximate calibration proximity is not a verified road network"
+  ]
+}

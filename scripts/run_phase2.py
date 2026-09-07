@@ -1,2 +1,6 @@
-from roadeye.phase2 import run
-if __name__ == "__main__": print(run())
+"""Compatibility entry point for the Phase 2 command."""
+
+from roadeye.phase2 import main
+
+if __name__ == "__main__":
+    main()
