@@ -1,0 +1,22 @@
+{
+  "selected_at_utc": "2026-09-07T18:41:31.016558+00:00",
+  "text_hash_rule": "SHA256 of UTF-8 file bytes with CRLF normalized to LF",
+  "protocol_sha256": "423c812fb8a2f8c3dbe954f37043c670d22e7ed4ce725dd8116f91c5c2a9ad1b",
+  "config_sha256": "0a6956d0e4b6f8e906192469b55e8c0256e0148dfb60591aa2020fd2516d609d",
+  "evaluation_window_sha256": "a2643518f7cee3e5ad0eabb2b9e00d73f6960de44d0519d0db6e0254a81fde40",
+  "development_report_sha256": "63cd2d775f6592e22cc16d1fe993183939f684c99ffcd2bfd1b997e77a3fbe17",
+  "runtime_source_sha256": {
+    "src/roadeye/__init__.py": "56a5b8c30d0dcf4b6b32e917b5e82878542927417ae9a768773f401a38952e3f",
+    "src/roadeye/association.py": "82fa135e32d508b8bbae93414799496da463f9208e8cd7fef8254425edf7d532",
+    "src/roadeye/embeddings.py": "3b7f6f067a12fe13d325c103302da748ae0fd79dc0dcd1a04f47b23e8e577c87",
+    "src/roadeye/evaluation.py": "cbe04018162efe0e8eff72b52d5e72ae7421dbade9b3d914ca6b489167f3a453",
+    "src/roadeye/phase2.py": "df70d41956e1237e2ac2db196b4687de8444600d7e4cf2e84a43742e32b501b0",
+    "src/roadeye/tracklets.py": "b9aea34981fae380407f9545e03a52b24c512501b583c38ef33895ca14ea9679",
+    "src/roadeye/vehicle_encoder.py": "e6cb0647fea5f19e6e0d93204c4028c37749eff4d932a9c3c188c22eae87aaf5"
+  },
+  "selected_variant": "imagenet_prefix",
+  "qualified_improvement": false,
+  "selected_development_result": null,
+  "evaluation_labels_opened_by_this_experiment_at_freeze": false,
+  "scope": "development selection only; S05 metrics do not exist yet"
+}

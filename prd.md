@@ -29,3 +29,13 @@ The initial 30-tracklet Phase 2 run had zero matched GT tracklets. Its recorded 
 The frozen S04 window was selected with GT camera coverage during feasibility. Results on it must be described as a fixed diagnostic subset, with no claim of unbiased held-out generalization. No CityFlow training or S04 threshold tuning is allowed in the repaired run. The originally requested six-camera demonstration is achieved only by predicted associations that can be checked against actual evidence; six-camera GT availability alone does not establish that success.
 
 The supplied data has approximate scenario GPS centers and calibration matrices, not exact surveyed camera GPS locations. Calibration-derived map positions must retain their approximate provenance. Indian ANPR remains separate and does not block the user-approved Phase 2 repair.
+
+The bounded Re-ID extension compares a VeRi-trained encoder and causal crop
+quality filtering on S01 development data. Its S05 evaluation is separate from
+parameter selection but shares locations with the previously inspected S04
+diagnostic; it is not an official benchmark or a novel-site generalization claim.
+Report unknown links, crop exclusions and partial-label coverage alongside every
+accuracy result. Pairwise recall over all mappable baseline tracks accompanies
+recall conditional on successfully embedded tracks. A six-camera prediction is
+not a verified journey unless every member is scored consistently against the
+released labels under the documented matching protocol.

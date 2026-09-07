@@ -1,0 +1,1695 @@
+{
+  "imagenet_prefix": {
+    "initial": {
+      "scope": "S01_clock_selected_development_not_held_out",
+      "run_role": "development",
+      "scenario": "S01",
+      "window_start_s": 0.0,
+      "window_end_s": 180.0,
+      "baseline_tracklets": 1154,
+      "baseline_observations": 85489,
+      "mapping_counts": {
+        "unmatched": 784,
+        "ambiguous": 228,
+        "matched": 142
+      },
+      "gt_rows_in_window": 30090,
+      "gt_camera_visits": 364,
+      "recovered_gt_camera_visits": 136,
+      "gt_camera_visit_coverage": 0.37362637362637363,
+      "association": {
+        "status": "MEASURED",
+        "predicted_links": 63,
+        "evaluable_links": 5,
+        "correct_links": 2,
+        "incorrect_links": 3,
+        "unscored_links": 58,
+        "link_precision_on_evaluable_links": 0.4,
+        "link_evaluation_coverage": 0.07936507936507936,
+        "all_link_precision_lower_bound": 0.031746031746031744,
+        "all_link_precision_upper_bound": 0.9523809523809523,
+        "labeled_assigned_tracklets": 142,
+        "predicted_cross_camera_pairs_on_labeled_tracklets": 5,
+        "true_cross_camera_pairs_on_labeled_tracklets": 115,
+        "correct_cross_camera_pairs": 2,
+        "pairwise_global_id_precision": 0.4,
+        "pairwise_global_id_recall": 0.017391304347826087,
+        "true_cross_camera_pairs_on_all_mappable_tracklets": 115,
+        "pairwise_global_id_recall_all_mappable_tracklets": 0.017391304347826087
+      },
+      "group_quality": {
+        "counts": {
+          "unscored": 862,
+          "fully_scored_consistent": 120,
+          "partially_scored": 14,
+          "mixed_gt_identities": 3
+        },
+        "max_fully_scored_consistent_camera_coverage": 2,
+        "scope": "consistency_under_IoU_coverage_purity_mapping_protocol"
+      },
+      "appearance_retrieval": {
+        "queries_with_prior_cross_camera_positive": 73,
+        "queries_without_prior_positive": 69,
+        "rank1_correct": 6,
+        "rank1": 0.0821917808219178,
+        "map": 0.1849345197431172,
+        "scope": "labeled_gallery_only_at_prefix_ready_time_no_topology_filter"
+      },
+      "max_predicted_camera_coverage": 3,
+      "global_ids": 999,
+      "model": {
+        "model": "resnet50_imagenet1k_v2",
+        "trained_for_vehicle_reid": false,
+        "description": "ImageNet ResNet-50 generic appearance fallback; no CityFlow training",
+        "weights_sha256": "11ad3fa62ca79e40addfd354a8ec4b7c75143b3038b8d2a807fbc68deab379ca",
+        "weights_source": "https://download.pytorch.org/models/resnet50-11ad3fa6.pth",
+        "torch": "2.4.1+cpu",
+        "torchvision": "0.19.1+cpu",
+        "device": "cpu",
+        "dimensions": 2048,
+        "sampling": "first_K_observations_in_window; mean_of_normalized_prefix_features",
+        "quality_prefix": null,
+        "pooling": "mean_of_normalized_features_then_L2",
+        "transforms": "ImageClassification(\n    crop_size=[224]\n    resize_size=[232]\n    mean=[0.485, 0.456, 0.406]\n    std=[0.229, 0.224, 0.225]\n    interpolation=InterpolationMode.BILINEAR\n)"
+      },
+      "gt_sha256": {
+        "c001": "618a8808b9520506adf660f7714707eec16df4ee35129043217f792e4c3d0599",
+        "c002": "6747328b2b0f43b440305ee7ff59ca773408e907a872875abbf91f92e7d3a6c3",
+        "c003": "92375f3b083a6a411969cbd641022550cdac13b4ef77bab87488a43877a8b453",
+        "c004": "439349fd5abb7aa4ca54aac2c582557b3fe4b7e504bc2fae18a107b58fb8c18a",
+        "c005": "1ffb8e2763c4bbaffe61ddfb9698420121421dba485d0132052333536da32c32"
+      },
+      "run_sha256": "d35795b26bc2a36e1e7c49cb160976d1eef17158a3961dc9dac6753350fd8be1",
+      "evaluation_policy": {
+        "iou_threshold": 0.5,
+        "min_matched_observations": 3,
+        "min_observation_coverage": 0.5,
+        "min_identity_purity": 0.8
+      },
+      "limitations": [
+        "Development metrics may select parameters; they are not held-out results",
+        "initial policy before predeclared S01 grid",
+        "CityFlow labels are partial; unscored links are unknown, not incorrect",
+        "ImageNet ResNet-50 generic appearance fallback; no CityFlow training",
+        "Baseline MTSC upstream causal behavior and training provenance are not independently audited",
+        "Approximate calibration proximity is not a verified road network"
+      ]
+    },
+    "grid": [
+      {
+        "variant": "imagenet_prefix",
+        "policy": {
+          "min_similarity": 0.6,
+          "margin": 0.03,
+          "max_gap_s": 45.0,
+          "max_camera_distance_m": 1500.0,
+          "overlap_distance_m": 150.0,
+          "max_speed_mps": 40.0,
+          "clock_tolerance_s": 2.0,
+          "position_tolerance_m": 100.0
+        },
+        "metrics": {
+          "status": "MEASURED",
+          "predicted_links": 230,
+          "evaluable_links": 14,
+          "correct_links": 2,
+          "incorrect_links": 12,
+          "unscored_links": 216,
+          "link_precision_on_evaluable_links": 0.14285714285714285,
+          "link_evaluation_coverage": 0.06086956521739131,
+          "all_link_precision_lower_bound": 0.008695652173913044,
+          "all_link_precision_upper_bound": 0.9478260869565217,
+          "labeled_assigned_tracklets": 142,
+          "predicted_cross_camera_pairs_on_labeled_tracklets": 24,
+          "true_cross_camera_pairs_on_labeled_tracklets": 115,
+          "correct_cross_camera_pairs": 3,
+          "pairwise_global_id_precision": 0.125,
+          "pairwise_global_id_recall": 0.02608695652173913,
+          "true_cross_camera_pairs_on_all_mappable_tracklets": 115,
+          "pairwise_global_id_recall_all_mappable_tracklets": 0.02608695652173913
+        },
+        "pairwise_f1": 0.04316546762589928,
+        "eligible": false,
+        "group_quality": {
+          "counts": {
+            "partially_scored": 51,
+            "unscored": 708,
+            "mixed_gt_identities": 13,
+            "fully_scored_consistent": 60
+          },
+          "max_fully_scored_consistent_camera_coverage": 1,
+          "scope": "consistency_under_IoU_coverage_purity_mapping_protocol"
+        },
+        "prediction_file": "artifacts/reid-development/imagenet_prefix/development-grid/similarity-0.6_margin-0.03.json",
+        "prediction_sha256": "e690258165d7cbe66b8694191861321dd98a97ba2bbb4b94bdc8ed6dca58cd47"
+      },
+      {
+        "variant": "imagenet_prefix",
+        "policy": {
+          "min_similarity": 0.6,
+          "margin": 0.06,
+          "max_gap_s": 45.0,
+          "max_camera_distance_m": 1500.0,
+          "overlap_distance_m": 150.0,
+          "max_speed_mps": 40.0,
+          "clock_tolerance_s": 2.0,
+          "position_tolerance_m": 100.0
+        },
+        "metrics": {
+          "status": "MEASURED",
+          "predicted_links": 78,
+          "evaluable_links": 10,
+          "correct_links": 3,
+          "incorrect_links": 7,
+          "unscored_links": 68,
+          "link_precision_on_evaluable_links": 0.3,
+          "link_evaluation_coverage": 0.1282051282051282,
+          "all_link_precision_lower_bound": 0.038461538461538464,
+          "all_link_precision_upper_bound": 0.9102564102564102,
+          "labeled_assigned_tracklets": 142,
+          "predicted_cross_camera_pairs_on_labeled_tracklets": 13,
+          "true_cross_camera_pairs_on_labeled_tracklets": 115,
+          "correct_cross_camera_pairs": 4,
+          "pairwise_global_id_precision": 0.3076923076923077,
+          "pairwise_global_id_recall": 0.034782608695652174,
+          "true_cross_camera_pairs_on_all_mappable_tracklets": 115,
+          "pairwise_global_id_recall_all_mappable_tracklets": 0.034782608695652174
+        },
+        "pairwise_f1": 0.0625,
+        "eligible": false,
+        "group_quality": {
+          "counts": {
+            "partially_scored": 19,
+            "unscored": 852,
+            "fully_scored_consistent": 106,
+            "mixed_gt_identities": 7
+          },
+          "max_fully_scored_consistent_camera_coverage": 2,
+          "scope": "consistency_under_IoU_coverage_purity_mapping_protocol"
+        },
+        "prediction_file": "artifacts/reid-development/imagenet_prefix/development-grid/similarity-0.6_margin-0.06.json",
+        "prediction_sha256": "86afd14600b9758e641c410f886bdc9174a77b0d55f9e6c6f614ebe5f04537ad"
+      },
+      {
+        "variant": "imagenet_prefix",
+        "policy": {
+          "min_similarity": 0.7,
+          "margin": 0.03,
+          "max_gap_s": 45.0,
+          "max_camera_distance_m": 1500.0,
+          "overlap_distance_m": 150.0,
+          "max_speed_mps": 40.0,
+          "clock_tolerance_s": 2.0,
+          "position_tolerance_m": 100.0
+        },
+        "metrics": {
+          "status": "MEASURED",
+          "predicted_links": 197,
+          "evaluable_links": 16,
+          "correct_links": 2,
+          "incorrect_links": 14,
+          "unscored_links": 181,
+          "link_precision_on_evaluable_links": 0.125,
+          "link_evaluation_coverage": 0.08121827411167512,
+          "all_link_precision_lower_bound": 0.01015228426395939,
+          "all_link_precision_upper_bound": 0.9289340101522843,
+          "labeled_assigned_tracklets": 142,
+          "predicted_cross_camera_pairs_on_labeled_tracklets": 26,
+          "true_cross_camera_pairs_on_labeled_tracklets": 115,
+          "correct_cross_camera_pairs": 3,
+          "pairwise_global_id_precision": 0.11538461538461539,
+          "pairwise_global_id_recall": 0.02608695652173913,
+          "true_cross_camera_pairs_on_all_mappable_tracklets": 115,
+          "pairwise_global_id_recall_all_mappable_tracklets": 0.02608695652173913
+        },
+        "pairwise_f1": 0.0425531914893617,
+        "eligible": false,
+        "group_quality": {
+          "counts": {
+            "partially_scored": 41,
+            "unscored": 743,
+            "mixed_gt_identities": 15,
+            "fully_scored_consistent": 66
+          },
+          "max_fully_scored_consistent_camera_coverage": 1,
+          "scope": "consistency_under_IoU_coverage_purity_mapping_protocol"
+        },
+        "prediction_file": "artifacts/reid-development/imagenet_prefix/development-grid/similarity-0.7_margin-0.03.json",
+        "prediction_sha256": "5c58130157a149a3f5184dcd2c3fe112d61a3c470672b56361f5764941c52fc4"
+      },
+      {
+        "variant": "imagenet_prefix",
+        "policy": {
+          "min_similarity": 0.7,
+          "margin": 0.06,
+          "max_gap_s": 45.0,
+          "max_camera_distance_m": 1500.0,
+          "overlap_distance_m": 150.0,
+          "max_speed_mps": 40.0,
+          "clock_tolerance_s": 2.0,
+          "position_tolerance_m": 100.0
+        },
+        "metrics": {
+          "status": "MEASURED",
+          "predicted_links": 66,
+          "evaluable_links": 9,
+          "correct_links": 3,
+          "incorrect_links": 6,
+          "unscored_links": 57,
+          "link_precision_on_evaluable_links": 0.3333333333333333,
+          "link_evaluation_coverage": 0.13636363636363635,
+          "all_link_precision_lower_bound": 0.045454545454545456,
+          "all_link_precision_upper_bound": 0.9090909090909091,
+          "labeled_assigned_tracklets": 142,
+          "predicted_cross_camera_pairs_on_labeled_tracklets": 12,
+          "true_cross_camera_pairs_on_labeled_tracklets": 115,
+          "correct_cross_camera_pairs": 4,
+          "pairwise_global_id_precision": 0.3333333333333333,
+          "pairwise_global_id_recall": 0.034782608695652174,
+          "true_cross_camera_pairs_on_all_mappable_tracklets": 115,
+          "pairwise_global_id_recall_all_mappable_tracklets": 0.034782608695652174
+        },
+        "pairwise_f1": 0.06299212598425197,
+        "eligible": false,
+        "group_quality": {
+          "counts": {
+            "unscored": 863,
+            "partially_scored": 16,
+            "fully_scored_consistent": 111,
+            "mixed_gt_identities": 6
+          },
+          "max_fully_scored_consistent_camera_coverage": 2,
+          "scope": "consistency_under_IoU_coverage_purity_mapping_protocol"
+        },
+        "prediction_file": "artifacts/reid-development/imagenet_prefix/development-grid/similarity-0.7_margin-0.06.json",
+        "prediction_sha256": "773684cd205bbe8d9b1696bfe7d946478de16454a749c53937ec27b169485a01"
+      },
+      {
+        "variant": "imagenet_prefix",
+        "policy": {
+          "min_similarity": 0.8,
+          "margin": 0.03,
+          "max_gap_s": 45.0,
+          "max_camera_distance_m": 1500.0,
+          "overlap_distance_m": 150.0,
+          "max_speed_mps": 40.0,
+          "clock_tolerance_s": 2.0,
+          "position_tolerance_m": 100.0
+        },
+        "metrics": {
+          "status": "MEASURED",
+          "predicted_links": 113,
+          "evaluable_links": 10,
+          "correct_links": 3,
+          "incorrect_links": 7,
+          "unscored_links": 103,
+          "link_precision_on_evaluable_links": 0.3,
+          "link_evaluation_coverage": 0.08849557522123894,
+          "all_link_precision_lower_bound": 0.02654867256637168,
+          "all_link_precision_upper_bound": 0.9380530973451328,
+          "labeled_assigned_tracklets": 142,
+          "predicted_cross_camera_pairs_on_labeled_tracklets": 12,
+          "true_cross_camera_pairs_on_labeled_tracklets": 115,
+          "correct_cross_camera_pairs": 4,
+          "pairwise_global_id_precision": 0.3333333333333333,
+          "pairwise_global_id_recall": 0.034782608695652174,
+          "true_cross_camera_pairs_on_all_mappable_tracklets": 115,
+          "pairwise_global_id_recall_all_mappable_tracklets": 0.034782608695652174
+        },
+        "pairwise_f1": 0.06299212598425197,
+        "eligible": false,
+        "group_quality": {
+          "counts": {
+            "unscored": 818,
+            "fully_scored_consistent": 97,
+            "partially_scored": 26,
+            "mixed_gt_identities": 8
+          },
+          "max_fully_scored_consistent_camera_coverage": 2,
+          "scope": "consistency_under_IoU_coverage_purity_mapping_protocol"
+        },
+        "prediction_file": "artifacts/reid-development/imagenet_prefix/development-grid/similarity-0.8_margin-0.03.json",
+        "prediction_sha256": "cdc753605179836375a0064fac96d2aa1836a73f9f60170152aa1cec854d3b24"
+      },
+      {
+        "variant": "imagenet_prefix",
+        "policy": {
+          "min_similarity": 0.8,
+          "margin": 0.06,
+          "max_gap_s": 45.0,
+          "max_camera_distance_m": 1500.0,
+          "overlap_distance_m": 150.0,
+          "max_speed_mps": 40.0,
+          "clock_tolerance_s": 2.0,
+          "position_tolerance_m": 100.0
+        },
+        "metrics": {
+          "status": "MEASURED",
+          "predicted_links": 38,
+          "evaluable_links": 5,
+          "correct_links": 3,
+          "incorrect_links": 2,
+          "unscored_links": 33,
+          "link_precision_on_evaluable_links": 0.6,
+          "link_evaluation_coverage": 0.13157894736842105,
+          "all_link_precision_lower_bound": 0.07894736842105263,
+          "all_link_precision_upper_bound": 0.9473684210526315,
+          "labeled_assigned_tracklets": 142,
+          "predicted_cross_camera_pairs_on_labeled_tracklets": 6,
+          "true_cross_camera_pairs_on_labeled_tracklets": 115,
+          "correct_cross_camera_pairs": 4,
+          "pairwise_global_id_precision": 0.6666666666666666,
+          "pairwise_global_id_recall": 0.034782608695652174,
+          "true_cross_camera_pairs_on_all_mappable_tracklets": 115,
+          "pairwise_global_id_recall_all_mappable_tracklets": 0.034782608695652174
+        },
+        "pairwise_f1": 0.06611570247933884,
+        "eligible": false,
+        "group_quality": {
+          "counts": {
+            "unscored": 887,
+            "fully_scored_consistent": 125,
+            "partially_scored": 10,
+            "mixed_gt_identities": 2
+          },
+          "max_fully_scored_consistent_camera_coverage": 3,
+          "scope": "consistency_under_IoU_coverage_purity_mapping_protocol"
+        },
+        "prediction_file": "artifacts/reid-development/imagenet_prefix/development-grid/similarity-0.8_margin-0.06.json",
+        "prediction_sha256": "a28b7c80f0eecce4bb2cad73e8997ac8829279f25d2c9b5d7f568cee3b54a7fa"
+      },
+      {
+        "variant": "imagenet_prefix",
+        "policy": {
+          "min_similarity": 0.85,
+          "margin": 0.03,
+          "max_gap_s": 45.0,
+          "max_camera_distance_m": 1500.0,
+          "overlap_distance_m": 150.0,
+          "max_speed_mps": 40.0,
+          "clock_tolerance_s": 2.0,
+          "position_tolerance_m": 100.0
+        },
+        "metrics": {
+          "status": "MEASURED",
+          "predicted_links": 63,
+          "evaluable_links": 5,
+          "correct_links": 2,
+          "incorrect_links": 3,
+          "unscored_links": 58,
+          "link_precision_on_evaluable_links": 0.4,
+          "link_evaluation_coverage": 0.07936507936507936,
+          "all_link_precision_lower_bound": 0.031746031746031744,
+          "all_link_precision_upper_bound": 0.9523809523809523,
+          "labeled_assigned_tracklets": 142,
+          "predicted_cross_camera_pairs_on_labeled_tracklets": 5,
+          "true_cross_camera_pairs_on_labeled_tracklets": 115,
+          "correct_cross_camera_pairs": 2,
+          "pairwise_global_id_precision": 0.4,
+          "pairwise_global_id_recall": 0.017391304347826087,
+          "true_cross_camera_pairs_on_all_mappable_tracklets": 115,
+          "pairwise_global_id_recall_all_mappable_tracklets": 0.017391304347826087
+        },
+        "pairwise_f1": 0.03333333333333333,
+        "eligible": false,
+        "group_quality": {
+          "counts": {
+            "unscored": 862,
+            "fully_scored_consistent": 120,
+            "partially_scored": 14,
+            "mixed_gt_identities": 3
+          },
+          "max_fully_scored_consistent_camera_coverage": 2,
+          "scope": "consistency_under_IoU_coverage_purity_mapping_protocol"
+        },
+        "prediction_file": "artifacts/reid-development/imagenet_prefix/development-grid/similarity-0.85_margin-0.03.json",
+        "prediction_sha256": "761912a7cd0e414b36a50eb75b8bbef804c7bd3d09021b426a616c0e7405fed3"
+      },
+      {
+        "variant": "imagenet_prefix",
+        "policy": {
+          "min_similarity": 0.85,
+          "margin": 0.06,
+          "max_gap_s": 45.0,
+          "max_camera_distance_m": 1500.0,
+          "overlap_distance_m": 150.0,
+          "max_speed_mps": 40.0,
+          "clock_tolerance_s": 2.0,
+          "position_tolerance_m": 100.0
+        },
+        "metrics": {
+          "status": "MEASURED",
+          "predicted_links": 22,
+          "evaluable_links": 2,
+          "correct_links": 1,
+          "incorrect_links": 1,
+          "unscored_links": 20,
+          "link_precision_on_evaluable_links": 0.5,
+          "link_evaluation_coverage": 0.09090909090909091,
+          "all_link_precision_lower_bound": 0.045454545454545456,
+          "all_link_precision_upper_bound": 0.9545454545454546,
+          "labeled_assigned_tracklets": 142,
+          "predicted_cross_camera_pairs_on_labeled_tracklets": 2,
+          "true_cross_camera_pairs_on_labeled_tracklets": 115,
+          "correct_cross_camera_pairs": 1,
+          "pairwise_global_id_precision": 0.5,
+          "pairwise_global_id_recall": 0.008695652173913044,
+          "true_cross_camera_pairs_on_all_mappable_tracklets": 115,
+          "pairwise_global_id_recall_all_mappable_tracklets": 0.008695652173913044
+        },
+        "pairwise_f1": 0.017094017094017096,
+        "eligible": false,
+        "group_quality": {
+          "counts": {
+            "unscored": 900,
+            "fully_scored_consistent": 134,
+            "partially_scored": 5,
+            "mixed_gt_identities": 1
+          },
+          "max_fully_scored_consistent_camera_coverage": 2,
+          "scope": "consistency_under_IoU_coverage_purity_mapping_protocol"
+        },
+        "prediction_file": "artifacts/reid-development/imagenet_prefix/development-grid/similarity-0.85_margin-0.06.json",
+        "prediction_sha256": "2728c18a88ab7305586003fbc3d4057cf77ea0232222a0de4b0629c792a2199b"
+      },
+      {
+        "variant": "imagenet_prefix",
+        "policy": {
+          "min_similarity": 0.9,
+          "margin": 0.03,
+          "max_gap_s": 45.0,
+          "max_camera_distance_m": 1500.0,
+          "overlap_distance_m": 150.0,
+          "max_speed_mps": 40.0,
+          "clock_tolerance_s": 2.0,
+          "position_tolerance_m": 100.0
+        },
+        "metrics": {
+          "status": "MEASURED",
+          "predicted_links": 25,
+          "evaluable_links": 1,
+          "correct_links": 0,
+          "incorrect_links": 1,
+          "unscored_links": 24,
+          "link_precision_on_evaluable_links": 0.0,
+          "link_evaluation_coverage": 0.04,
+          "all_link_precision_lower_bound": 0.0,
+          "all_link_precision_upper_bound": 0.96,
+          "labeled_assigned_tracklets": 142,
+          "predicted_cross_camera_pairs_on_labeled_tracklets": 1,
+          "true_cross_camera_pairs_on_labeled_tracklets": 115,
+          "correct_cross_camera_pairs": 0,
+          "pairwise_global_id_precision": 0.0,
+          "pairwise_global_id_recall": 0.0,
+          "true_cross_camera_pairs_on_all_mappable_tracklets": 115,
+          "pairwise_global_id_recall_all_mappable_tracklets": 0.0
+        },
+        "pairwise_f1": 0.0,
+        "eligible": false,
+        "group_quality": {
+          "counts": {
+            "unscored": 896,
+            "fully_scored_consistent": 136,
+            "partially_scored": 4,
+            "mixed_gt_identities": 1
+          },
+          "max_fully_scored_consistent_camera_coverage": 1,
+          "scope": "consistency_under_IoU_coverage_purity_mapping_protocol"
+        },
+        "prediction_file": "artifacts/reid-development/imagenet_prefix/development-grid/similarity-0.9_margin-0.03.json",
+        "prediction_sha256": "8d3e79fb16d9351f4b1a30638c564f72fee4c585a084a1c6ed6b3605a755aef1"
+      },
+      {
+        "variant": "imagenet_prefix",
+        "policy": {
+          "min_similarity": 0.9,
+          "margin": 0.06,
+          "max_gap_s": 45.0,
+          "max_camera_distance_m": 1500.0,
+          "overlap_distance_m": 150.0,
+          "max_speed_mps": 40.0,
+          "clock_tolerance_s": 2.0,
+          "position_tolerance_m": 100.0
+        },
+        "metrics": {
+          "status": "UNVERIFIED",
+          "predicted_links": 9,
+          "evaluable_links": 0,
+          "correct_links": 0,
+          "incorrect_links": 0,
+          "unscored_links": 9,
+          "link_precision_on_evaluable_links": null,
+          "link_evaluation_coverage": 0.0,
+          "all_link_precision_lower_bound": 0.0,
+          "all_link_precision_upper_bound": 1.0,
+          "labeled_assigned_tracklets": 142,
+          "predicted_cross_camera_pairs_on_labeled_tracklets": 0,
+          "true_cross_camera_pairs_on_labeled_tracklets": 115,
+          "correct_cross_camera_pairs": 0,
+          "pairwise_global_id_precision": null,
+          "pairwise_global_id_recall": 0.0,
+          "true_cross_camera_pairs_on_all_mappable_tracklets": 115,
+          "pairwise_global_id_recall_all_mappable_tracklets": 0.0
+        },
+        "pairwise_f1": 0.0,
+        "eligible": false,
+        "group_quality": {
+          "counts": {
+            "unscored": 911,
+            "fully_scored_consistent": 141,
+            "partially_scored": 1
+          },
+          "max_fully_scored_consistent_camera_coverage": 1,
+          "scope": "consistency_under_IoU_coverage_purity_mapping_protocol"
+        },
+        "prediction_file": "artifacts/reid-development/imagenet_prefix/development-grid/similarity-0.9_margin-0.06.json",
+        "prediction_sha256": "0b9a4acf449209eda573590055d2bafca484ae7ee020b5cb1e9ceb200bce56cd"
+      }
+    ],
+    "protocol_sha256": "423c812fb8a2f8c3dbe954f37043c670d22e7ed4ce725dd8116f91c5c2a9ad1b"
+  },
+  "veri_prefix": {
+    "initial": {
+      "scope": "S01_clock_selected_development_not_held_out",
+      "run_role": "development",
+      "scenario": "S01",
+      "window_start_s": 0.0,
+      "window_end_s": 180.0,
+      "baseline_tracklets": 1154,
+      "baseline_observations": 85489,
+      "mapping_counts": {
+        "unmatched": 784,
+        "ambiguous": 228,
+        "matched": 142
+      },
+      "gt_rows_in_window": 30090,
+      "gt_camera_visits": 364,
+      "recovered_gt_camera_visits": 136,
+      "gt_camera_visit_coverage": 0.37362637362637363,
+      "association": {
+        "status": "MEASURED",
+        "predicted_links": 7,
+        "evaluable_links": 1,
+        "correct_links": 1,
+        "incorrect_links": 0,
+        "unscored_links": 6,
+        "link_precision_on_evaluable_links": 1.0,
+        "link_evaluation_coverage": 0.14285714285714285,
+        "all_link_precision_lower_bound": 0.14285714285714285,
+        "all_link_precision_upper_bound": 1.0,
+        "labeled_assigned_tracklets": 142,
+        "predicted_cross_camera_pairs_on_labeled_tracklets": 1,
+        "true_cross_camera_pairs_on_labeled_tracklets": 115,
+        "correct_cross_camera_pairs": 1,
+        "pairwise_global_id_precision": 1.0,
+        "pairwise_global_id_recall": 0.008695652173913044,
+        "true_cross_camera_pairs_on_all_mappable_tracklets": 115,
+        "pairwise_global_id_recall_all_mappable_tracklets": 0.008695652173913044
+      },
+      "group_quality": {
+        "counts": {
+          "unscored": 914,
+          "fully_scored_consistent": 141
+        },
+        "max_fully_scored_consistent_camera_coverage": 2,
+        "scope": "consistency_under_IoU_coverage_purity_mapping_protocol"
+      },
+      "appearance_retrieval": {
+        "queries_with_prior_cross_camera_positive": 73,
+        "queries_without_prior_positive": 69,
+        "rank1_correct": 13,
+        "rank1": 0.1780821917808219,
+        "map": 0.2483898446294654,
+        "scope": "labeled_gallery_only_at_prefix_ready_time_no_topology_filter"
+      },
+      "max_predicted_camera_coverage": 2,
+      "global_ids": 1055,
+      "model": {
+        "model": "fastreid_veri_sbs_r50_ibn",
+        "trained_for_vehicle_reid": true,
+        "description": "FastReID SBS ResNet-50-IBN trained on VeRi; no RoadEye CityFlow training",
+        "weights_sha256": "57fb9c17d88911ea64390bf5427f43511435e7f88f6eed9dbc969d4b611e53cd",
+        "weights_source": "https://github.com/JDAI-CV/fast-reid/releases/download/v0.1.1/veri_sbs_R50-ibn.pth",
+        "torch": "2.4.1+cpu",
+        "torchvision": "0.19.1+cpu",
+        "device": "cpu",
+        "dimensions": 2048,
+        "sampling": "first_K_observations_in_window; mean_of_normalized_prefix_features",
+        "quality_prefix": null,
+        "pooling": "mean_of_normalized_features_then_L2",
+        "transforms": "Compose(\n    Resize(size=(256, 256), interpolation=bicubic, max_size=None, antialias=True)\n    PILToTensor()\n)"
+      },
+      "gt_sha256": {
+        "c001": "618a8808b9520506adf660f7714707eec16df4ee35129043217f792e4c3d0599",
+        "c002": "6747328b2b0f43b440305ee7ff59ca773408e907a872875abbf91f92e7d3a6c3",
+        "c003": "92375f3b083a6a411969cbd641022550cdac13b4ef77bab87488a43877a8b453",
+        "c004": "439349fd5abb7aa4ca54aac2c582557b3fe4b7e504bc2fae18a107b58fb8c18a",
+        "c005": "1ffb8e2763c4bbaffe61ddfb9698420121421dba485d0132052333536da32c32"
+      },
+      "run_sha256": "dbd696144e14de92f46a161f9cfebccf30953652e647f9b3bcedd5bf73aad8fb",
+      "evaluation_policy": {
+        "iou_threshold": 0.5,
+        "min_matched_observations": 3,
+        "min_observation_coverage": 0.5,
+        "min_identity_purity": 0.8
+      },
+      "limitations": [
+        "Development metrics may select parameters; they are not held-out results",
+        "initial policy before predeclared S01 grid",
+        "CityFlow labels are partial; unscored links are unknown, not incorrect",
+        "FastReID SBS ResNet-50-IBN trained on VeRi; no RoadEye CityFlow training",
+        "Baseline MTSC upstream causal behavior and training provenance are not independently audited",
+        "Approximate calibration proximity is not a verified road network"
+      ]
+    },
+    "grid": [
+      {
+        "variant": "veri_prefix",
+        "policy": {
+          "min_similarity": 0.6,
+          "margin": 0.03,
+          "max_gap_s": 45.0,
+          "max_camera_distance_m": 1500.0,
+          "overlap_distance_m": 150.0,
+          "max_speed_mps": 40.0,
+          "clock_tolerance_s": 2.0,
+          "position_tolerance_m": 100.0
+        },
+        "metrics": {
+          "status": "MEASURED",
+          "predicted_links": 316,
+          "evaluable_links": 12,
+          "correct_links": 5,
+          "incorrect_links": 7,
+          "unscored_links": 304,
+          "link_precision_on_evaluable_links": 0.4166666666666667,
+          "link_evaluation_coverage": 0.0379746835443038,
+          "all_link_precision_lower_bound": 0.015822784810126583,
+          "all_link_precision_upper_bound": 0.9778481012658228,
+          "labeled_assigned_tracklets": 142,
+          "predicted_cross_camera_pairs_on_labeled_tracklets": 22,
+          "true_cross_camera_pairs_on_labeled_tracklets": 115,
+          "correct_cross_camera_pairs": 7,
+          "pairwise_global_id_precision": 0.3181818181818182,
+          "pairwise_global_id_recall": 0.06086956521739131,
+          "true_cross_camera_pairs_on_all_mappable_tracklets": 115,
+          "pairwise_global_id_recall_all_mappable_tracklets": 0.06086956521739131
+        },
+        "pairwise_f1": 0.10218978102189781,
+        "eligible": false,
+        "group_quality": {
+          "counts": {
+            "unscored": 621,
+            "fully_scored_consistent": 65,
+            "mixed_gt_identities": 10,
+            "partially_scored": 50
+          },
+          "max_fully_scored_consistent_camera_coverage": 2,
+          "scope": "consistency_under_IoU_coverage_purity_mapping_protocol"
+        },
+        "prediction_file": "artifacts/reid-development/veri_prefix/development-grid/similarity-0.6_margin-0.03.json",
+        "prediction_sha256": "b7f38358aec7f6d5f1f3fcbc7b29e2439c5bdd1b4701744ca7b00aef967a84d6"
+      },
+      {
+        "variant": "veri_prefix",
+        "policy": {
+          "min_similarity": 0.6,
+          "margin": 0.06,
+          "max_gap_s": 45.0,
+          "max_camera_distance_m": 1500.0,
+          "overlap_distance_m": 150.0,
+          "max_speed_mps": 40.0,
+          "clock_tolerance_s": 2.0,
+          "position_tolerance_m": 100.0
+        },
+        "metrics": {
+          "status": "MEASURED",
+          "predicted_links": 127,
+          "evaluable_links": 6,
+          "correct_links": 4,
+          "incorrect_links": 2,
+          "unscored_links": 121,
+          "link_precision_on_evaluable_links": 0.6666666666666666,
+          "link_evaluation_coverage": 0.047244094488188976,
+          "all_link_precision_lower_bound": 0.031496062992125984,
+          "all_link_precision_upper_bound": 0.984251968503937,
+          "labeled_assigned_tracklets": 142,
+          "predicted_cross_camera_pairs_on_labeled_tracklets": 9,
+          "true_cross_camera_pairs_on_labeled_tracklets": 115,
+          "correct_cross_camera_pairs": 5,
+          "pairwise_global_id_precision": 0.5555555555555556,
+          "pairwise_global_id_recall": 0.043478260869565216,
+          "true_cross_camera_pairs_on_all_mappable_tracklets": 115,
+          "pairwise_global_id_recall_all_mappable_tracklets": 0.043478260869565216
+        },
+        "pairwise_f1": 0.08064516129032258,
+        "eligible": false,
+        "group_quality": {
+          "counts": {
+            "unscored": 799,
+            "fully_scored_consistent": 105,
+            "mixed_gt_identities": 2,
+            "partially_scored": 29
+          },
+          "max_fully_scored_consistent_camera_coverage": 2,
+          "scope": "consistency_under_IoU_coverage_purity_mapping_protocol"
+        },
+        "prediction_file": "artifacts/reid-development/veri_prefix/development-grid/similarity-0.6_margin-0.06.json",
+        "prediction_sha256": "79ad9dcb3ca02fe4cf439722751382c97c1b7def570b6c4f5c9c748bb7b57843"
+      },
+      {
+        "variant": "veri_prefix",
+        "policy": {
+          "min_similarity": 0.7,
+          "margin": 0.03,
+          "max_gap_s": 45.0,
+          "max_camera_distance_m": 1500.0,
+          "overlap_distance_m": 150.0,
+          "max_speed_mps": 40.0,
+          "clock_tolerance_s": 2.0,
+          "position_tolerance_m": 100.0
+        },
+        "metrics": {
+          "status": "MEASURED",
+          "predicted_links": 157,
+          "evaluable_links": 6,
+          "correct_links": 5,
+          "incorrect_links": 1,
+          "unscored_links": 151,
+          "link_precision_on_evaluable_links": 0.8333333333333334,
+          "link_evaluation_coverage": 0.03821656050955414,
+          "all_link_precision_lower_bound": 0.03184713375796178,
+          "all_link_precision_upper_bound": 0.9936305732484076,
+          "labeled_assigned_tracklets": 142,
+          "predicted_cross_camera_pairs_on_labeled_tracklets": 9,
+          "true_cross_camera_pairs_on_labeled_tracklets": 115,
+          "correct_cross_camera_pairs": 6,
+          "pairwise_global_id_precision": 0.6666666666666666,
+          "pairwise_global_id_recall": 0.05217391304347826,
+          "true_cross_camera_pairs_on_all_mappable_tracklets": 115,
+          "pairwise_global_id_recall_all_mappable_tracklets": 0.05217391304347826
+        },
+        "pairwise_f1": 0.09677419354838708,
+        "eligible": false,
+        "group_quality": {
+          "counts": {
+            "unscored": 771,
+            "fully_scored_consistent": 103,
+            "partially_scored": 28,
+            "mixed_gt_identities": 3
+          },
+          "max_fully_scored_consistent_camera_coverage": 3,
+          "scope": "consistency_under_IoU_coverage_purity_mapping_protocol"
+        },
+        "prediction_file": "artifacts/reid-development/veri_prefix/development-grid/similarity-0.7_margin-0.03.json",
+        "prediction_sha256": "789c5dd41e4736dfa14b1428a37e5f03035b6965e4d281bdcd9b5e90cdee3d4b"
+      },
+      {
+        "variant": "veri_prefix",
+        "policy": {
+          "min_similarity": 0.7,
+          "margin": 0.06,
+          "max_gap_s": 45.0,
+          "max_camera_distance_m": 1500.0,
+          "overlap_distance_m": 150.0,
+          "max_speed_mps": 40.0,
+          "clock_tolerance_s": 2.0,
+          "position_tolerance_m": 100.0
+        },
+        "metrics": {
+          "status": "MEASURED",
+          "predicted_links": 79,
+          "evaluable_links": 5,
+          "correct_links": 4,
+          "incorrect_links": 1,
+          "unscored_links": 74,
+          "link_precision_on_evaluable_links": 0.8,
+          "link_evaluation_coverage": 0.06329113924050633,
+          "all_link_precision_lower_bound": 0.05063291139240506,
+          "all_link_precision_upper_bound": 0.9873417721518988,
+          "labeled_assigned_tracklets": 142,
+          "predicted_cross_camera_pairs_on_labeled_tracklets": 6,
+          "true_cross_camera_pairs_on_labeled_tracklets": 115,
+          "correct_cross_camera_pairs": 5,
+          "pairwise_global_id_precision": 0.8333333333333334,
+          "pairwise_global_id_recall": 0.043478260869565216,
+          "true_cross_camera_pairs_on_all_mappable_tracklets": 115,
+          "pairwise_global_id_recall_all_mappable_tracklets": 0.043478260869565216
+        },
+        "pairwise_f1": 0.08264462809917356,
+        "eligible": false,
+        "group_quality": {
+          "counts": {
+            "unscored": 846,
+            "fully_scored_consistent": 123,
+            "partially_scored": 13,
+            "mixed_gt_identities": 1
+          },
+          "max_fully_scored_consistent_camera_coverage": 3,
+          "scope": "consistency_under_IoU_coverage_purity_mapping_protocol"
+        },
+        "prediction_file": "artifacts/reid-development/veri_prefix/development-grid/similarity-0.7_margin-0.06.json",
+        "prediction_sha256": "bc7f71ee153ceb29cc76662ea81b9dfa4cf2dda94225f464921d06c33e6efdde"
+      },
+      {
+        "variant": "veri_prefix",
+        "policy": {
+          "min_similarity": 0.8,
+          "margin": 0.03,
+          "max_gap_s": 45.0,
+          "max_camera_distance_m": 1500.0,
+          "overlap_distance_m": 150.0,
+          "max_speed_mps": 40.0,
+          "clock_tolerance_s": 2.0,
+          "position_tolerance_m": 100.0
+        },
+        "metrics": {
+          "status": "MEASURED",
+          "predicted_links": 25,
+          "evaluable_links": 1,
+          "correct_links": 1,
+          "incorrect_links": 0,
+          "unscored_links": 24,
+          "link_precision_on_evaluable_links": 1.0,
+          "link_evaluation_coverage": 0.04,
+          "all_link_precision_lower_bound": 0.04,
+          "all_link_precision_upper_bound": 1.0,
+          "labeled_assigned_tracklets": 142,
+          "predicted_cross_camera_pairs_on_labeled_tracklets": 1,
+          "true_cross_camera_pairs_on_labeled_tracklets": 115,
+          "correct_cross_camera_pairs": 1,
+          "pairwise_global_id_precision": 1.0,
+          "pairwise_global_id_recall": 0.008695652173913044,
+          "true_cross_camera_pairs_on_all_mappable_tracklets": 115,
+          "pairwise_global_id_recall_all_mappable_tracklets": 0.008695652173913044
+        },
+        "pairwise_f1": 0.017241379310344827,
+        "eligible": false,
+        "group_quality": {
+          "counts": {
+            "unscored": 896,
+            "fully_scored_consistent": 139,
+            "partially_scored": 2
+          },
+          "max_fully_scored_consistent_camera_coverage": 2,
+          "scope": "consistency_under_IoU_coverage_purity_mapping_protocol"
+        },
+        "prediction_file": "artifacts/reid-development/veri_prefix/development-grid/similarity-0.8_margin-0.03.json",
+        "prediction_sha256": "21584d4c4f1e817f8e31bbd006d389b7594a14f4889823ab9e9a580abf622559"
+      },
+      {
+        "variant": "veri_prefix",
+        "policy": {
+          "min_similarity": 0.8,
+          "margin": 0.06,
+          "max_gap_s": 45.0,
+          "max_camera_distance_m": 1500.0,
+          "overlap_distance_m": 150.0,
+          "max_speed_mps": 40.0,
+          "clock_tolerance_s": 2.0,
+          "position_tolerance_m": 100.0
+        },
+        "metrics": {
+          "status": "MEASURED",
+          "predicted_links": 15,
+          "evaluable_links": 1,
+          "correct_links": 1,
+          "incorrect_links": 0,
+          "unscored_links": 14,
+          "link_precision_on_evaluable_links": 1.0,
+          "link_evaluation_coverage": 0.06666666666666667,
+          "all_link_precision_lower_bound": 0.06666666666666667,
+          "all_link_precision_upper_bound": 1.0,
+          "labeled_assigned_tracklets": 142,
+          "predicted_cross_camera_pairs_on_labeled_tracklets": 1,
+          "true_cross_camera_pairs_on_labeled_tracklets": 115,
+          "correct_cross_camera_pairs": 1,
+          "pairwise_global_id_precision": 1.0,
+          "pairwise_global_id_recall": 0.008695652173913044,
+          "true_cross_camera_pairs_on_all_mappable_tracklets": 115,
+          "pairwise_global_id_recall_all_mappable_tracklets": 0.008695652173913044
+        },
+        "pairwise_f1": 0.017241379310344827,
+        "eligible": false,
+        "group_quality": {
+          "counts": {
+            "unscored": 906,
+            "fully_scored_consistent": 140,
+            "partially_scored": 1
+          },
+          "max_fully_scored_consistent_camera_coverage": 2,
+          "scope": "consistency_under_IoU_coverage_purity_mapping_protocol"
+        },
+        "prediction_file": "artifacts/reid-development/veri_prefix/development-grid/similarity-0.8_margin-0.06.json",
+        "prediction_sha256": "1c5bd1f79981da53d6bd4e18e73465bdebdcee1e68271f6180bd49f4226d6fbb"
+      },
+      {
+        "variant": "veri_prefix",
+        "policy": {
+          "min_similarity": 0.85,
+          "margin": 0.03,
+          "max_gap_s": 45.0,
+          "max_camera_distance_m": 1500.0,
+          "overlap_distance_m": 150.0,
+          "max_speed_mps": 40.0,
+          "clock_tolerance_s": 2.0,
+          "position_tolerance_m": 100.0
+        },
+        "metrics": {
+          "status": "MEASURED",
+          "predicted_links": 7,
+          "evaluable_links": 1,
+          "correct_links": 1,
+          "incorrect_links": 0,
+          "unscored_links": 6,
+          "link_precision_on_evaluable_links": 1.0,
+          "link_evaluation_coverage": 0.14285714285714285,
+          "all_link_precision_lower_bound": 0.14285714285714285,
+          "all_link_precision_upper_bound": 1.0,
+          "labeled_assigned_tracklets": 142,
+          "predicted_cross_camera_pairs_on_labeled_tracklets": 1,
+          "true_cross_camera_pairs_on_labeled_tracklets": 115,
+          "correct_cross_camera_pairs": 1,
+          "pairwise_global_id_precision": 1.0,
+          "pairwise_global_id_recall": 0.008695652173913044,
+          "true_cross_camera_pairs_on_all_mappable_tracklets": 115,
+          "pairwise_global_id_recall_all_mappable_tracklets": 0.008695652173913044
+        },
+        "pairwise_f1": 0.017241379310344827,
+        "eligible": false,
+        "group_quality": {
+          "counts": {
+            "unscored": 914,
+            "fully_scored_consistent": 141
+          },
+          "max_fully_scored_consistent_camera_coverage": 2,
+          "scope": "consistency_under_IoU_coverage_purity_mapping_protocol"
+        },
+        "prediction_file": "artifacts/reid-development/veri_prefix/development-grid/similarity-0.85_margin-0.03.json",
+        "prediction_sha256": "a09229c9e3a211f80fd950a78396cea162ba526ad639e40460a51c0da4587e5c"
+      },
+      {
+        "variant": "veri_prefix",
+        "policy": {
+          "min_similarity": 0.85,
+          "margin": 0.06,
+          "max_gap_s": 45.0,
+          "max_camera_distance_m": 1500.0,
+          "overlap_distance_m": 150.0,
+          "max_speed_mps": 40.0,
+          "clock_tolerance_s": 2.0,
+          "position_tolerance_m": 100.0
+        },
+        "metrics": {
+          "status": "MEASURED",
+          "predicted_links": 6,
+          "evaluable_links": 1,
+          "correct_links": 1,
+          "incorrect_links": 0,
+          "unscored_links": 5,
+          "link_precision_on_evaluable_links": 1.0,
+          "link_evaluation_coverage": 0.16666666666666666,
+          "all_link_precision_lower_bound": 0.16666666666666666,
+          "all_link_precision_upper_bound": 1.0,
+          "labeled_assigned_tracklets": 142,
+          "predicted_cross_camera_pairs_on_labeled_tracklets": 1,
+          "true_cross_camera_pairs_on_labeled_tracklets": 115,
+          "correct_cross_camera_pairs": 1,
+          "pairwise_global_id_precision": 1.0,
+          "pairwise_global_id_recall": 0.008695652173913044,
+          "true_cross_camera_pairs_on_all_mappable_tracklets": 115,
+          "pairwise_global_id_recall_all_mappable_tracklets": 0.008695652173913044
+        },
+        "pairwise_f1": 0.017241379310344827,
+        "eligible": false,
+        "group_quality": {
+          "counts": {
+            "unscored": 915,
+            "fully_scored_consistent": 141
+          },
+          "max_fully_scored_consistent_camera_coverage": 2,
+          "scope": "consistency_under_IoU_coverage_purity_mapping_protocol"
+        },
+        "prediction_file": "artifacts/reid-development/veri_prefix/development-grid/similarity-0.85_margin-0.06.json",
+        "prediction_sha256": "a7ab47c0317ce4c89a27a2f7b9a99ec3bafcea9a300d1c1f7587fdc834de9c2b"
+      },
+      {
+        "variant": "veri_prefix",
+        "policy": {
+          "min_similarity": 0.9,
+          "margin": 0.03,
+          "max_gap_s": 45.0,
+          "max_camera_distance_m": 1500.0,
+          "overlap_distance_m": 150.0,
+          "max_speed_mps": 40.0,
+          "clock_tolerance_s": 2.0,
+          "position_tolerance_m": 100.0
+        },
+        "metrics": {
+          "status": "UNVERIFIED",
+          "predicted_links": 1,
+          "evaluable_links": 0,
+          "correct_links": 0,
+          "incorrect_links": 0,
+          "unscored_links": 1,
+          "link_precision_on_evaluable_links": null,
+          "link_evaluation_coverage": 0.0,
+          "all_link_precision_lower_bound": 0.0,
+          "all_link_precision_upper_bound": 1.0,
+          "labeled_assigned_tracklets": 142,
+          "predicted_cross_camera_pairs_on_labeled_tracklets": 0,
+          "true_cross_camera_pairs_on_labeled_tracklets": 115,
+          "correct_cross_camera_pairs": 0,
+          "pairwise_global_id_precision": null,
+          "pairwise_global_id_recall": 0.0,
+          "true_cross_camera_pairs_on_all_mappable_tracklets": 115,
+          "pairwise_global_id_recall_all_mappable_tracklets": 0.0
+        },
+        "pairwise_f1": 0.0,
+        "eligible": false,
+        "group_quality": {
+          "counts": {
+            "unscored": 919,
+            "fully_scored_consistent": 142
+          },
+          "max_fully_scored_consistent_camera_coverage": 1,
+          "scope": "consistency_under_IoU_coverage_purity_mapping_protocol"
+        },
+        "prediction_file": "artifacts/reid-development/veri_prefix/development-grid/similarity-0.9_margin-0.03.json",
+        "prediction_sha256": "40979380230006e472fee19a139765f467583f8b068810f974f3a1b904a51585"
+      },
+      {
+        "variant": "veri_prefix",
+        "policy": {
+          "min_similarity": 0.9,
+          "margin": 0.06,
+          "max_gap_s": 45.0,
+          "max_camera_distance_m": 1500.0,
+          "overlap_distance_m": 150.0,
+          "max_speed_mps": 40.0,
+          "clock_tolerance_s": 2.0,
+          "position_tolerance_m": 100.0
+        },
+        "metrics": {
+          "status": "UNVERIFIED",
+          "predicted_links": 1,
+          "evaluable_links": 0,
+          "correct_links": 0,
+          "incorrect_links": 0,
+          "unscored_links": 1,
+          "link_precision_on_evaluable_links": null,
+          "link_evaluation_coverage": 0.0,
+          "all_link_precision_lower_bound": 0.0,
+          "all_link_precision_upper_bound": 1.0,
+          "labeled_assigned_tracklets": 142,
+          "predicted_cross_camera_pairs_on_labeled_tracklets": 0,
+          "true_cross_camera_pairs_on_labeled_tracklets": 115,
+          "correct_cross_camera_pairs": 0,
+          "pairwise_global_id_precision": null,
+          "pairwise_global_id_recall": 0.0,
+          "true_cross_camera_pairs_on_all_mappable_tracklets": 115,
+          "pairwise_global_id_recall_all_mappable_tracklets": 0.0
+        },
+        "pairwise_f1": 0.0,
+        "eligible": false,
+        "group_quality": {
+          "counts": {
+            "unscored": 919,
+            "fully_scored_consistent": 142
+          },
+          "max_fully_scored_consistent_camera_coverage": 1,
+          "scope": "consistency_under_IoU_coverage_purity_mapping_protocol"
+        },
+        "prediction_file": "artifacts/reid-development/veri_prefix/development-grid/similarity-0.9_margin-0.06.json",
+        "prediction_sha256": "e6d91e03cb8a16f2aa077383883f157042c917c381ffe2ae64242c4fee340dd4"
+      }
+    ],
+    "protocol_sha256": "423c812fb8a2f8c3dbe954f37043c670d22e7ed4ce725dd8116f91c5c2a9ad1b"
+  },
+  "veri_quality": {
+    "initial": {
+      "scope": "S01_clock_selected_development_not_held_out",
+      "run_role": "development",
+      "scenario": "S01",
+      "window_start_s": 0.0,
+      "window_end_s": 180.0,
+      "baseline_tracklets": 1154,
+      "baseline_observations": 85489,
+      "mapping_counts": {
+        "unmatched": 784,
+        "ambiguous": 228,
+        "matched": 142
+      },
+      "gt_rows_in_window": 30090,
+      "gt_camera_visits": 364,
+      "recovered_gt_camera_visits": 100,
+      "gt_camera_visit_coverage": 0.27472527472527475,
+      "association": {
+        "status": "MEASURED",
+        "predicted_links": 8,
+        "evaluable_links": 2,
+        "correct_links": 2,
+        "incorrect_links": 0,
+        "unscored_links": 6,
+        "link_precision_on_evaluable_links": 1.0,
+        "link_evaluation_coverage": 0.25,
+        "all_link_precision_lower_bound": 0.25,
+        "all_link_precision_upper_bound": 1.0,
+        "labeled_assigned_tracklets": 102,
+        "predicted_cross_camera_pairs_on_labeled_tracklets": 2,
+        "true_cross_camera_pairs_on_labeled_tracklets": 57,
+        "correct_cross_camera_pairs": 2,
+        "pairwise_global_id_precision": 1.0,
+        "pairwise_global_id_recall": 0.03508771929824561,
+        "true_cross_camera_pairs_on_all_mappable_tracklets": 115,
+        "pairwise_global_id_recall_all_mappable_tracklets": 0.017391304347826087
+      },
+      "group_quality": {
+        "counts": {
+          "unscored": 219,
+          "fully_scored_consistent": 99,
+          "partially_scored": 1
+        },
+        "max_fully_scored_consistent_camera_coverage": 2,
+        "scope": "consistency_under_IoU_coverage_purity_mapping_protocol"
+      },
+      "appearance_retrieval": {
+        "queries_with_prior_cross_camera_positive": 40,
+        "queries_without_prior_positive": 62,
+        "rank1_correct": 11,
+        "rank1": 0.275,
+        "map": 0.3541423782277312,
+        "scope": "labeled_gallery_only_at_prefix_ready_time_no_topology_filter"
+      },
+      "max_predicted_camera_coverage": 3,
+      "global_ids": 319,
+      "model": {
+        "model": "fastreid_veri_sbs_r50_ibn",
+        "trained_for_vehicle_reid": true,
+        "description": "FastReID SBS ResNet-50-IBN trained on VeRi; no RoadEye CityFlow training",
+        "weights_sha256": "57fb9c17d88911ea64390bf5427f43511435e7f88f6eed9dbc969d4b611e53cd",
+        "weights_source": "https://github.com/JDAI-CV/fast-reid/releases/download/v0.1.1/veri_sbs_R50-ibn.pth",
+        "torch": "2.4.1+cpu",
+        "torchvision": "0.19.1+cpu",
+        "device": "cpu",
+        "dimensions": 2048,
+        "sampling": "first_K_quality_eligible_spaced_observations_within_bounded_prefix",
+        "quality_prefix": {
+          "max_wait_s": 3.0,
+          "min_interval_s": 0.5,
+          "min_side_px": 24,
+          "min_area_px": 2304,
+          "min_laplacian_variance": 20.0
+        },
+        "pooling": "mean_of_normalized_features_then_L2",
+        "transforms": "Compose(\n    Resize(size=(256, 256), interpolation=bicubic, max_size=None, antialias=True)\n    PILToTensor()\n)"
+      },
+      "gt_sha256": {
+        "c001": "618a8808b9520506adf660f7714707eec16df4ee35129043217f792e4c3d0599",
+        "c002": "6747328b2b0f43b440305ee7ff59ca773408e907a872875abbf91f92e7d3a6c3",
+        "c003": "92375f3b083a6a411969cbd641022550cdac13b4ef77bab87488a43877a8b453",
+        "c004": "439349fd5abb7aa4ca54aac2c582557b3fe4b7e504bc2fae18a107b58fb8c18a",
+        "c005": "1ffb8e2763c4bbaffe61ddfb9698420121421dba485d0132052333536da32c32"
+      },
+      "run_sha256": "1476c7dad17d3f2e26a9a58a9c9f1eaf2721d404e1d81d76665c81f9d8613aaa",
+      "evaluation_policy": {
+        "iou_threshold": 0.5,
+        "min_matched_observations": 3,
+        "min_observation_coverage": 0.5,
+        "min_identity_purity": 0.8
+      },
+      "limitations": [
+        "Development metrics may select parameters; they are not held-out results",
+        "initial policy before predeclared S01 grid",
+        "CityFlow labels are partial; unscored links are unknown, not incorrect",
+        "FastReID SBS ResNet-50-IBN trained on VeRi; no RoadEye CityFlow training",
+        "Baseline MTSC upstream causal behavior and training provenance are not independently audited",
+        "Approximate calibration proximity is not a verified road network"
+      ]
+    },
+    "grid": [
+      {
+        "variant": "veri_quality",
+        "policy": {
+          "min_similarity": 0.6,
+          "margin": 0.03,
+          "max_gap_s": 45.0,
+          "max_camera_distance_m": 1500.0,
+          "overlap_distance_m": 150.0,
+          "max_speed_mps": 40.0,
+          "clock_tolerance_s": 2.0,
+          "position_tolerance_m": 100.0
+        },
+        "metrics": {
+          "status": "MEASURED",
+          "predicted_links": 119,
+          "evaluable_links": 8,
+          "correct_links": 2,
+          "incorrect_links": 6,
+          "unscored_links": 111,
+          "link_precision_on_evaluable_links": 0.25,
+          "link_evaluation_coverage": 0.06722689075630252,
+          "all_link_precision_lower_bound": 0.01680672268907563,
+          "all_link_precision_upper_bound": 0.9495798319327731,
+          "labeled_assigned_tracklets": 102,
+          "predicted_cross_camera_pairs_on_labeled_tracklets": 12,
+          "true_cross_camera_pairs_on_labeled_tracklets": 57,
+          "correct_cross_camera_pairs": 4,
+          "pairwise_global_id_precision": 0.3333333333333333,
+          "pairwise_global_id_recall": 0.07017543859649122,
+          "true_cross_camera_pairs_on_all_mappable_tracklets": 115,
+          "pairwise_global_id_recall_all_mappable_tracklets": 0.034782608695652174
+        },
+        "pairwise_f1": 0.06299212598425197,
+        "eligible": false,
+        "group_quality": {
+          "counts": {
+            "unscored": 117,
+            "fully_scored_consistent": 57,
+            "mixed_gt_identities": 7,
+            "partially_scored": 27
+          },
+          "max_fully_scored_consistent_camera_coverage": 1,
+          "scope": "consistency_under_IoU_coverage_purity_mapping_protocol"
+        },
+        "prediction_file": "artifacts/reid-development/veri_quality/development-grid/similarity-0.6_margin-0.03.json",
+        "prediction_sha256": "1712258219085883a9eadbd529a38315d1338a577922bfa9322f670d51bd7279"
+      },
+      {
+        "variant": "veri_quality",
+        "policy": {
+          "min_similarity": 0.6,
+          "margin": 0.06,
+          "max_gap_s": 45.0,
+          "max_camera_distance_m": 1500.0,
+          "overlap_distance_m": 150.0,
+          "max_speed_mps": 40.0,
+          "clock_tolerance_s": 2.0,
+          "position_tolerance_m": 100.0
+        },
+        "metrics": {
+          "status": "MEASURED",
+          "predicted_links": 73,
+          "evaluable_links": 6,
+          "correct_links": 3,
+          "incorrect_links": 3,
+          "unscored_links": 67,
+          "link_precision_on_evaluable_links": 0.5,
+          "link_evaluation_coverage": 0.0821917808219178,
+          "all_link_precision_lower_bound": 0.0410958904109589,
+          "all_link_precision_upper_bound": 0.958904109589041,
+          "labeled_assigned_tracklets": 102,
+          "predicted_cross_camera_pairs_on_labeled_tracklets": 8,
+          "true_cross_camera_pairs_on_labeled_tracklets": 57,
+          "correct_cross_camera_pairs": 4,
+          "pairwise_global_id_precision": 0.5,
+          "pairwise_global_id_recall": 0.07017543859649122,
+          "true_cross_camera_pairs_on_all_mappable_tracklets": 115,
+          "pairwise_global_id_recall_all_mappable_tracklets": 0.034782608695652174
+        },
+        "pairwise_f1": 0.06504065040650406,
+        "eligible": false,
+        "group_quality": {
+          "counts": {
+            "unscored": 160,
+            "fully_scored_consistent": 74,
+            "partially_scored": 16,
+            "mixed_gt_identities": 4
+          },
+          "max_fully_scored_consistent_camera_coverage": 2,
+          "scope": "consistency_under_IoU_coverage_purity_mapping_protocol"
+        },
+        "prediction_file": "artifacts/reid-development/veri_quality/development-grid/similarity-0.6_margin-0.06.json",
+        "prediction_sha256": "ddf15a552dff4f26ee4e6790cfc50b929783aa129222169fe034ac9904740b8f"
+      },
+      {
+        "variant": "veri_quality",
+        "policy": {
+          "min_similarity": 0.7,
+          "margin": 0.03,
+          "max_gap_s": 45.0,
+          "max_camera_distance_m": 1500.0,
+          "overlap_distance_m": 150.0,
+          "max_speed_mps": 40.0,
+          "clock_tolerance_s": 2.0,
+          "position_tolerance_m": 100.0
+        },
+        "metrics": {
+          "status": "MEASURED",
+          "predicted_links": 59,
+          "evaluable_links": 3,
+          "correct_links": 3,
+          "incorrect_links": 0,
+          "unscored_links": 56,
+          "link_precision_on_evaluable_links": 1.0,
+          "link_evaluation_coverage": 0.05084745762711865,
+          "all_link_precision_lower_bound": 0.05084745762711865,
+          "all_link_precision_upper_bound": 1.0,
+          "labeled_assigned_tracklets": 102,
+          "predicted_cross_camera_pairs_on_labeled_tracklets": 5,
+          "true_cross_camera_pairs_on_labeled_tracklets": 57,
+          "correct_cross_camera_pairs": 4,
+          "pairwise_global_id_precision": 0.8,
+          "pairwise_global_id_recall": 0.07017543859649122,
+          "true_cross_camera_pairs_on_all_mappable_tracklets": 115,
+          "pairwise_global_id_recall_all_mappable_tracklets": 0.034782608695652174
+        },
+        "pairwise_f1": 0.06666666666666667,
+        "eligible": false,
+        "group_quality": {
+          "counts": {
+            "unscored": 171,
+            "fully_scored_consistent": 80,
+            "partially_scored": 16,
+            "mixed_gt_identities": 1
+          },
+          "max_fully_scored_consistent_camera_coverage": 2,
+          "scope": "consistency_under_IoU_coverage_purity_mapping_protocol"
+        },
+        "prediction_file": "artifacts/reid-development/veri_quality/development-grid/similarity-0.7_margin-0.03.json",
+        "prediction_sha256": "6342ece82c0e7524076882a94e6b7e72f36f96714b781a190bef788b798d4fb0"
+      },
+      {
+        "variant": "veri_quality",
+        "policy": {
+          "min_similarity": 0.7,
+          "margin": 0.06,
+          "max_gap_s": 45.0,
+          "max_camera_distance_m": 1500.0,
+          "overlap_distance_m": 150.0,
+          "max_speed_mps": 40.0,
+          "clock_tolerance_s": 2.0,
+          "position_tolerance_m": 100.0
+        },
+        "metrics": {
+          "status": "MEASURED",
+          "predicted_links": 41,
+          "evaluable_links": 3,
+          "correct_links": 3,
+          "incorrect_links": 0,
+          "unscored_links": 38,
+          "link_precision_on_evaluable_links": 1.0,
+          "link_evaluation_coverage": 0.07317073170731707,
+          "all_link_precision_lower_bound": 0.07317073170731707,
+          "all_link_precision_upper_bound": 1.0,
+          "labeled_assigned_tracklets": 102,
+          "predicted_cross_camera_pairs_on_labeled_tracklets": 4,
+          "true_cross_camera_pairs_on_labeled_tracklets": 57,
+          "correct_cross_camera_pairs": 4,
+          "pairwise_global_id_precision": 1.0,
+          "pairwise_global_id_recall": 0.07017543859649122,
+          "true_cross_camera_pairs_on_all_mappable_tracklets": 115,
+          "pairwise_global_id_recall_all_mappable_tracklets": 0.034782608695652174
+        },
+        "pairwise_f1": 0.06722689075630252,
+        "eligible": false,
+        "group_quality": {
+          "counts": {
+            "unscored": 188,
+            "fully_scored_consistent": 86,
+            "partially_scored": 12
+          },
+          "max_fully_scored_consistent_camera_coverage": 2,
+          "scope": "consistency_under_IoU_coverage_purity_mapping_protocol"
+        },
+        "prediction_file": "artifacts/reid-development/veri_quality/development-grid/similarity-0.7_margin-0.06.json",
+        "prediction_sha256": "c552176786f6c51b77f12e95e1328c55c486cd628815bd11c88c7f9af2eed57a"
+      },
+      {
+        "variant": "veri_quality",
+        "policy": {
+          "min_similarity": 0.8,
+          "margin": 0.03,
+          "max_gap_s": 45.0,
+          "max_camera_distance_m": 1500.0,
+          "overlap_distance_m": 150.0,
+          "max_speed_mps": 40.0,
+          "clock_tolerance_s": 2.0,
+          "position_tolerance_m": 100.0
+        },
+        "metrics": {
+          "status": "MEASURED",
+          "predicted_links": 17,
+          "evaluable_links": 2,
+          "correct_links": 2,
+          "incorrect_links": 0,
+          "unscored_links": 15,
+          "link_precision_on_evaluable_links": 1.0,
+          "link_evaluation_coverage": 0.11764705882352941,
+          "all_link_precision_lower_bound": 0.11764705882352941,
+          "all_link_precision_upper_bound": 1.0,
+          "labeled_assigned_tracklets": 102,
+          "predicted_cross_camera_pairs_on_labeled_tracklets": 3,
+          "true_cross_camera_pairs_on_labeled_tracklets": 57,
+          "correct_cross_camera_pairs": 3,
+          "pairwise_global_id_precision": 1.0,
+          "pairwise_global_id_recall": 0.05263157894736842,
+          "true_cross_camera_pairs_on_all_mappable_tracklets": 115,
+          "pairwise_global_id_recall_all_mappable_tracklets": 0.02608695652173913
+        },
+        "pairwise_f1": 0.05084745762711864,
+        "eligible": false,
+        "group_quality": {
+          "counts": {
+            "unscored": 211,
+            "fully_scored_consistent": 96,
+            "partially_scored": 3
+          },
+          "max_fully_scored_consistent_camera_coverage": 2,
+          "scope": "consistency_under_IoU_coverage_purity_mapping_protocol"
+        },
+        "prediction_file": "artifacts/reid-development/veri_quality/development-grid/similarity-0.8_margin-0.03.json",
+        "prediction_sha256": "f8cb873d916298938788ae098898288d4fecf4bd8bda79c5eb8dee9615e5f6d3"
+      },
+      {
+        "variant": "veri_quality",
+        "policy": {
+          "min_similarity": 0.8,
+          "margin": 0.06,
+          "max_gap_s": 45.0,
+          "max_camera_distance_m": 1500.0,
+          "overlap_distance_m": 150.0,
+          "max_speed_mps": 40.0,
+          "clock_tolerance_s": 2.0,
+          "position_tolerance_m": 100.0
+        },
+        "metrics": {
+          "status": "MEASURED",
+          "predicted_links": 15,
+          "evaluable_links": 2,
+          "correct_links": 2,
+          "incorrect_links": 0,
+          "unscored_links": 13,
+          "link_precision_on_evaluable_links": 1.0,
+          "link_evaluation_coverage": 0.13333333333333333,
+          "all_link_precision_lower_bound": 0.13333333333333333,
+          "all_link_precision_upper_bound": 1.0,
+          "labeled_assigned_tracklets": 102,
+          "predicted_cross_camera_pairs_on_labeled_tracklets": 3,
+          "true_cross_camera_pairs_on_labeled_tracklets": 57,
+          "correct_cross_camera_pairs": 3,
+          "pairwise_global_id_precision": 1.0,
+          "pairwise_global_id_recall": 0.05263157894736842,
+          "true_cross_camera_pairs_on_all_mappable_tracklets": 115,
+          "pairwise_global_id_recall_all_mappable_tracklets": 0.02608695652173913
+        },
+        "pairwise_f1": 0.05084745762711864,
+        "eligible": false,
+        "group_quality": {
+          "counts": {
+            "unscored": 213,
+            "fully_scored_consistent": 96,
+            "partially_scored": 3
+          },
+          "max_fully_scored_consistent_camera_coverage": 2,
+          "scope": "consistency_under_IoU_coverage_purity_mapping_protocol"
+        },
+        "prediction_file": "artifacts/reid-development/veri_quality/development-grid/similarity-0.8_margin-0.06.json",
+        "prediction_sha256": "e899fb4a6af64cd283613cc05b52562e48cac69e5e67c621a838856bd90220d2"
+      },
+      {
+        "variant": "veri_quality",
+        "policy": {
+          "min_similarity": 0.85,
+          "margin": 0.03,
+          "max_gap_s": 45.0,
+          "max_camera_distance_m": 1500.0,
+          "overlap_distance_m": 150.0,
+          "max_speed_mps": 40.0,
+          "clock_tolerance_s": 2.0,
+          "position_tolerance_m": 100.0
+        },
+        "metrics": {
+          "status": "MEASURED",
+          "predicted_links": 8,
+          "evaluable_links": 2,
+          "correct_links": 2,
+          "incorrect_links": 0,
+          "unscored_links": 6,
+          "link_precision_on_evaluable_links": 1.0,
+          "link_evaluation_coverage": 0.25,
+          "all_link_precision_lower_bound": 0.25,
+          "all_link_precision_upper_bound": 1.0,
+          "labeled_assigned_tracklets": 102,
+          "predicted_cross_camera_pairs_on_labeled_tracklets": 2,
+          "true_cross_camera_pairs_on_labeled_tracklets": 57,
+          "correct_cross_camera_pairs": 2,
+          "pairwise_global_id_precision": 1.0,
+          "pairwise_global_id_recall": 0.03508771929824561,
+          "true_cross_camera_pairs_on_all_mappable_tracklets": 115,
+          "pairwise_global_id_recall_all_mappable_tracklets": 0.017391304347826087
+        },
+        "pairwise_f1": 0.03418803418803419,
+        "eligible": false,
+        "group_quality": {
+          "counts": {
+            "unscored": 219,
+            "fully_scored_consistent": 99,
+            "partially_scored": 1
+          },
+          "max_fully_scored_consistent_camera_coverage": 2,
+          "scope": "consistency_under_IoU_coverage_purity_mapping_protocol"
+        },
+        "prediction_file": "artifacts/reid-development/veri_quality/development-grid/similarity-0.85_margin-0.03.json",
+        "prediction_sha256": "63f4a60a46fba4a12d440c78052fa5189c9c1b156656e6ef6068b4a832399a10"
+      },
+      {
+        "variant": "veri_quality",
+        "policy": {
+          "min_similarity": 0.85,
+          "margin": 0.06,
+          "max_gap_s": 45.0,
+          "max_camera_distance_m": 1500.0,
+          "overlap_distance_m": 150.0,
+          "max_speed_mps": 40.0,
+          "clock_tolerance_s": 2.0,
+          "position_tolerance_m": 100.0
+        },
+        "metrics": {
+          "status": "MEASURED",
+          "predicted_links": 7,
+          "evaluable_links": 2,
+          "correct_links": 2,
+          "incorrect_links": 0,
+          "unscored_links": 5,
+          "link_precision_on_evaluable_links": 1.0,
+          "link_evaluation_coverage": 0.2857142857142857,
+          "all_link_precision_lower_bound": 0.2857142857142857,
+          "all_link_precision_upper_bound": 1.0,
+          "labeled_assigned_tracklets": 102,
+          "predicted_cross_camera_pairs_on_labeled_tracklets": 2,
+          "true_cross_camera_pairs_on_labeled_tracklets": 57,
+          "correct_cross_camera_pairs": 2,
+          "pairwise_global_id_precision": 1.0,
+          "pairwise_global_id_recall": 0.03508771929824561,
+          "true_cross_camera_pairs_on_all_mappable_tracklets": 115,
+          "pairwise_global_id_recall_all_mappable_tracklets": 0.017391304347826087
+        },
+        "pairwise_f1": 0.03418803418803419,
+        "eligible": false,
+        "group_quality": {
+          "counts": {
+            "unscored": 220,
+            "fully_scored_consistent": 99,
+            "partially_scored": 1
+          },
+          "max_fully_scored_consistent_camera_coverage": 2,
+          "scope": "consistency_under_IoU_coverage_purity_mapping_protocol"
+        },
+        "prediction_file": "artifacts/reid-development/veri_quality/development-grid/similarity-0.85_margin-0.06.json",
+        "prediction_sha256": "83cdb4d96460d8c6a0ef8124a0995cc41c8f289d8ac723bfa2b93ea662f5a81a"
+      },
+      {
+        "variant": "veri_quality",
+        "policy": {
+          "min_similarity": 0.9,
+          "margin": 0.03,
+          "max_gap_s": 45.0,
+          "max_camera_distance_m": 1500.0,
+          "overlap_distance_m": 150.0,
+          "max_speed_mps": 40.0,
+          "clock_tolerance_s": 2.0,
+          "position_tolerance_m": 100.0
+        },
+        "metrics": {
+          "status": "UNVERIFIED",
+          "predicted_links": 0,
+          "evaluable_links": 0,
+          "correct_links": 0,
+          "incorrect_links": 0,
+          "unscored_links": 0,
+          "link_precision_on_evaluable_links": null,
+          "link_evaluation_coverage": null,
+          "all_link_precision_lower_bound": null,
+          "all_link_precision_upper_bound": null,
+          "labeled_assigned_tracklets": 102,
+          "predicted_cross_camera_pairs_on_labeled_tracklets": 0,
+          "true_cross_camera_pairs_on_labeled_tracklets": 57,
+          "correct_cross_camera_pairs": 0,
+          "pairwise_global_id_precision": null,
+          "pairwise_global_id_recall": 0.0,
+          "true_cross_camera_pairs_on_all_mappable_tracklets": 115,
+          "pairwise_global_id_recall_all_mappable_tracklets": 0.0
+        },
+        "pairwise_f1": 0.0,
+        "eligible": false,
+        "group_quality": {
+          "counts": {
+            "unscored": 225,
+            "fully_scored_consistent": 102
+          },
+          "max_fully_scored_consistent_camera_coverage": 1,
+          "scope": "consistency_under_IoU_coverage_purity_mapping_protocol"
+        },
+        "prediction_file": "artifacts/reid-development/veri_quality/development-grid/similarity-0.9_margin-0.03.json",
+        "prediction_sha256": "2c74ef12dc090f46a2ace35442d6ea827e40dac6c3ad696b0dd92b068e3af4c1"
+      },
+      {
+        "variant": "veri_quality",
+        "policy": {
+          "min_similarity": 0.9,
+          "margin": 0.06,
+          "max_gap_s": 45.0,
+          "max_camera_distance_m": 1500.0,
+          "overlap_distance_m": 150.0,
+          "max_speed_mps": 40.0,
+          "clock_tolerance_s": 2.0,
+          "position_tolerance_m": 100.0
+        },
+        "metrics": {
+          "status": "UNVERIFIED",
+          "predicted_links": 0,
+          "evaluable_links": 0,
+          "correct_links": 0,
+          "incorrect_links": 0,
+          "unscored_links": 0,
+          "link_precision_on_evaluable_links": null,
+          "link_evaluation_coverage": null,
+          "all_link_precision_lower_bound": null,
+          "all_link_precision_upper_bound": null,
+          "labeled_assigned_tracklets": 102,
+          "predicted_cross_camera_pairs_on_labeled_tracklets": 0,
+          "true_cross_camera_pairs_on_labeled_tracklets": 57,
+          "correct_cross_camera_pairs": 0,
+          "pairwise_global_id_precision": null,
+          "pairwise_global_id_recall": 0.0,
+          "true_cross_camera_pairs_on_all_mappable_tracklets": 115,
+          "pairwise_global_id_recall_all_mappable_tracklets": 0.0
+        },
+        "pairwise_f1": 0.0,
+        "eligible": false,
+        "group_quality": {
+          "counts": {
+            "unscored": 225,
+            "fully_scored_consistent": 102
+          },
+          "max_fully_scored_consistent_camera_coverage": 1,
+          "scope": "consistency_under_IoU_coverage_purity_mapping_protocol"
+        },
+        "prediction_file": "artifacts/reid-development/veri_quality/development-grid/similarity-0.9_margin-0.06.json",
+        "prediction_sha256": "8fab0835f1f0fb9b927fadaee5a3eae8b5c19e2910400065f47b070d5e6d327c"
+      }
+    ],
+    "protocol_sha256": "423c812fb8a2f8c3dbe954f37043c670d22e7ed4ce725dd8116f91c5c2a9ad1b"
+  }
+}

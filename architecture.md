@@ -42,3 +42,34 @@ GT access is isolated in `roadeye.evaluation`, run only after immutable predicti
 S04 is reserved for evaluation, while S01/S03 are reserved for later development. This run trains on no CityFlow data and does not tune thresholds on S04. Because the S04 window was chosen using GT coverage during feasibility, its measured results are a fixed-subset diagnostic rather than an unbiased held-out or official benchmark. Upstream baseline MTSC training provenance and causality have not been independently audited; RoadEye's own decision causality is tested.
 
 References: [official ResNet-50 weights and transforms](https://docs.pytorch.org/vision/stable/models/generated/torchvision.models.resnet50.html), the local CityFlow `ReadMe.txt`, and [AI City calibration/annotation FAQ](https://www.aicitychallenge.org/2022-faqs/).
+
+## Bounded vehicle Re-ID extension
+
+The optional `fastreid_veri_sbs_r50_ibn` encoder uses the published FastReID VeRi
+checkpoint through a CPU-only adapter with existing torch/torchvision. It preserves
+IBN, non-local blocks, GeM, BN neck, RGB 256x256 bicubic preprocessing and checkpoint
+normalization. Checkpoint and runtime-source hashes are recorded; an explicit
+upstream parity script checks the adaptation. Model loading never downloads.
+Source, license and modifications are recorded in `third_party/fastreid/NOTICE.md`.
+
+The optional quality prefix accepts the first three sufficiently large, detailed
+crops, at least 0.5 seconds apart, within three seconds of the first baseline
+observation. Each crop is judged when its own frame arrives. Readiness is the third
+accepted sample's timestamp; later clearer crops cannot revise a past descriptor.
+Incomplete prefixes remain excluded with reasons. Visit start time remains the
+first baseline observation, distinct from first accepted crop and identity readiness.
+
+All comparison runs explicitly declare development or evaluation role. S01 may
+select settings; S05 is frozen before scoring. No CityFlow training occurs. S05
+shares camera locations with inspected S04, so new-site or proven new-identity
+generalization is not claimed. Quality-filter selection uses a recall denominator
+including all GT-mappable baseline tracklets, so dropping hard crops does not
+automatically improve the selection objective. The existing association topology,
+temporal policy, ambiguity rejection, evidence format and independent IDs remain.
+
+S05 inspection also found nonpositive dimensions in two baseline source rows,
+one within the frozen window. The selected evaluation configuration explicitly
+enables `exclude_nonpositive_and_record`. Import retains source line, frame,
+box, timestamp and window membership in the prepared manifest. Raw files remain
+unchanged; other malformed/nonfinite data and unexpected hashes still fail.
+The default importer policy remains strict for earlier runs.

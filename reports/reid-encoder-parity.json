@@ -1,0 +1,21 @@
+{
+  "status": "PASS",
+  "device": "cpu",
+  "input_shape": [
+    2,
+    3,
+    256,
+    256
+  ],
+  "reference_revision": "c9bc3ceb2f7a6438b62fb515ea3df6d1e999e95d",
+  "reference_sha256": {
+    "fastreid/layers/batch_norm.py": "515bb53a8ec02400378a23212c5762e21f5c1f32557a694e7625d67d3e8bd6a8",
+    "fastreid/layers/non_local.py": "33996acb01cc781229dcc9d7acab6e9802a84b133dec96b81c5d1c21c47efe2e",
+    "fastreid/layers/pooling.py": "aa3dac4cf51bb40af21b8a8c2441336fc717bf2e772d3f7da196b707dd6bed49",
+    "fastreid/modeling/backbones/resnet.py": "fcf498a00dddbfdf04bd71b67eeaa5c1c4829785afb17f5b73ebc4d9fedeb26e"
+  },
+  "checkpoint_sha256": "57fb9c17d88911ea64390bf5427f43511435e7f88f6eed9dbc969d4b611e53cd",
+  "adapter_sha256": "e6cb0647fea5f19e6e0d93204c4028c37749eff4d932a9c3c188c22eae87aaf5",
+  "max_absolute_error": 0.0,
+  "scope": "raw descriptor parity against upstream backbone, IBN, non-local and GeM operations; synthetic input, not accuracy"
+}

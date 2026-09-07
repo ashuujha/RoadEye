@@ -5,9 +5,10 @@
 | 0–2 | Planning and feasibility protocol | Critical |
 | 2–10 | Python 3.11 setup; CityFlow and Indian downloads/audit; freeze feasible subsets; evidence report | **Critical gate** |
 | 10–18 | CityFlow import, CPU embeddings, association baseline, evaluator | Critical |
-| 18–24 | Crop selection, evidence timeline, map, replay | Critical |
-| 24–34 | Indian transcription/review, detector/OCR, preprocessing, evaluation | Critical |
-| 34–40 | Portable Colab export and bounded Re-ID improvement, if justified | Conditional |
+| 18–21 | User-approved Phase 2 continuation: bounded pretrained vehicle Re-ID comparison and frozen evaluation | Critical repair; 3-hour cap |
+| 21–27 | Crop selection, evidence timeline, map, replay | Critical |
+| 27–37 | Indian transcription/review, detector/OCR, preprocessing, evaluation | Critical |
+| 37–40 | Portable Colab export; fine-tuning only if separately justified and approved | Conditional |
 | 40–45 | Plate search, hybrid evidence, OD, density heat map, bottleneck proxies | Required |
 | 45–51 | Frozen evaluation, leakage checks, error analysis, CPU timing | Critical |
 | 51–56 | Integration repair, offline rehearsal, claims and evidence packaging | Critical |
@@ -19,3 +20,20 @@ Hard gates: verify actual CityFlow camera coverage and Indian transcription/test
 The user explicitly approved Phase 2 independently of the Indian OCR gate. The original Phase 2 smoke result did not constitute a valid evaluation; the repaired code now processes the full frozen S04 window, isolates GT, makes causal decisions, and emits measured diagnostic results. See `reports/phase2-audit.md` and `reports/phase2-metrics.json`.
 
 Foundation checks pass, but the six-camera predicted-journey goal is still unmet: the longest fully scored consistent group covers two cameras. Do not silently advance to hours 18–24 or spend the later fine-tuning allocation. Stop for the user's direction on a bounded Re-ID improvement checkpoint and fresh evaluation plan. All future phases retain the local audit/commit/explicit-clearance workflow in `agents.md`.
+
+## Approved Phase 2 continuation
+
+The user's subsequent **go** approves the recommended bounded Re-ID improvement
+checkpoint before frontend work. Pull three hours forward from the original
+34–40 conditional allocation; keep the total at 56 hands-on hours / 96 elapsed
+hours. The table above reflects this allocation, not a claim that all prior
+budgeted hours were consumed. No GPU fine-tuning is performed in this checkpoint.
+
+Compare the existing ImageNet encoder, an official VeRi-trained encoder, and a
+causal quality-filtered crop prefix on S01 only. Freeze first-180-second windows
+without identity labels. Select from the predeclared S01 parameter grid using
+minimum link evidence/precision and pairwise F1 whose recall denominator includes
+excluded mappable tracklets. Freeze configuration, source hashes and development
+results before one S05 evaluation. Preserve S04 results unchanged. Exact protocol:
+`configs/reid-experiment.json`. Stop with an audit and local commit; frontend,
+OCR, training and subsequent phases require another explicit go-ahead.

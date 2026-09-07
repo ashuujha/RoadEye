@@ -1,0 +1,33 @@
+{
+  "schema_version": 1,
+  "checkpoint": "user-approved bounded Phase 2 Re-ID improvement",
+  "development": {"partition": "train", "scenario": "S01", "start_s": 0.0, "end_s": 180.0},
+  "evaluation": {"partition": "validation", "scenario": "S05", "start_s": 0.0, "end_s": 180.0},
+  "window_selection": "first 180 scenario seconds, all cameras, chosen without opening identity annotations",
+  "cityflow_training": false,
+  "variants": ["imagenet_prefix", "veri_prefix", "veri_quality"],
+  "quality_prefix": {
+    "max_wait_s": 3.0,
+    "min_interval_s": 0.5,
+    "min_side_px": 24,
+    "min_area_px": 2304,
+    "min_laplacian_variance": 20.0
+  },
+  "development_similarity_grid": [0.6, 0.7, 0.8, 0.85, 0.9],
+  "development_margin_grid": [0.03, 0.06],
+  "selection": {
+    "minimum_evaluable_links": 10,
+    "minimum_link_precision": 0.8,
+    "objective": "maximum labeled pairwise global-ID F1 among eligible development runs; recall denominator includes all mappable baseline tracklets, including crop exclusions",
+    "tie_break": "higher evaluable link precision, then higher similarity threshold, then variant name",
+    "no_eligible_candidate": "retain original ImageNet prefix and association policy; report no qualified improvement"
+  },
+  "evaluation_rule": "freeze chosen config and development results before opening S05 GT; run one selected configuration; no S05 tuning",
+  "evaluation_input_repair": "explicitly exclude and record nonpositive baseline boxes; S05 metadata-only inspection found two source rows, one inside the fixed window; all other validation remains strict",
+  "limitations": [
+    "S01 development is small and may not transfer to S05",
+    "S05 shares cameras and location with previously inspected S04; novel-site or novel-identity generalization is not claimed",
+    "Partial identity labels limit evaluation coverage; unknown links are not verified correct",
+    "No fine-tuning or GPU dependency is introduced in this checkpoint"
+  ]
+}

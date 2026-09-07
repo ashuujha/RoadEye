@@ -104,6 +104,16 @@ def association_metrics(mapping: dict, assignments: dict, links: list[dict]) -> 
         predicted_pairs += same_prediction
         positive_pairs += same_truth
         correct_pairs += same_prediction and same_truth
+    all_truth_groups: dict = defaultdict(Counter)
+    for key in mapping:
+        label = identity(key)
+        if label is not None:
+            parts = key.split("/")
+            all_truth_groups[(tuple(parts[:2]), label)][parts[2]] += 1
+    all_positive_pairs = sum(
+        (sum(cameras.values()) ** 2 - sum(n * n for n in cameras.values())) // 2
+        for cameras in all_truth_groups.values()
+    )
     return {
         "status": "MEASURED" if correct + incorrect else "UNVERIFIED",
         "predicted_links": len(links),
@@ -121,6 +131,10 @@ def association_metrics(mapping: dict, assignments: dict, links: list[dict]) -> 
         "correct_cross_camera_pairs": correct_pairs,
         "pairwise_global_id_precision": ratio(correct_pairs, predicted_pairs),
         "pairwise_global_id_recall": ratio(correct_pairs, positive_pairs),
+        "true_cross_camera_pairs_on_all_mappable_tracklets": all_positive_pairs,
+        "pairwise_global_id_recall_all_mappable_tracklets": ratio(
+            correct_pairs, all_positive_pairs
+        ),
     }
 
 
@@ -194,8 +208,13 @@ def evaluate(output: Path, project: Path) -> dict:
             raise ValueError(f"Predictions changed: {name}")
     config = json.loads((output / "config.json").read_text())
     window = json.loads((output / "window.json").read_text())
-    if window["scenario"] in config["development_scenarios"]:
-        raise ValueError("Evaluation scenario was declared development")
+    role = config.get("run_role", "evaluation")
+    if role not in ("development", "evaluation"):
+        raise ValueError("Invalid evaluation run role")
+    if set(config["development_scenarios"]) & set(config["evaluation_scenarios"]):
+        raise ValueError("Development and evaluation scenarios overlap")
+    if window["scenario"] not in config[f"{role}_scenarios"]:
+        raise ValueError("Scoring scenario does not match declared run role")
     root = project / config["dataset_root"]
     truth: dict = defaultdict(list)
     gt_hashes = {}
@@ -230,6 +249,7 @@ def evaluate(output: Path, project: Path) -> dict:
     }
     metrics = {
         "scope": config["evaluation_scope"],
+        "run_role": role,
         "scenario": window["scenario"],
         "window_start_s": window["start_s"],
         "window_end_s": window["end_s"],
@@ -250,10 +270,15 @@ def evaluate(output: Path, project: Path) -> dict:
         "run_sha256": sha256(output / "run.json"),
         "evaluation_policy": config["evaluation"],
         "limitations": [
-            "S04 window was selected with labels at feasibility, not an unbiased held-out benchmark",
-            "No CityFlow training or threshold tuning in this run; S01/S03 reserved for development",
+            "Development metrics may select parameters; they are not held-out results"
+            if role == "development"
+            else config.get(
+                "split_limitation",
+                "S04 window was selected with labels at feasibility, not an unbiased held-out benchmark",
+            ),
+            config["threshold_selection"],
             "CityFlow labels are partial; unscored links are unknown, not incorrect",
-            "Generic ImageNet appearance model, not vehicle-specialized Re-ID",
+            prepared["model"]["description"],
             "Baseline MTSC upstream causal behavior and training provenance are not independently audited",
             "Approximate calibration proximity is not a verified road network",
         ],

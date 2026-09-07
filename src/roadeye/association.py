@@ -207,7 +207,9 @@ def associate(
             {
                 "tracklet_key": key,
                 "camera": metadata[key]["camera"],
-                "first_observed_s": metadata[key]["samples"][0]["time_s"],
+                "first_observed_s": metadata[key].get(
+                    "first_observed_s", metadata[key]["samples"][0]["time_s"]
+                ),
                 "identified_at_s": metadata[key]["ready_s"],
                 "last_observed_s": latest[key].time_s,
                 "reference_position": positions[metadata[key]["camera"]],

@@ -17,6 +17,7 @@ from .tracklets import (
     extract_crops,
     load_tracklets,
     sha256,
+    text_sha256,
     write_json,
 )
 
@@ -28,10 +29,28 @@ def configuration(path: Path) -> tuple[dict, dict]:
     window = json.loads((ROOT / config["window"]).read_text(encoding="utf-8"))
     if set(config["development_scenarios"]) & set(config["evaluation_scenarios"]):
         raise ValueError("Development and evaluation scenarios overlap")
-    if window["scenario"] not in config["evaluation_scenarios"]:
-        raise ValueError("Run window is not in declared evaluation partition")
+    role = config.get("run_role", "evaluation")
+    if role not in ("development", "evaluation"):
+        raise ValueError("Invalid run role")
+    if window["scenario"] not in config[f"{role}_scenarios"]:
+        raise ValueError(f"Run window is not in declared {role} partition")
     if config["cityflow_training"]:
         raise ValueError("Phase 2 fallback does not train on CityFlow")
+    if config.get("selection_manifest"):
+        frozen = json.loads((ROOT / config["selection_manifest"]).read_text())
+        checks = {
+            path: frozen["config_sha256"],
+            ROOT / config["window"]: frozen["evaluation_window_sha256"],
+            ROOT / "configs/reid-experiment.json": frozen["protocol_sha256"],
+            ROOT / "reports/reid-development.json": frozen["development_report_sha256"],
+            **{
+                ROOT / name: digest
+                for name, digest in frozen["runtime_source_sha256"].items()
+            },
+        }
+        for source, digest in checks.items():
+            if text_sha256(source) != digest:
+                raise ValueError(f"Frozen experiment changed: {source.name}")
     return config, window
 
 
@@ -39,7 +58,9 @@ def prepare(config_path: Path, output: Path) -> dict:
     config, window = configuration(config_path)
     output.mkdir(parents=True, exist_ok=True)
     root = ROOT / config["dataset_root"]
-    tracklets, sources = load_tracklets(root, window)
+    tracklets, sources = load_tracklets(
+        root, window, config.get("invalid_box_policy", "error")
+    )
     positions = camera_positions(root, window)
     weights = ROOT / config["embedding"]["weights"]
     signature = {
@@ -61,7 +82,12 @@ def prepare(config_path: Path, output: Path) -> dict:
         return manifest
     started = time.perf_counter()
     samples, failures = extract_crops(
-        root, window, tracklets, output, config["embedding"]["samples_per_tracklet"]
+        root,
+        window,
+        tracklets,
+        output,
+        config["embedding"]["samples_per_tracklet"],
+        config["embedding"].get("quality_prefix"),
     )
     crop_seconds = time.perf_counter() - started
     started = time.perf_counter()
@@ -77,6 +103,7 @@ def prepare(config_path: Path, output: Path) -> dict:
             "scenario": t.scenario,
             "camera": t.camera,
             "local_id": t.local_id,
+            "first_observed_s": t.observations[0].time_s,
             "ready_s": samples[t.key][-1]["time_s"],
             "samples": samples[t.key],
         }
@@ -123,6 +150,7 @@ def prepare(config_path: Path, output: Path) -> dict:
 def run(
     config_path: Path = ROOT / "configs/phase2.json",
     output: Path = ROOT / "artifacts/phase2-repaired",
+    verify_only: bool = False,
 ) -> dict:
     from .tracklets import Observation
 
@@ -147,7 +175,11 @@ def run(
     )
     seconds = time.perf_counter() - started
     for name, value in result.items():
-        write_json(output / f"{name}.json", value)
+        if verify_only:
+            if json.loads((output / f"{name}.json").read_text()) != value:
+                raise ValueError(f"Repeat predictions changed: {name}")
+        else:
+            write_json(output / f"{name}.json", value)
     summary = {
         "baseline_tracklets": manifest["baseline_tracklets"],
         "embedded_tracklets": manifest["embedded_tracklets"],
@@ -162,7 +194,8 @@ def run(
         "prediction_sha256": {name: sha256(output / f"{name}.json") for name in result},
         "evaluation_status": "not_evaluated_by_runtime",
     }
-    write_json(output / "run.json", summary)
+    if not verify_only:
+        write_json(output / "run.json", summary)
     print(json.dumps(summary, indent=2), flush=True)
     return summary
 
@@ -179,7 +212,9 @@ def main() -> None:
     args = parser.parse_args()
     if args.action == "fetch-weights":
         config, _ = configuration(args.config)
-        download_weights(ROOT / config["embedding"]["weights"])
+        download_weights(
+            ROOT / config["embedding"]["weights"], config["embedding"]["kind"]
+        )
     elif args.action == "prepare":
         print(json.dumps(prepare(args.config, args.output), indent=2))
     else:

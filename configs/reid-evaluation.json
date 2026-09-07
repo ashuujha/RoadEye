@@ -1,0 +1,42 @@
+{
+  "schema_version": 2,
+  "dataset_root": "data/cityflow",
+  "window": "configs/reid-evaluation-window.json",
+  "evaluation_scope": "S05_clock_selected_evaluation_after_S01_development",
+  "development_scenarios": [
+    "S01"
+  ],
+  "evaluation_scenarios": [
+    "S04",
+    "S05"
+  ],
+  "cityflow_training": false,
+  "threshold_selection": "predeclared S01 development grid; frozen before S05 scoring",
+  "embedding": {
+    "kind": "resnet50_imagenet1k_v2",
+    "weights": "artifacts/models/resnet50-11ad3fa6.pth",
+    "samples_per_tracklet": 3,
+    "batch_size": 16,
+    "cpu_threads": 4
+  },
+  "association": {
+    "min_similarity": 0.85,
+    "margin": 0.03,
+    "max_gap_s": 45.0,
+    "max_camera_distance_m": 1500.0,
+    "overlap_distance_m": 150.0,
+    "max_speed_mps": 40.0,
+    "clock_tolerance_s": 2.0,
+    "position_tolerance_m": 100.0
+  },
+  "evaluation": {
+    "iou_threshold": 0.5,
+    "min_matched_observations": 3,
+    "min_observation_coverage": 0.5,
+    "min_identity_purity": 0.8
+  },
+  "run_role": "evaluation",
+  "split_limitation": "S05 shares locations/cameras with previously inspected S04; no novel-site or verified novel-identity generalization claim",
+  "selection_manifest": "reports/reid-selection.json",
+  "invalid_box_policy": "exclude_nonpositive_and_record"
+}
