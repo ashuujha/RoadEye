@@ -1,0 +1,11 @@
+numpy==1.26.4
+opencv-python-headless==4.10.0.84
+torch==2.4.1
+torchvision==0.19.1
+ultralytics==8.3.0
+easyocr==1.7.2
+fastapi==0.115.0
+uvicorn==0.30.6
+pytest==8.3.3
+ruff==0.6.9
+
