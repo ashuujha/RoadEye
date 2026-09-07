@@ -1,0 +1,18 @@
+{
+  "status": "MEASURED",
+  "run_role": "evaluation",
+  "scope": "optimistic pair-level opportunities in labeled gallery; ignores group consistency and unlabeled distractors; not end-to-end accuracy",
+  "counts": {
+    "queries_with_prior_cross_camera_positive": 297,
+    "queries_with_pair_level_admissible_positive": 281,
+    "correct_rank1_within_labeled_admissible_gallery": 31,
+    "queries_with_admissible_positive_above_similarity_threshold": 3,
+    "queries_losing_all_positives_to_pair_level_gates": 16
+  },
+  "rejected_positive_pairs_by_reason": {
+    "implausible_travel_time": 21,
+    "stale_observation": 131
+  },
+  "mapping_sha256": "7763ff71bfe29f54e05f7ef479514b26e356b4de725847cb8bb714834983e69b",
+  "run_sha256": "5d5f6e41bc0be0fabdc14f15569586c67e35c2f220d81d3ae88ffdb3ddac760c"
+}

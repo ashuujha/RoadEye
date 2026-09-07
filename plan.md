@@ -37,3 +37,16 @@ excluded mappable tracklets. Freeze configuration, source hashes and development
 results before one S05 evaluation. Preserve S04 results unchanged. Exact protocol:
 `configs/reid-experiment.json`. Stop with an audit and local commit; frontend,
 OCR, training and subsequent phases require another explicit go-ahead.
+
+### Hours 18–21 outcome
+
+The VeRi encoder passed exact CPU adapter parity and improved S01 labelled-gallery
+retrieval, but none of 30 predeclared development configurations met the minimum
+evidence/precision gate. The frozen fallback therefore retained the original
+ImageNet model and thresholds for one S05 evaluation. S05 measured 2/4 correct
+evaluable links, 2/647 pairwise recall, and a longest fully scored consistent
+journey of two cameras. The six-camera demo target remains failed even though ten
+S05 identities are mappable across at least six cameras. See
+`reports/reid-audit.md`. Do not silently tune on consumed S05 or start the next
+phase; wait for the user's decision between training-only fine-tuning and the
+frontend phase with the current limitation.

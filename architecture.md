@@ -73,3 +73,11 @@ enables `exclude_nonpositive_and_record`. Import retains source line, frame,
 box, timestamp and window membership in the prepared manifest. Raw files remain
 unchanged; other malformed/nonfinite data and unexpected hashes still fail.
 The default importer policy remains strict for earlier runs.
+
+The S01 selection gate rejected all vehicle-encoder candidates; the frozen S05
+run therefore uses the existing ImageNet fallback and original thresholds. Its
+two-camera verified maximum leaves appearance discrimination and score calibration
+as the binding architecture problem. A future training iteration may use only
+S01/S03 training labels in a portable GPU job; labels stay outside runtime and
+the resulting CPU-loaded artifact must carry data split, code, weight and metric
+provenance. S05 is now consumed and cannot become a fresh test through retuning.

@@ -39,3 +39,11 @@ accuracy result. Pairwise recall over all mappable baseline tracks accompanies
 recall conditional on successfully embedded tracks. A six-camera prediction is
 not a verified journey unless every member is scored consistently against the
 released labels under the documented matching protocol.
+
+The frozen S05 evaluation did not meet the core journey criterion. It measured
+2/4 correct evaluable links, 2/647 pairwise recall, and a longest fully scored
+consistent journey of two cameras. The data/mapping contains ten identities
+across at least six cameras, so the shortfall is the current association system.
+The three-camera predicted maximum is not a verified success. These measured
+numbers replace any implication that the bounded pretrained-model experiment
+established a six-camera demo.

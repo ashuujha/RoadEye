@@ -1,0 +1,109 @@
+{
+  "scope": "S05_clock_selected_evaluation_after_S01_development",
+  "run_role": "evaluation",
+  "scenario": "S05",
+  "window_start_s": 0.0,
+  "window_end_s": 180.0,
+  "baseline_tracklets": 6609,
+  "baseline_observations": 570113,
+  "mapping_counts": {
+    "unmatched": 5672,
+    "ambiguous": 464,
+    "matched": 473
+  },
+  "gt_rows_in_window": 75532,
+  "gt_camera_visits": 802,
+  "recovered_gt_camera_visits": 442,
+  "gt_camera_visit_coverage": 0.5511221945137157,
+  "association": {
+    "status": "MEASURED",
+    "predicted_links": 147,
+    "evaluable_links": 4,
+    "correct_links": 2,
+    "incorrect_links": 2,
+    "unscored_links": 143,
+    "link_precision_on_evaluable_links": 0.5,
+    "link_evaluation_coverage": 0.027210884353741496,
+    "all_link_precision_lower_bound": 0.013605442176870748,
+    "all_link_precision_upper_bound": 0.9863945578231292,
+    "labeled_assigned_tracklets": 473,
+    "predicted_cross_camera_pairs_on_labeled_tracklets": 4,
+    "true_cross_camera_pairs_on_labeled_tracklets": 647,
+    "correct_cross_camera_pairs": 2,
+    "pairwise_global_id_precision": 0.5,
+    "pairwise_global_id_recall": 0.0030911901081916537,
+    "true_cross_camera_pairs_on_all_mappable_tracklets": 647,
+    "pairwise_global_id_recall_all_mappable_tracklets": 0.0030911901081916537
+  },
+  "group_quality": {
+    "counts": {
+      "unscored": 5285,
+      "fully_scored_consistent": 445,
+      "partially_scored": 22,
+      "mixed_gt_identities": 2
+    },
+    "max_fully_scored_consistent_camera_coverage": 2,
+    "scope": "consistency_under_IoU_coverage_purity_mapping_protocol"
+  },
+  "appearance_retrieval": {
+    "queries_with_prior_cross_camera_positive": 297,
+    "queries_without_prior_positive": 176,
+    "rank1_correct": 16,
+    "rank1": 0.05387205387205387,
+    "map": 0.06404463198556852,
+    "scope": "labeled_gallery_only_at_prefix_ready_time_no_topology_filter"
+  },
+  "max_predicted_camera_coverage": 3,
+  "global_ids": 5754,
+  "model": {
+    "model": "resnet50_imagenet1k_v2",
+    "trained_for_vehicle_reid": false,
+    "description": "ImageNet ResNet-50 generic appearance fallback; no CityFlow training",
+    "weights_sha256": "11ad3fa62ca79e40addfd354a8ec4b7c75143b3038b8d2a807fbc68deab379ca",
+    "weights_source": "https://download.pytorch.org/models/resnet50-11ad3fa6.pth",
+    "torch": "2.4.1+cpu",
+    "torchvision": "0.19.1+cpu",
+    "device": "cpu",
+    "dimensions": 2048,
+    "sampling": "first_K_observations_in_window; mean_of_normalized_prefix_features",
+    "quality_prefix": null,
+    "pooling": "mean_of_normalized_features_then_L2",
+    "transforms": "ImageClassification(\n    crop_size=[224]\n    resize_size=[232]\n    mean=[0.485, 0.456, 0.406]\n    std=[0.229, 0.224, 0.225]\n    interpolation=InterpolationMode.BILINEAR\n)"
+  },
+  "gt_sha256": {
+    "c010": "8f552b9649e7cbed2a3a7188d7e44009b77b0a9b726a9e6b41fc067e13376cb5",
+    "c016": "a6f1589be2b1e40dc932d5c800fd1fe8d36005e6a3ffe6fd28fbbfec146af1fc",
+    "c017": "043b7358d9dd9c2336e98f06b62703e139ffc3ffcd3f75faf7cad7c9ccfb8822",
+    "c018": "3d40cf56264807b23d27d88edcbeb163ee2d258ca1d1a8453919ecaf0f1e844f",
+    "c019": "21426829806d78418cee9f57f8c097e28571c7cd46c9a6f436cd8bdb02724819",
+    "c020": "a77cdeb6a509cf90d02132662eb3718a1623c394948150f1efaf8b31cd2c9516",
+    "c021": "35db9443aa90301335a52d2a28dfc85c9426b03b55cc6383ccc7b2f6d3619db0",
+    "c022": "6ddd751fd91666e2e7c1e4da9884ed54d2bf6e07fb556cdf4c49090a9b7bcedf",
+    "c023": "5d9544e4bd3495e0e0e0894007814d98583d6babfc2dd44b50f30df44f133571",
+    "c024": "b9e5bc21527a8327881621bf60149771db1402678b3486465fb39a192e5d5fe4",
+    "c025": "2febfe77ad622c8298fefa3d85fd9ffd03152ad8d7a4485077b4fc1f93ee68a3",
+    "c026": "d201718c8d0112641665d29964a1dce71f486c78b468b306ab64a7a2db4c30e5",
+    "c027": "57e56e99df0154d18b0f877ba24c2abc13ce9214296fc3a1d3da43f118eb3e2a",
+    "c028": "170537e4f7f1e8e314b637740acbb83921ae71de9ccc438b281f78749e14024c",
+    "c029": "6baff6817809fafff55f1ef21fc6504f32559f7a5f0ed8a6a689f185d3f0a4d0",
+    "c033": "c80bf0dbd071dff9f9b63bcd21db2f9f30696dd65d1577f581707021a5e5c215",
+    "c034": "dab811e28f0cd5ac25ec8832fdd9fe7f147f7359db06921b2071144aea944cf9",
+    "c035": "231cd69072e9dfa28ab6b33ab47753fd9e2332c88f35391d83392a7ab3f0f495",
+    "c036": "2822ae1ce08d52e2c2949591104feb59cb613eccb09ad6142782fe88537ff3d5"
+  },
+  "run_sha256": "5d5f6e41bc0be0fabdc14f15569586c67e35c2f220d81d3ae88ffdb3ddac760c",
+  "evaluation_policy": {
+    "iou_threshold": 0.5,
+    "min_matched_observations": 3,
+    "min_observation_coverage": 0.5,
+    "min_identity_purity": 0.8
+  },
+  "limitations": [
+    "S05 shares locations/cameras with previously inspected S04; no novel-site or verified novel-identity generalization claim",
+    "predeclared S01 development grid; frozen before S05 scoring",
+    "CityFlow labels are partial; unscored links are unknown, not incorrect",
+    "ImageNet ResNet-50 generic appearance fallback; no CityFlow training",
+    "Baseline MTSC upstream causal behavior and training provenance are not independently audited",
+    "Approximate calibration proximity is not a verified road network"
+  ]
+}
