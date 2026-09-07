@@ -118,3 +118,24 @@ def load_vehicle_encoder(path: Path) -> VehicleEncoder:
     if not torch.all(model.pixel_std > 0):
         raise ValueError("Invalid checkpoint normalization")
     return model.eval().requires_grad_(False)
+
+
+def load_roadeye_encoder(path: Path, expected_sha256: str) -> VehicleEncoder:
+    """Load a training-job export with an externally recorded exact checksum."""
+    from .tracklets import sha256
+
+    if len(expected_sha256) != 64 or sha256(path) != expected_sha256:
+        raise ValueError("RoadEye encoder checksum mismatch")
+    checkpoint = torch.load(path, map_location="cpu", weights_only=True)
+    if set(checkpoint) != {"format", "architecture", "state_dict"}:
+        raise ValueError("Unexpected RoadEye encoder payload")
+    if (
+        checkpoint["format"] != "roadeye_vehicle_encoder_v1"
+        or checkpoint["architecture"] != "fastreid_sbs_r50_ibn"
+    ):
+        raise ValueError("Unsupported RoadEye encoder format")
+    model = VehicleEncoder()
+    model.load_state_dict(checkpoint["state_dict"], strict=True)
+    if not torch.all(model.pixel_std > 0):
+        raise ValueError("Invalid RoadEye checkpoint normalization")
+    return model.eval().requires_grad_(False)

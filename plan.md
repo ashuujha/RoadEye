@@ -5,48 +5,30 @@
 | 0–2 | Planning and feasibility protocol | Critical |
 | 2–10 | Python 3.11 setup; CityFlow and Indian downloads/audit; freeze feasible subsets; evidence report | **Critical gate** |
 | 10–18 | CityFlow import, CPU embeddings, association baseline, evaluator | Critical |
-| 18–21 | User-approved Phase 2 continuation: bounded pretrained vehicle Re-ID comparison and frozen evaluation | Critical repair; 3-hour cap |
-| 21–27 | Crop selection, evidence timeline, map, replay | Critical |
-| 27–37 | Indian transcription/review, detector/OCR, preprocessing, evaluation | Critical |
-| 37–40 | Portable Colab export; fine-tuning only if separately justified and approved | Conditional |
-| 40–45 | Plate search, hybrid evidence, OD, density heat map, bottleneck proxies | Required |
-| 45–51 | Frozen evaluation, leakage checks, error analysis, CPU timing | Critical |
-| 51–56 | Integration repair, offline rehearsal, claims and evidence packaging | Critical |
+| 18–21 | Bounded pretrained vehicle Re-ID comparison and frozen evaluation | Critical repair; completed |
+| 21–24 | Private S01/S03 training bundle, portable Colab job, and CPU artifact contract | Critical repair; approved checkpoint |
+| 24–30 | Crop selection, evidence timeline, map, and replay | Critical |
+| 30–40 | Indian transcription/review, detector/OCR, preprocessing, and evaluation | Critical |
+| 40–45 | Plate search, hybrid evidence, OD, density heat map, and bottleneck proxies | Required |
+| 45–51 | Frozen evaluation, leakage checks, error analysis, and CPU timing | Critical |
+| 51–56 | Integration repair, offline rehearsal, claims, and evidence packaging | Critical |
 
-Hard gates: verify actual CityFlow camera coverage and Indian transcription/test capacity before implementation; stop for user direction on either failure. Never use ground truth at runtime or fabricate journeys. Allow up to 1 hour for Roboflow/IEEE checks, 6 hours for transcription review, and 3 hours for portable setup. Cut extra model variants, supplementary datasets, further tuning, and presentation polish first. Never cut evaluation, provenance, uncertainty, or CPU rehearsal.
+Hard gates remain unchanged: verify actual CityFlow camera coverage and Indian transcription/test capacity before implementation; never use ground truth at runtime or fabricate journeys. Allow up to one hour for Roboflow/IEEE checks and six hours for transcription review. Cut extra model variants, supplementary datasets, further tuning, and presentation polish first. Never cut evaluation, provenance, uncertainty, or CPU rehearsal.
 
-## Current checkpoint — Phase 2 repair
+## Completed Phase 2 repair, hours 10–18
 
-The user explicitly approved Phase 2 independently of the Indian OCR gate. The original Phase 2 smoke result did not constitute a valid evaluation; the repaired code now processes the full frozen S04 window, isolates GT, makes causal decisions, and emits measured diagnostic results. See `reports/phase2-audit.md` and `reports/phase2-metrics.json`.
+The repaired command processes the full frozen S04 window, isolates ground truth, makes causal decisions, and emits measured diagnostic results. The S04 window was selected with identity coverage during feasibility and is a diagnostic subset. See `reports/phase2-audit.md` and `reports/phase2-metrics.json`.
 
-Foundation checks pass, but the six-camera predicted-journey goal is still unmet: the longest fully scored consistent group covers two cameras. Do not silently advance to hours 18–24 or spend the later fine-tuning allocation. Stop for the user's direction on a bounded Re-ID improvement checkpoint and fresh evaluation plan. All future phases retain the local audit/commit/explicit-clearance workflow in `agents.md`.
+## Completed bounded Re-ID comparison, hours 18–21
 
-## Approved Phase 2 continuation
+The VeRi encoder passed exact CPU adapter parity and improved S01 labelled-gallery retrieval, but none of 30 predeclared development configurations met the minimum evidence/precision gate. The frozen fallback retained the original ImageNet model and thresholds for one S05 evaluation. S05 measured 2/4 correct evaluable links, 2/647 pairwise recall, and a longest fully scored consistent journey of two cameras. Ten S05 identities are mappable across at least six cameras, so the current system does not meet the six-camera criterion. S05 is consumed and cannot become a fresh test through retuning. See `reports/reid-audit.md`.
 
-The user's subsequent **go** approves the recommended bounded Re-ID improvement
-checkpoint before frontend work. Pull three hours forward from the original
-34–40 conditional allocation; keep the total at 56 hands-on hours / 96 elapsed
-hours. The table above reflects this allocation, not a claim that all prior
-budgeted hours were consumed. No GPU fine-tuning is performed in this checkpoint.
+## Approved training-only checkpoint, hours 21–24
 
-Compare the existing ImageNet encoder, an official VeRi-trained encoder, and a
-causal quality-filtered crop prefix on S01 only. Freeze first-180-second windows
-without identity labels. Select from the predeclared S01 parameter grid using
-minimum link evidence/precision and pairwise F1 whose recall denominator includes
-excluded mappable tracklets. Freeze configuration, source hashes and development
-results before one S05 evaluation. Preserve S04 results unchanged. Exact protocol:
-`configs/reid-experiment.json`. Stop with an audit and local commit; frontend,
-OCR, training and subsequent phases require another explicit go-ahead.
+Move the three-hour portable setup allocation ahead of frontend work without changing the 56-hour total. Build a private, derived crop bundle from training scenarios S01/S03 only. Split by scoped identity before crop extraction, use no S02/S04/S05 labels, and select the best epoch using development identity-camera pooled cross-camera mAP, with rank-1 and earlier epoch as tie-breakers. Record the unfine-tuned epoch-zero baseline so a trained result cannot be called an improvement without evidence. Preserve validation scenario S02 for one separately approved frozen evaluation after model selection.
 
-### Hours 18–21 outcome
+The portable job uses the official exact-hash VeRi checkpoint for initialization, cross-entropy plus batch-hard triplet loss, and a CUDA runtime only for training. It exports a versioned exact-hash encoder that the existing demo loads on CPU. The local bundle/job construction and export/import contract are part of this checkpoint. Training metrics and the returned trained artifact remain **UNVERIFIED** until the user privately runs the Colab notebook and returns its result ZIP. No frontend, OCR, analytics, or additional evaluation begins before the checkpoint audit and explicit clearance.
 
-The VeRi encoder passed exact CPU adapter parity and improved S01 labelled-gallery
-retrieval, but none of 30 predeclared development configurations met the minimum
-evidence/precision gate. The frozen fallback therefore retained the original
-ImageNet model and thresholds for one S05 evaluation. S05 measured 2/4 correct
-evaluable links, 2/647 pairwise recall, and a longest fully scored consistent
-journey of two cameras. The six-camera demo target remains failed even though ten
-S05 identities are mappable across at least six cameras. See
-`reports/reid-audit.md`. Do not silently tune on consumed S05 or start the next
-phase; wait for the user's decision between training-only fine-tuning and the
-frontend phase with the current limitation.
+### Hours 21–24 measured construction result
+
+The private ignored bundle contains 2,900 real S01/S03 crops across 11 cameras and 113 multi-camera identities: 2,318 crops/90 identities for training and 582 crops/23 identities for development, with zero identity overlap and zero crop exclusions. Archive integrity and every crop hash passed. The code-only Colab archive contains no data, weights, or credentials and passed its internal source-hash verification. A real 2048-dimensional encoder export reloaded on local CPU with exact tensor equality and zero maximum difference. These are construction and portability checks, not Re-ID accuracy results.

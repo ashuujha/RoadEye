@@ -24,3 +24,13 @@ Use Python 3.11, typed module boundaries, pathlib, small functions, structured l
 Layout: `src/roadeye/` future modules; `scripts/` inspection and later portable jobs; `configs/`; `tests/`; ignored `data/` and `artifacts/`; `reports/`; `test_frontend/`.
 
 Environment: `py -3.11 -m venv .venv`; use `.venv\\Scripts\\python.exe`; install `requirements-cpu.txt` then editable package. Future commands (`audit`, `prepare`, `evaluate`, `serve`) are not claims that those modules exist. No module is done without provenance, meaningful tests, failure handling, and CPU/offline rehearsal.
+
+The approved training-only Re-ID job is built with
+`.venv\\Scripts\\python.exe scripts/build_reid_training_bundle.py` and
+`.venv\\Scripts\\python.exe scripts/package_reid_colab_job.py`. Its two ZIP files
+under `artifacts/reid-training/` are private ignored artifacts; never commit or
+redistribute the CityFlow-derived data bundle. Run
+`notebooks/roadeye_reid_colab.ipynb` only in a private GPU runtime. A returned
+model is not accepted until its manifest/hash, development history, and local
+CPU loading are verified. Never copy S01/S03 identities or associations into a
+runtime config or demo artifact.

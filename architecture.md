@@ -81,3 +81,35 @@ as the binding architecture problem. A future training iteration may use only
 S01/S03 training labels in a portable GPU job; labels stay outside runtime and
 the resulting CPU-loaded artifact must carry data split, code, weight and metric
 provenance. S05 is now consumed and cannot become a fresh test through retuning.
+
+## Training-only Re-ID repair
+
+The portable training boundary reads released identities only from CityFlow
+training scenarios S01/S03. A deterministic scenario-stratified split assigns
+whole scoped identities to training or development before crops are written.
+The actual private bundle has 2,318 crops from 90 training identities and 582
+crops from 23 development identities, with no identity overlap. Every identity
+retains evidence from at least two cameras. S02, S04, and S05 are excluded by config
+and by bundle-builder validation.
+
+The training job initializes the exact-hash official VeRi encoder and optimizes
+cross-entropy plus batch-hard triplet loss. Each identity-balanced batch draws
+positive examples across cameras. Development evaluation pools observations per
+identity/camera, then measures rank-1 and mean average precision against other
+cameras. Epoch zero is evaluated before training; model selection uses mAP,
+rank-1, then the earlier epoch. Development labels never enter the exported
+runtime artifact.
+
+The data bundle is an ignored private derivative of the licensed dataset. The
+separate code archive contains no data, weights, or credentials and carries an
+internal source-hash manifest. The Colab notebook verifies that manifest,
+explicitly downloads the pinned initialization checkpoint, requires CUDA, and
+returns weights, history, and a provenance manifest. `load_roadeye_encoder`
+requires the returned weight's full SHA-256 and exact payload schema. Demo
+embedding remains CPU-only and performs no download. A real unfine-tuned export
+already passed exact local CPU reload parity; trained accuracy and trained-artifact
+CPU import remain unverified until the private job is run and returned.
+
+Validation scenario S02 remains untouched for one separately approved frozen
+evaluation after model selection. S04 and S05 are consumed diagnostics and may
+only receive clearly labelled post-hoc comparisons.

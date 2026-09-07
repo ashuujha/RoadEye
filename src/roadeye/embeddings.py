@@ -47,7 +47,10 @@ def embed(
     digest = sha256(weights)
     torch.set_num_threads(config["cpu_threads"])
     torch.manual_seed(0)
-    vehicle = config["kind"] == "fastreid_veri_sbs_r50_ibn"
+    vehicle = config["kind"] in {
+        "fastreid_veri_sbs_r50_ibn",
+        "roadeye_cityflow_reid_r50_ibn",
+    }
     if vehicle:
         from torchvision.transforms import (
             Compose,
@@ -56,9 +59,17 @@ def embed(
             Resize,
         )
 
-        from .vehicle_encoder import WEIGHTS_URL as source_url, load_vehicle_encoder
+        from .vehicle_encoder import (
+            WEIGHTS_URL as source_url,
+            load_roadeye_encoder,
+            load_vehicle_encoder,
+        )
 
-        model = load_vehicle_encoder(weights)
+        if config["kind"] == "roadeye_cityflow_reid_r50_ibn":
+            model = load_roadeye_encoder(weights, config["weights_sha256"])
+            source_url = config["weights_source"]
+        else:
+            model = load_vehicle_encoder(weights)
         transform = Compose(
             [Resize((256, 256), interpolation=InterpolationMode.BICUBIC), PILToTensor()]
         )
@@ -108,9 +119,13 @@ def embed(
     metadata = {
         "model": config["kind"],
         "trained_for_vehicle_reid": vehicle,
-        "description": "FastReID SBS ResNet-50-IBN trained on VeRi; no RoadEye CityFlow training"
-        if vehicle
-        else "ImageNet ResNet-50 generic appearance fallback; no CityFlow training",
+        "description": (
+            "RoadEye-format FastReID SBS ResNet-50-IBN artifact; verify its adjacent training manifest before use"
+            if config["kind"] == "roadeye_cityflow_reid_r50_ibn"
+            else "FastReID SBS ResNet-50-IBN trained on VeRi; no RoadEye CityFlow training"
+            if vehicle
+            else "ImageNet ResNet-50 generic appearance fallback; no CityFlow training"
+        ),
         "weights_sha256": digest,
         "weights_source": source_url,
         "torch": torch.__version__,

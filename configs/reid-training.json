@@ -1,0 +1,57 @@
+{
+  "schema_version": 1,
+  "purpose": "training_only_cityflow_identity_supervision_never_runtime_labels",
+  "dataset_root": "data/cityflow/AICity22_Track1_MTMC_Tracking",
+  "partition": "train",
+  "scenarios": ["S01", "S03"],
+  "allowed_evaluation_scenarios": ["S02", "S04", "S05"],
+  "identity_scope": "partition/scenario/gt_identity",
+  "split": {
+    "seed": 20260908,
+    "development_fraction_per_scenario": 0.2,
+    "unit": "scoped_identity",
+    "require_zero_identity_overlap": true
+  },
+  "crop_export": {
+    "samples_per_identity_camera": 6,
+    "min_clipped_side_px": 16,
+    "jpeg_quality": 95,
+    "selection": "deterministic_evenly_spaced_GT_observations_per_identity_camera"
+  },
+  "initialization": {
+    "kind": "fastreid_veri_sbs_r50_ibn",
+    "weights": "artifacts/models/veri_sbs_R50-ibn.pth",
+    "sha256": "57fb9c17d88911ea64390bf5427f43511435e7f88f6eed9dbc969d4b611e53cd"
+  },
+  "training": {
+    "seed": 20260908,
+    "epochs": 15,
+    "identities_per_batch": 8,
+    "instances_per_identity": 4,
+    "learning_rate": 0.0001,
+    "weight_decay": 0.0005,
+    "label_smoothing": 0.1,
+    "triplet_margin": 0.3,
+    "cross_entropy_weight": 1.0,
+    "triplet_weight": 1.0,
+    "num_workers": 2,
+    "input_size": [256, 256],
+    "device": "cuda"
+  },
+  "selection": {
+    "metric": "identity_camera_pooled_cross_camera_map",
+    "tie_break": "rank1_then_earlier_epoch",
+    "development_only": true
+  },
+  "export": {
+    "format": "roadeye_vehicle_encoder_v1",
+    "filename": "roadeye_cityflow_reid.pt",
+    "manifest": "roadeye_cityflow_reid.json"
+  },
+  "claims": [
+    "Training metrics are development results, not S05 or city-wide accuracy",
+    "S02 remains untouched for one separately approved frozen evaluation",
+    "S05 is consumed and may only be used for a disclosed post-hoc comparison",
+    "The exported encoder must be rehearsed on CPU before demo use"
+  ]
+}

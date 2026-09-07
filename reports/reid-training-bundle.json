@@ -1,0 +1,38 @@
+{
+  "status": "PASS",
+  "scope": "private_cityflow_train_S01_S03_reid_bundle_construction",
+  "not_an_accuracy_result": true,
+  "bundle_manifest_sha256": "ae5240cf4a0f7e1127774294b95674ddcfbcda13651e891a9c842c02429abaa0",
+  "data_archive": {
+    "filename": "roadeye-reid-training-data.zip",
+    "bytes": 103931049,
+    "sha256": "93515f851d662fbb54c2bc5c5791f9c4b23f99b1f607f7648f09d2d01977abe6",
+    "zip_test": "PASS",
+    "members": 2902
+  },
+  "records": 2900,
+  "train_records": 2318,
+  "development_records": 582,
+  "train_identities": 90,
+  "development_identities": 23,
+  "identity_overlap": 0,
+  "cameras": 11,
+  "identities_with_two_or_more_cameras": 113,
+  "excluded_crops": 0,
+  "records_by_scenario_split": {
+    "S01/development": 485,
+    "S01/train": 1948,
+    "S03/development": 97,
+    "S03/train": 370
+  },
+  "identities_by_scenario_split": {
+    "S01/development": 19,
+    "S01/train": 76,
+    "S03/development": 4,
+    "S03/train": 14
+  },
+  "source_scenarios": ["S01", "S03"],
+  "source_files_hashed": 24,
+  "every_record_and_crop_hash_verified": true,
+  "evaluation_scenarios_present": false
+}

@@ -1,0 +1,17 @@
+{
+  "status": "PASS",
+  "scope": "portable_code_only_colab_job_construction",
+  "archive": {
+    "filename": "roadeye-reid-colab-job.zip",
+    "bytes": 19608,
+    "sha256": "685a139f7581138707b8a03756a2c1af43a8157fe16cc87adb236fa7b6b32e89",
+    "zip_test": "PASS",
+    "members": 11,
+    "internal_source_hashes_valid": true
+  },
+  "contains_data": false,
+  "contains_weights": false,
+  "contains_credentials": false,
+  "training_executed": false,
+  "training_metrics_status": "UNVERIFIED"
+}

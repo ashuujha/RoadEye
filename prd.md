@@ -47,3 +47,14 @@ across at least six cameras, so the shortfall is the current association system.
 The three-camera predicted maximum is not a verified success. These measured
 numbers replace any implication that the bounded pretrained-model experiment
 established a six-camera demo.
+
+The approved training-only repair uses CityFlow training scenarios S01/S03 and
+an identity-disjoint development split. S02/S04/S05 identities, associations, and
+future observations are excluded from training and model selection. Development
+rank-1 and mAP are model-selection measurements only. A fine-tuned model may be
+called an improvement only if the recorded development result exceeds its
+epoch-zero baseline; neither result is city-wide or held-out test accuracy.
+The runtime receives only the exported encoder and its provenance manifest,
+never training identities or associations. Until the private GPU job runs and
+the returned artifact passes local CPU verification, fine-tuned performance is
+**UNVERIFIED**.
