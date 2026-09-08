@@ -1588,6 +1588,144 @@ textarea:focus-visible {
   font-size: 13px;
 }
 
+.trajectory-search-modes {
+  display: inline-flex;
+  gap: 6px;
+  margin-bottom: 14px;
+  padding: 4px;
+  background-color: var(--bg-panel);
+  border: 1px solid var(--border-subtle);
+  border-radius: 6px;
+}
+
+.trajectory-form {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.trajectory-search-row {
+  display: flex;
+  align-items: stretch;
+  gap: 10px;
+}
+
+.trajectory-search-input {
+  flex: 1;
+}
+
+.trajectory-result-layout {
+  display: grid;
+  grid-template-columns: minmax(260px, 340px) minmax(0, 1fr);
+  gap: 16px;
+  margin-top: 16px;
+  align-items: start;
+}
+
+.trajectory-search-results {
+  position: sticky;
+  top: 16px;
+}
+
+.trajectory-section-heading,
+.version-info {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.trajectory-candidate-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 12px;
+  max-height: 720px;
+  overflow-y: auto;
+}
+
+.trajectory-candidate {
+  display: grid;
+  grid-template-columns: 72px minmax(0, 1fr);
+  gap: 10px;
+  width: 100%;
+  padding: 8px;
+  color: var(--text-secondary);
+  text-align: left;
+  background: var(--bg-raised);
+  border: 1px solid var(--border-subtle);
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.trajectory-candidate:hover,
+.trajectory-candidate.active {
+  border-color: var(--accent-primary);
+  background: var(--bg-hover);
+}
+
+.trajectory-candidate img {
+  width: 72px;
+  height: 54px;
+  object-fit: cover;
+  border-radius: 3px;
+  background: #0d0e10;
+}
+
+.trajectory-candidate-copy {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 11px;
+}
+
+.trajectory-candidate-copy strong {
+  color: var(--text-primary);
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+
+.trajectory-candidate-copy small {
+  color: var(--text-muted);
+}
+
+.trajectory-journey-column {
+  min-width: 0;
+}
+
+.trajectory-map-disclosure,
+.trajectory-score-note {
+  margin-top: 10px;
+}
+
+.trajectory-sample {
+  display: grid;
+  grid-template-columns: 92px minmax(0, 1fr);
+  gap: 10px;
+  align-items: start;
+  margin-top: 5px;
+}
+
+.trajectory-sample img {
+  width: 92px;
+  height: 68px;
+  object-fit: cover;
+  border: 1px solid var(--border-subtle);
+  border-radius: 3px;
+  background: #0d0e10;
+}
+
+.trajectory-sample p {
+  margin: 0 0 5px;
+  overflow-wrap: anywhere;
+}
+
+.trajectory-evidence-link {
+  color: var(--accent-primary);
+  font-size: 11px;
+}
+
 /* --- 18. SYSTEM, HEALTH & RUNNER --- */
 .health-grid-cards {
   display: grid;
@@ -1686,6 +1824,12 @@ textarea:focus-visible {
   .trajectory-split {
     grid-template-columns: 1fr;
   }
+  .trajectory-result-layout {
+    grid-template-columns: 1fr;
+  }
+  .trajectory-search-results {
+    position: static;
+  }
 }
 
 @media (max-width: 1024px) {
@@ -1706,6 +1850,9 @@ textarea:focus-visible {
   .runner-controls-grid,
   .health-grid-cards {
     grid-template-columns: 1fr;
+  }
+  .trajectory-search-row {
+    flex-direction: column;
   }
 }
 

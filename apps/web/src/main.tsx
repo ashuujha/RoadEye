@@ -23,10 +23,6 @@ const queryClient = new QueryClient({
   },
 });
 
-async function pendingTrajectorySearch(): Promise<void> {
-  // TrajectoryView is remapped to the audited read-only client in step 6.4.
-}
-
 function App() {
   const [page, setPage] = useState<PageId>("Map");
   const [selectedObservationId, setSelectedObservationId] = useState<string | null>(null);
@@ -54,20 +50,7 @@ function App() {
         </div>
       )}
 
-      {page === "Trajectories" && (
-        <TrajectoryView
-          runId=""
-          start=""
-          end=""
-          cameras={emptyRecords}
-          graphEdges={emptyRecords}
-          journeyData={null}
-          onQueryTrajectory={pendingTrajectorySearch}
-          onSelectObservation={setSelectedObservationId}
-          busy={false}
-          message=""
-        />
-      )}
+      {page === "Trajectories" && <TrajectoryView />}
 
       {page === "Analytics" && <AnalyticsView runId="" />}
 
