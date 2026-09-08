@@ -2,6 +2,7 @@
 
 const state = {
   status: null,
+  analytics: null,
   vehicles: [],
   selectedId: null,
   journey: null,
@@ -27,6 +28,11 @@ const elements = {
   evidenceContent: document.querySelector("#evidence-content"),
   sampleTabs: document.querySelector("#sample-tabs"),
   vehicleTemplate: document.querySelector("#vehicle-template"),
+  analyticsNotice: document.querySelector("#analytics-notice"),
+  analyticsSummary: document.querySelector("#analytics-summary"),
+  densityTable: document.querySelector("#density-table"),
+  odTable: document.querySelector("#od-table"),
+  bottleneckTable: document.querySelector("#bottleneck-table"),
 };
 
 const map = L.map("map", { attributionControl: false, zoomControl: true });
@@ -64,18 +70,78 @@ function setError(message) {
 function drawCameras() {
   cameraLayer.clearLayers();
   const points = [];
+  const density = new Map(
+    (state.analytics?.camera_density || []).map((row) => [row.camera, row.observed_runtime_visit_count]),
+  );
+  const maximumDensity = Math.max(1, ...density.values());
   Object.entries(state.status.camera_positions).forEach(([camera, position]) => {
     const point = [position.latitude, position.longitude];
+    const observedVisits = density.get(camera) || 0;
     points.push(point);
     L.circleMarker(point, {
-      radius: 7,
+      radius: 6 + 12 * Math.sqrt(observedVisits / maximumDensity),
       color: "#6d91a8",
       weight: 2,
-      fillColor: "#0d1b29",
-      fillOpacity: 1,
-    }).bindTooltip(camera).addTo(cameraLayer);
+      fillColor: "#21c997",
+      fillOpacity: .25 + .65 * (observedVisits / maximumDensity),
+    }).bindTooltip(`${camera} Â· ${observedVisits} observed predicted visits`).addTo(cameraLayer);
   });
   if (points.length) map.fitBounds(points, { padding: [70, 70], maxZoom: 19 });
+}
+
+function metric(label, value) {
+  const card = document.createElement("div");
+  const number = document.createElement("strong");
+  number.textContent = String(value);
+  const caption = document.createElement("span");
+  caption.textContent = label;
+  card.append(number, caption);
+  return card;
+}
+
+function tableRows(root, rows, render) {
+  root.replaceChildren();
+  if (!rows.length) {
+    const empty = document.createElement("p");
+    empty.className = "muted";
+    empty.textContent = "No multi-camera prediction in this runtime.";
+    root.append(empty);
+    return;
+  }
+  rows.forEach((row) => {
+    const item = document.createElement("div");
+    const [label, value] = render(row);
+    const name = document.createElement("span");
+    name.textContent = label;
+    const count = document.createElement("strong");
+    count.textContent = value;
+    item.append(name, count);
+    root.append(item);
+  });
+}
+
+function renderAnalytics() {
+  const analytics = state.analytics;
+  const summary = analytics.summary;
+  elements.analyticsNotice.textContent = state.status.analytics_notice;
+  elements.analyticsSummary.replaceChildren(
+    metric("predicted IDs", summary.predicted_global_vehicle_ids),
+    metric("multi-camera", summary.multi_camera_predicted_vehicle_ids),
+    metric("observed visits", summary.observed_runtime_visits),
+    metric("predicted links", summary.predicted_transitions),
+  );
+  tableRows(elements.densityTable, analytics.camera_density, (row) => [
+    row.camera,
+    `${row.observed_runtime_visit_count} visits`,
+  ]);
+  tableRows(elements.odTable, analytics.origin_destination_pairs.slice(0, 8), (row) => [
+    `${row.origin_camera} â†’ ${row.destination_camera}`,
+    `${row.predicted_vehicle_count} IDs`,
+  ]);
+  tableRows(elements.bottleneckTable, analytics.bottleneck_proxies.slice(0, 8), (row) => [
+    `${row.from_camera} â†’ ${row.to_camera}`,
+    `${row.predicted_transition_count} links`,
+  ]);
 }
 
 async function loadVehicles() {
@@ -264,6 +330,7 @@ function replay() {
 async function start() {
   try {
     state.status = await getJson("/api/status");
+    state.analytics = await getJson("/api/analytics");
     elements.status.textContent = `${state.status.status} | ${state.status.runtime_artifact_integrity} integrity | ${state.status.predicted_link_count} predicted links`;
     elements.status.className = state.status.status === "UNVERIFIED"
       ? "status-chip unverified"
@@ -272,6 +339,7 @@ async function start() {
       elements.disclosure.textContent = state.status.disclosure;
       elements.disclosure.hidden = false;
     }
+    renderAnalytics();
     drawCameras();
     await loadVehicles();
     if (state.vehicles.length) await selectJourney(state.vehicles[0].global_id);

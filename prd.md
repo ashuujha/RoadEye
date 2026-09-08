@@ -73,8 +73,10 @@ The hours 27–33 local interface now renders all 35 frozen S02 multi-camera
 predictions, with crop selection, boxed source frames, approximate camera points,
 chronological replay, and 37 link-evidence records. This is a delivery result, not
 an accuracy improvement. Its strongest displayed prediction spans three cameras;
-the verified maximum remains two cameras. Plate-string search and analytics remain
-unimplemented until their independent phases.
+the verified maximum remains two cameras. Prediction-only camera visit, OD
+endpoint, and transition-support analytics are now implemented and always labelled
+`UNVERIFIED`; they are not traffic or congestion measurements. Plate-string search
+and hybrid evidence remain blocked on sealed human OCR review.
 
 The S01 development-only association calibration tested 30 predeclared settings;
 two passed its small evidence gate. The selected policy measured 5/6 correct

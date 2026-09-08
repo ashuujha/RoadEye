@@ -97,3 +97,13 @@ unfinished work by model score for reviewer convenience. It does not mark any
 row reviewed, inspect plate truth, or relax the 150-readable/every-row-terminal
 gate. Plate search and hybrid evidence remain blocked until the human review and
 single sealed test score are complete.
+
+## Completed hours 43-47 prediction analytics checkpoint
+
+The portion that does not depend on missing plate truth is complete: OD endpoints,
+camera visit intensity, and transition-support proxies are computed over frozen
+runtime predictions, exposed through the read-only API, and rendered in the test
+frontend with `UNVERIFIED` labels. Visit counts are not called traffic density and
+transition gaps are not called congestion/travel time. Plate search and hybrid
+evidence stay blocked until all 200 test plates receive terminal human review and
+the one sealed OCR evaluation completes.

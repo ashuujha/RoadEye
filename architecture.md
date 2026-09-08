@@ -154,6 +154,13 @@ similarity, ambiguity margin, temporal gap, and constraint reason as model evide
 never as calibrated probability or runtime ground-truth verification. The service
 does not load an ML model, rerun association, or alter frozen predictions.
 
+The `/api/analytics` route derives camera visit counts, first/last-camera OD
+pairs, and directed transition-support proxies from the same hash-verified
+journeys. Camera circles scale by observed runtime visit count. The aggregates
+contain no evaluator mapping or plate data and are always `UNVERIFIED`: visit
+counts are not traffic density, endpoint pairs are not verified OD flow, and
+transition frequency/boundary gaps are not congestion or route travel time.
+
 ## Development-calibrated association diagnostic
 
 The trained encoder's association score was calibrated only on the 19 S01

@@ -1,0 +1,425 @@
+{
+  "schema_version": 1,
+  "status": "UNVERIFIED",
+  "scope": "prediction_only_aggregate_runtime_analytics",
+  "scenario": "S06_complete_0.0_to_199.9_seconds",
+  "disclosure": "S06 \u2014 unverified prediction, no ground truth available",
+  "source_prediction_sha256": "ea68331023efd04decf9f342df363f9422eaca594d0358e4f521566d7112f0a0",
+  "summary": {
+    "predicted_global_vehicle_ids": 666,
+    "multi_camera_predicted_vehicle_ids": 123,
+    "observed_runtime_visits": 826,
+    "predicted_transitions": 160,
+    "camera_count": 6,
+    "first_observed_s": 0.0,
+    "last_observed_s": 199.9
+  },
+  "camera_density": [
+    {
+      "camera": "c043",
+      "observed_runtime_visit_count": 193,
+      "predicted_unique_vehicle_count": 193,
+      "multi_camera_predicted_vehicle_count": 72,
+      "share_of_observed_runtime_visits": 0.233656,
+      "position": {
+        "latitude": 42.49195848807656,
+        "longitude": -90.72055289863232,
+        "kind": "inverse_homography_roi_median_road_reference_not_camera_GPS",
+        "calibration_sha256": "33f17c2a0d96b3e668676d07b21139de62c414473eaae387488e0e7cb8de2b6c",
+        "roi_sha256": "005b34c240a180be56f365f6b9d7e6355ebc8a39abd418bd8e3693d80d0fdb3f"
+      },
+      "measurement_status": "runtime_prediction_visit_count_not_traffic_density"
+    },
+    {
+      "camera": "c041",
+      "observed_runtime_visit_count": 172,
+      "predicted_unique_vehicle_count": 172,
+      "multi_camera_predicted_vehicle_count": 30,
+      "share_of_observed_runtime_visits": 0.208232,
+      "position": {
+        "latitude": 42.49131009241283,
+        "longitude": -90.70145465396406,
+        "kind": "inverse_homography_roi_median_road_reference_not_camera_GPS",
+        "calibration_sha256": "689f0e8187050e804bac63ce174e9512348e1545609114eb98928517a7f9d3ce",
+        "roi_sha256": "b876746bf01c50ea403408610141e6e7d2114de73fcca78e999f0aea18ac28d0"
+      },
+      "measurement_status": "runtime_prediction_visit_count_not_traffic_density"
+    },
+    {
+      "camera": "c045",
+      "observed_runtime_visit_count": 138,
+      "predicted_unique_vehicle_count": 138,
+      "multi_camera_predicted_vehicle_count": 48,
+      "share_of_observed_runtime_visits": 0.16707,
+      "position": {
+        "latitude": 42.48853032280022,
+        "longitude": -90.73916521601704,
+        "kind": "inverse_homography_roi_median_road_reference_not_camera_GPS",
+        "calibration_sha256": "f7fab26bb9a8e4ba6a4ea62419ca46d9b578bb9557210a63876f3c1de5b67397",
+        "roi_sha256": "c92c648098aa8e88723b21e749f426cd7177a444d51fed4eaef06be843cd2447"
+      },
+      "measurement_status": "runtime_prediction_visit_count_not_traffic_density"
+    },
+    {
+      "camera": "c042",
+      "observed_runtime_visit_count": 131,
+      "predicted_unique_vehicle_count": 131,
+      "multi_camera_predicted_vehicle_count": 72,
+      "share_of_observed_runtime_visits": 0.158596,
+      "position": {
+        "latitude": 42.49210690077021,
+        "longitude": -90.71475513552122,
+        "kind": "inverse_homography_roi_median_road_reference_not_camera_GPS",
+        "calibration_sha256": "e71c5cb27394bc73687bc999694fd1aa200d8dfb9faa402fb2a8901b13bd266f",
+        "roi_sha256": "6b3e0f1672ea33649eb6611c38e5f58d1c26c5eeaf6e30a89dc3aa510e097759"
+      },
+      "measurement_status": "runtime_prediction_visit_count_not_traffic_density"
+    },
+    {
+      "camera": "c044",
+      "observed_runtime_visit_count": 115,
+      "predicted_unique_vehicle_count": 115,
+      "multi_camera_predicted_vehicle_count": 36,
+      "share_of_observed_runtime_visits": 0.139225,
+      "position": {
+        "latitude": 42.4903530596095,
+        "longitude": -90.7324579591997,
+        "kind": "inverse_homography_roi_median_road_reference_not_camera_GPS",
+        "calibration_sha256": "228801445b3059d6112109ac97377566eb84212646df3ee3b6da48ac6986aeb3",
+        "roi_sha256": "fc323090562a9f24d6d222b6c3a49cbdb8d0f64cce0a4ce52e79b49a48b41ad7"
+      },
+      "measurement_status": "runtime_prediction_visit_count_not_traffic_density"
+    },
+    {
+      "camera": "c046",
+      "observed_runtime_visit_count": 77,
+      "predicted_unique_vehicle_count": 77,
+      "multi_camera_predicted_vehicle_count": 25,
+      "share_of_observed_runtime_visits": 0.09322,
+      "position": {
+        "latitude": 42.48658112065959,
+        "longitude": -90.74696729696285,
+        "kind": "inverse_homography_roi_median_road_reference_not_camera_GPS",
+        "calibration_sha256": "aab167f15e105adadff5aa66da82eb0e78bb06c2687014a90133584d59a5b16b",
+        "roi_sha256": "045808c25d2a2320195d014f00ab490288afd282a98ed34a3f46a4babff5da41"
+      },
+      "measurement_status": "runtime_prediction_visit_count_not_traffic_density"
+    }
+  ],
+  "origin_destination_pairs": [
+    {
+      "origin_camera": "c042",
+      "destination_camera": "c043",
+      "predicted_vehicle_count": 21,
+      "share_of_multi_camera_predictions": 0.170732,
+      "measurement_status": "predicted_endpoints_not_verified_od_flow"
+    },
+    {
+      "origin_camera": "c043",
+      "destination_camera": "c042",
+      "predicted_vehicle_count": 20,
+      "share_of_multi_camera_predictions": 0.162602,
+      "measurement_status": "predicted_endpoints_not_verified_od_flow"
+    },
+    {
+      "origin_camera": "c044",
+      "destination_camera": "c045",
+      "predicted_vehicle_count": 14,
+      "share_of_multi_camera_predictions": 0.113821,
+      "measurement_status": "predicted_endpoints_not_verified_od_flow"
+    },
+    {
+      "origin_camera": "c042",
+      "destination_camera": "c041",
+      "predicted_vehicle_count": 13,
+      "share_of_multi_camera_predictions": 0.105691,
+      "measurement_status": "predicted_endpoints_not_verified_od_flow"
+    },
+    {
+      "origin_camera": "c046",
+      "destination_camera": "c045",
+      "predicted_vehicle_count": 12,
+      "share_of_multi_camera_predictions": 0.097561,
+      "measurement_status": "predicted_endpoints_not_verified_od_flow"
+    },
+    {
+      "origin_camera": "c045",
+      "destination_camera": "c044",
+      "predicted_vehicle_count": 8,
+      "share_of_multi_camera_predictions": 0.065041,
+      "measurement_status": "predicted_endpoints_not_verified_od_flow"
+    },
+    {
+      "origin_camera": "c041",
+      "destination_camera": "c042",
+      "predicted_vehicle_count": 6,
+      "share_of_multi_camera_predictions": 0.04878,
+      "measurement_status": "predicted_endpoints_not_verified_od_flow"
+    },
+    {
+      "origin_camera": "c045",
+      "destination_camera": "c046",
+      "predicted_vehicle_count": 6,
+      "share_of_multi_camera_predictions": 0.04878,
+      "measurement_status": "predicted_endpoints_not_verified_od_flow"
+    },
+    {
+      "origin_camera": "c043",
+      "destination_camera": "c041",
+      "predicted_vehicle_count": 5,
+      "share_of_multi_camera_predictions": 0.04065,
+      "measurement_status": "predicted_endpoints_not_verified_od_flow"
+    },
+    {
+      "origin_camera": "c041",
+      "destination_camera": "c043",
+      "predicted_vehicle_count": 4,
+      "share_of_multi_camera_predictions": 0.03252,
+      "measurement_status": "predicted_endpoints_not_verified_od_flow"
+    },
+    {
+      "origin_camera": "c043",
+      "destination_camera": "c044",
+      "predicted_vehicle_count": 4,
+      "share_of_multi_camera_predictions": 0.03252,
+      "measurement_status": "predicted_endpoints_not_verified_od_flow"
+    },
+    {
+      "origin_camera": "c044",
+      "destination_camera": "c046",
+      "predicted_vehicle_count": 3,
+      "share_of_multi_camera_predictions": 0.02439,
+      "measurement_status": "predicted_endpoints_not_verified_od_flow"
+    },
+    {
+      "origin_camera": "c046",
+      "destination_camera": "c044",
+      "predicted_vehicle_count": 2,
+      "share_of_multi_camera_predictions": 0.01626,
+      "measurement_status": "predicted_endpoints_not_verified_od_flow"
+    },
+    {
+      "origin_camera": "c042",
+      "destination_camera": "c044",
+      "predicted_vehicle_count": 1,
+      "share_of_multi_camera_predictions": 0.00813,
+      "measurement_status": "predicted_endpoints_not_verified_od_flow"
+    },
+    {
+      "origin_camera": "c044",
+      "destination_camera": "c041",
+      "predicted_vehicle_count": 1,
+      "share_of_multi_camera_predictions": 0.00813,
+      "measurement_status": "predicted_endpoints_not_verified_od_flow"
+    },
+    {
+      "origin_camera": "c044",
+      "destination_camera": "c043",
+      "predicted_vehicle_count": 1,
+      "share_of_multi_camera_predictions": 0.00813,
+      "measurement_status": "predicted_endpoints_not_verified_od_flow"
+    },
+    {
+      "origin_camera": "c045",
+      "destination_camera": "c043",
+      "predicted_vehicle_count": 1,
+      "share_of_multi_camera_predictions": 0.00813,
+      "measurement_status": "predicted_endpoints_not_verified_od_flow"
+    },
+    {
+      "origin_camera": "c046",
+      "destination_camera": "c042",
+      "predicted_vehicle_count": 1,
+      "share_of_multi_camera_predictions": 0.00813,
+      "measurement_status": "predicted_endpoints_not_verified_od_flow"
+    }
+  ],
+  "bottleneck_proxies": [
+    {
+      "rank": 1,
+      "from_camera": "c042",
+      "to_camera": "c043",
+      "predicted_transition_count": 35,
+      "share_of_predicted_transitions": 0.21875,
+      "median_observed_boundary_gap_s": 23.9,
+      "maximum_observed_boundary_gap_s": 35.1,
+      "measurement_status": "predicted_transition_support_not_congestion_or_route_time"
+    },
+    {
+      "rank": 2,
+      "from_camera": "c043",
+      "to_camera": "c042",
+      "predicted_transition_count": 26,
+      "share_of_predicted_transitions": 0.1625,
+      "median_observed_boundary_gap_s": 20.5,
+      "maximum_observed_boundary_gap_s": 44.0,
+      "measurement_status": "predicted_transition_support_not_congestion_or_route_time"
+    },
+    {
+      "rank": 3,
+      "from_camera": "c044",
+      "to_camera": "c045",
+      "predicted_transition_count": 15,
+      "share_of_predicted_transitions": 0.09375,
+      "median_observed_boundary_gap_s": 26.3,
+      "maximum_observed_boundary_gap_s": 38.1,
+      "measurement_status": "predicted_transition_support_not_congestion_or_route_time"
+    },
+    {
+      "rank": 4,
+      "from_camera": "c046",
+      "to_camera": "c045",
+      "predicted_transition_count": 15,
+      "share_of_predicted_transitions": 0.09375,
+      "median_observed_boundary_gap_s": 32.0,
+      "maximum_observed_boundary_gap_s": 42.8,
+      "measurement_status": "predicted_transition_support_not_congestion_or_route_time"
+    },
+    {
+      "rank": 5,
+      "from_camera": "c045",
+      "to_camera": "c044",
+      "predicted_transition_count": 11,
+      "share_of_predicted_transitions": 0.06875,
+      "median_observed_boundary_gap_s": 31.0,
+      "maximum_observed_boundary_gap_s": 40.4,
+      "measurement_status": "predicted_transition_support_not_congestion_or_route_time"
+    },
+    {
+      "rank": 6,
+      "from_camera": "c041",
+      "to_camera": "c042",
+      "predicted_transition_count": 10,
+      "share_of_predicted_transitions": 0.0625,
+      "median_observed_boundary_gap_s": 26.2,
+      "maximum_observed_boundary_gap_s": 41.4,
+      "measurement_status": "predicted_transition_support_not_congestion_or_route_time"
+    },
+    {
+      "rank": 7,
+      "from_camera": "c042",
+      "to_camera": "c041",
+      "predicted_transition_count": 10,
+      "share_of_predicted_transitions": 0.0625,
+      "median_observed_boundary_gap_s": 30.1,
+      "maximum_observed_boundary_gap_s": 40.8,
+      "measurement_status": "predicted_transition_support_not_congestion_or_route_time"
+    },
+    {
+      "rank": 8,
+      "from_camera": "c043",
+      "to_camera": "c041",
+      "predicted_transition_count": 10,
+      "share_of_predicted_transitions": 0.0625,
+      "median_observed_boundary_gap_s": 10.7,
+      "maximum_observed_boundary_gap_s": 25.3,
+      "measurement_status": "predicted_transition_support_not_congestion_or_route_time"
+    },
+    {
+      "rank": 9,
+      "from_camera": "c045",
+      "to_camera": "c046",
+      "predicted_transition_count": 9,
+      "share_of_predicted_transitions": 0.05625,
+      "median_observed_boundary_gap_s": 37.5,
+      "maximum_observed_boundary_gap_s": 42.8,
+      "measurement_status": "predicted_transition_support_not_congestion_or_route_time"
+    },
+    {
+      "rank": 10,
+      "from_camera": "c044",
+      "to_camera": "c043",
+      "predicted_transition_count": 6,
+      "share_of_predicted_transitions": 0.0375,
+      "median_observed_boundary_gap_s": 22.3,
+      "maximum_observed_boundary_gap_s": 30.6,
+      "measurement_status": "predicted_transition_support_not_congestion_or_route_time"
+    },
+    {
+      "rank": 11,
+      "from_camera": "c043",
+      "to_camera": "c044",
+      "predicted_transition_count": 5,
+      "share_of_predicted_transitions": 0.03125,
+      "median_observed_boundary_gap_s": 39.1,
+      "maximum_observed_boundary_gap_s": 42.5,
+      "measurement_status": "predicted_transition_support_not_congestion_or_route_time"
+    },
+    {
+      "rank": 12,
+      "from_camera": "c043",
+      "to_camera": "c045",
+      "predicted_transition_count": 3,
+      "share_of_predicted_transitions": 0.01875,
+      "median_observed_boundary_gap_s": 0.3,
+      "maximum_observed_boundary_gap_s": 0.4,
+      "measurement_status": "predicted_transition_support_not_congestion_or_route_time"
+    },
+    {
+      "rank": 13,
+      "from_camera": "c041",
+      "to_camera": "c043",
+      "predicted_transition_count": 1,
+      "share_of_predicted_transitions": 0.00625,
+      "median_observed_boundary_gap_s": 1.2,
+      "maximum_observed_boundary_gap_s": 1.2,
+      "measurement_status": "predicted_transition_support_not_congestion_or_route_time"
+    },
+    {
+      "rank": 14,
+      "from_camera": "c043",
+      "to_camera": "c046",
+      "predicted_transition_count": 1,
+      "share_of_predicted_transitions": 0.00625,
+      "median_observed_boundary_gap_s": -29.4,
+      "maximum_observed_boundary_gap_s": -29.4,
+      "measurement_status": "predicted_transition_support_not_congestion_or_route_time"
+    },
+    {
+      "rank": 15,
+      "from_camera": "c045",
+      "to_camera": "c042",
+      "predicted_transition_count": 1,
+      "share_of_predicted_transitions": 0.00625,
+      "median_observed_boundary_gap_s": 103.9,
+      "maximum_observed_boundary_gap_s": 103.9,
+      "measurement_status": "predicted_transition_support_not_congestion_or_route_time"
+    },
+    {
+      "rank": 16,
+      "from_camera": "c045",
+      "to_camera": "c043",
+      "predicted_transition_count": 1,
+      "share_of_predicted_transitions": 0.00625,
+      "median_observed_boundary_gap_s": -0.5,
+      "maximum_observed_boundary_gap_s": -0.5,
+      "measurement_status": "predicted_transition_support_not_congestion_or_route_time"
+    },
+    {
+      "rank": 17,
+      "from_camera": "c046",
+      "to_camera": "c044",
+      "predicted_transition_count": 1,
+      "share_of_predicted_transitions": 0.00625,
+      "median_observed_boundary_gap_s": 33.4,
+      "maximum_observed_boundary_gap_s": 33.4,
+      "measurement_status": "predicted_transition_support_not_congestion_or_route_time"
+    }
+  ],
+  "claim_boundaries": {
+    "uses_runtime_ground_truth": false,
+    "counts_model_predicted_identities": true,
+    "camera_density_is_traffic_volume": false,
+    "origin_destination_is_verified_flow": false,
+    "bottleneck_proxy_is_congestion": false,
+    "boundary_gap_is_route_travel_time": false,
+    "plate_or_owner_data_used": false
+  },
+  "verification": {
+    "runtime_artifact_integrity": "PASS",
+    "analytics_route": "/api/analytics",
+    "analytics_route_present": true,
+    "contains_global_vehicle_ids": false,
+    "contains_plate_strings": false
+  }
+}

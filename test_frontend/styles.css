@@ -64,8 +64,18 @@ button:disabled { cursor: default; opacity: .45; }
 .notice-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
 .notice-grid p { border: 1px solid var(--line); background: var(--panel); padding: 9px; border-radius: 7px; color: var(--muted); font-size: .76rem; }
 .notice-grid strong { color: #fff; }
-.map-card, .timeline-card, .evidence-card { padding: 15px; border: 1px solid var(--line); border-radius: 10px; background: var(--panel); }
+.map-card, .timeline-card, .evidence-card, .analytics-card { padding: 15px; border: 1px solid var(--line); border-radius: 10px; background: var(--panel); }
 .section-heading { min-height: 42px; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.analytics-status { color: var(--warning); border: 1px solid #8a6c24; border-radius: 999px; padding: 5px 8px; font-size: .68rem; font-weight: 850; }
+.analytics-summary { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 12px; }
+.analytics-summary div { display: grid; gap: 3px; padding: 10px; border: 1px solid var(--line); border-radius: 7px; background: var(--panel-2); }
+.analytics-summary strong { color: var(--accent); font-size: 1.15rem; }
+.analytics-summary span { color: var(--muted); font-size: .68rem; }
+.analytics-tables { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 12px; }
+.analytics-tables h3 { margin: 0 0 7px; color: #fff; font-size: .78rem; }
+.compact-table { display: grid; gap: 4px; }
+.compact-table > div { display: flex; justify-content: space-between; gap: 8px; padding: 6px 8px; border-radius: 5px; background: #091622; color: var(--muted); font-size: .69rem; }
+.compact-table strong { color: #fff; white-space: nowrap; }
 #map { height: 330px; margin-top: 10px; border-radius: 7px; background: #081522; border: 1px solid #213b51; }
 .map-caption { margin-top: 8px; font-size: .72rem; }
 .leaflet-container { font-family: inherit; }
@@ -93,5 +103,10 @@ button:disabled { cursor: default; opacity: .45; }
   .search-panel { border-right: 0; border-bottom: 1px solid var(--line); }
   .vehicle-list { max-height: 260px; }
   .notice-grid { grid-template-columns: 1fr; }
+  .analytics-summary, .analytics-tables { grid-template-columns: 1fr 1fr; }
   .evidence-content { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 560px) {
+  .analytics-summary, .analytics-tables { grid-template-columns: 1fr; }
 }

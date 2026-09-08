@@ -14,6 +14,7 @@ from fastapi import FastAPI, HTTPException, Query, Response
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 
+from .analytics import build_prediction_analytics
 from .s06_demo import S06_DISCLOSURE
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -108,6 +109,14 @@ class DemoRepository:
             for visit in journey["visits"]
         }:
             raise ValueError("Journey cameras and topology positions differ")
+        self._analytics = build_prediction_analytics(
+            journeys=self.journeys,
+            camera_positions=self.topology["positions"],
+            predicted_link_count=len(self.links),
+            scenario=self.config["scenario"],
+            disclosure=self.config.get("disclosure"),
+            source_prediction_sha256=self.run["prediction_sha256"]["journeys"],
+        )
 
     def _verify_hashes(self) -> None:
         if _sha256(self.paths.artifacts / "prepared.json") != self.run.get(
@@ -159,7 +168,16 @@ class DemoRepository:
                 "Runtime data contains predictions and evidence only; "
                 "ground-truth identities are excluded.",
             ),
+            "analytics_notice": (
+                "Aggregate counts are derived from runtime predictions. They are "
+                "not verified traffic flow, density, congestion, or route timing."
+            ),
         }
+
+    def analytics(self) -> dict[str, Any]:
+        """Return aggregates computed only from hash-verified runtime predictions."""
+
+        return self._analytics
 
     def list_vehicles(
         self, query: str = "", *, multi_camera_only: bool = True, limit: int = 50
@@ -368,6 +386,10 @@ def create_app(config_path: Path = ROOT / "configs/demo.json") -> FastAPI:
         return repository.list_vehicles(
             q, multi_camera_only=multi_camera_only, limit=limit
         )
+
+    @app.get("/api/analytics")
+    def analytics() -> dict[str, Any]:
+        return repository.analytics()
 
     @app.get("/api/vehicles/{global_id}")
     def journey(global_id: str) -> dict[str, Any]:

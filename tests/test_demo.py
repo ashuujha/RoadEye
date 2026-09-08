@@ -182,6 +182,7 @@ def test_app_exposes_api_before_static_frontend(tmp_path, monkeypatch):
     app = create_app(fixture_config(tmp_path, monkeypatch))
     paths = [route.path for route in app.routes]
     assert "/api/status" in paths
+    assert "/api/analytics" in paths
     assert paths.index("/api/status") < paths.index("")
     assert not any("evaluation" in route.path or "ground" in route.path for route in app.routes)
 
@@ -210,3 +211,12 @@ def test_bearing_is_explicitly_derived_from_points():
         {"latitude": 0.0, "longitude": 1.0},
     )
     assert east == pytest.approx(90.0)
+
+
+def test_demo_analytics_are_prediction_only(tmp_path, monkeypatch):
+    repository = DemoRepository(fixture_config(tmp_path, monkeypatch))
+    report = repository.analytics()
+    assert report["status"] == "UNVERIFIED"
+    assert report["summary"]["observed_runtime_visits"] == 2
+    assert report["origin_destination_pairs"][0]["predicted_vehicle_count"] == 1
+    assert report["claim_boundaries"]["uses_runtime_ground_truth"] is False
