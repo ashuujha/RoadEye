@@ -5,8 +5,10 @@
 CityFlow has real long multi-camera identities: feasibility found identity 260
 across 24 S04 cameras. RoadEye has not predicted a fully scored, identity-consistent
 six-camera group. The frozen S02 demo reaches three predicted cameras and two
-fully verified cameras. The disclosed S05 post-hoc diagnostic reaches five
-predicted cameras and two fully verified cameras.
+fully verified cameras. The final frozen S01/S03-calibrated post-hoc diagnostic
+reaches 16 predicted cameras on S04 and eight on S05, but both scenarios still
+reach only two fully scored identity-consistent cameras. Large raw groups contain
+mixed or unscored members and cannot be presented as verified journeys.
 
 ## Evaluation inventory
 
@@ -26,12 +28,12 @@ post-hoc diagnostic evidence.
 
 ## Recommended repair
 
-Use S01 and S03 development identities to improve camera-domain robustness and
-association calibration, with no labels in runtime. Then run one explicitly
-post-hoc S04/S05 diagnostic and accept the result whether or not it reaches six.
-This may produce a real six-camera demo journey, but it cannot restore fresh
-held-out status. A fresh accuracy claim requires another approved labeled
-multi-camera dataset or access to an official S06 evaluator.
+The approved S01/S03 repair has now been exhausted. It froze pure trained Re-ID,
+a 0.675 cosine threshold, zero margin, and a 45-second maximum gap after measuring
+7/8 correct evaluable development links. Its single S04/S05 post-hoc run failed.
+Do not tune again on S02/S04/S05. The highest-impact next experiment requires a
+fresh development source with camera diversity closer to S04/S05, followed by a
+new approved labeled holdout or the official S06 evaluator.
 
 Until one of those paths succeeds, the demo must retain the honest two-camera
 verified maximum and may show the three-camera S02 prediction with unknown

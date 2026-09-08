@@ -54,6 +54,13 @@ therefore stays on the frozen S02 artifacts. The six-camera criterion remains
 failed until an independently predicted group is fully verified under the frozen
 evaluation protocol.
 
+The final S01/S03 repair is recorded in
+`reports/reid-six-camera-repair-audit.md`. Its one frozen S04/S05 post-hoc run is
+consumed and failed: raw spans are 16 and eight, while both fully scored
+identity-consistent maxima remain two. Never tune on those results or expose the
+evaluation mappings to runtime/demo artifacts. Keep the S02 test frontend and its
+honest two-camera verified framing until a new approved labeled holdout exists.
+
 The Indian ANPR checkpoint is documented in `reports/anpr-audit.md`. Run its
 tracked tooling with `.venv\Scripts\python.exe scripts\run_anpr.py <action>`.
 The current manual action is in `reports/anpr-transcription-runbook.md`: review

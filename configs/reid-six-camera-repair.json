@@ -1,0 +1,43 @@
+{
+  "schema_version": 1,
+  "purpose": "S01_S03_development_only_camera_domain_association_repair",
+  "development_scenarios": ["S01", "S03"],
+  "development_outputs": {
+    "S01": "artifacts/reid-trained-calibration/s01-quality",
+    "S03": "artifacts/reid-six-camera-repair/s03-quality"
+  },
+  "development_identity_source": "private_S01_S03_training_bundle_development_split",
+  "descriptor": {
+    "kind": "causal_reid_plus_hsv_histogram",
+    "hsv_bins": [12, 4, 4],
+    "hsv_weights": [0.0, 0.1, 0.2, 0.3]
+  },
+  "similarity_grid": [0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.675, 0.7, 0.75, 0.8, 0.85],
+  "margin_grid": [0.0, 0.02, 0.03, 0.06, 0.1],
+  "max_gap_s_grid": [45.0, 90.0, 150.0],
+  "selection": {
+    "minimum_evaluable_development_links": 8,
+    "minimum_development_link_precision": 0.8,
+    "minimum_evaluable_links_per_scenario": 1,
+    "minimum_link_precision_per_scenario": 0.5,
+    "objective": "maximum_fully_scored_consistent_development_camera_coverage",
+    "tie_break": "higher_combined_pairwise_f1_then_higher_S03_pairwise_f1_then_fewer_mixed_groups_then_higher_link_precision_then_higher_threshold"
+  },
+  "posthoc_scenarios": ["S04", "S05"],
+  "development_iteration": {
+    "initial_grid_result": "FAIL_zero_of_528_candidates_passed",
+    "best_initial_candidate_at_required_volume": "6_of_8_evaluable_links_correct",
+    "best_initial_candidate_below_volume_floor": "6_of_7_evaluable_links_correct",
+    "refinement": "added_0.675_similarity_and_0.02_margin_boundaries_using_S01_S03_only",
+    "unchanged_gates": true,
+    "evaluation_labels_opened": false
+  },
+  "posthoc_rule": "freeze exactly one policy and descriptor before creating new predictions; both scenarios are consumed and diagnostics are not held-out claims",
+  "claims": [
+    "S01 and S03 metrics are development selection evidence only",
+    "Runtime association receives observations, descriptors, topology, time, and frozen thresholds; it never receives CityFlow identities",
+    "S04 and S05 labels may be opened only after the repair selection manifest is written",
+    "A six-camera journey passes only when one predicted group is fully scored as one released identity across at least six cameras",
+    "Failure remains the reported result if the frozen post-hoc diagnostic does not pass"
+  ]
+}

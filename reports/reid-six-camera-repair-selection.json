@@ -1,0 +1,75 @@
+{
+  "status": "PASS",
+  "scope": "frozen_S01_S03_development_selection_before_new_S04_S05_predictions",
+  "selected_policy": {
+    "min_similarity": 0.675,
+    "margin": 0.0,
+    "max_gap_s": 45.0,
+    "max_camera_distance_m": 1500.0,
+    "overlap_distance_m": 150.0,
+    "max_speed_mps": 40.0,
+    "clock_tolerance_s": 2.0,
+    "position_tolerance_m": 100.0
+  },
+  "selected_hsv_weight": 0.0,
+  "selected_development_metrics": {
+    "development_identities": 23,
+    "mapped_development_tracklets": 33,
+    "relevant_predicted_links": 22,
+    "evaluable_development_links": 8,
+    "correct_development_links": 7,
+    "incorrect_development_links": 1,
+    "unscored_development_links": 14,
+    "ignored_links_without_development_endpoint": 197,
+    "predicted_development_cross_camera_pairs": 11,
+    "true_development_cross_camera_pairs": 22,
+    "correct_development_cross_camera_pairs": 10,
+    "status": "MEASURED",
+    "development_link_precision": 0.875,
+    "development_link_evaluation_coverage": 0.36363636363636365,
+    "development_pairwise_precision": 0.9090909090909091,
+    "development_pairwise_recall": 0.45454545454545453,
+    "development_pairwise_f1": 0.6060606060606061,
+    "development_group_counts": {
+      "mixed_gt_identities": 2,
+      "partially_scored": 11,
+      "fully_scored_consistent": 12
+    },
+    "max_fully_scored_consistent_development_camera_coverage": 4
+  },
+  "evaluation_labels_opened_by_repair_before_freeze": false,
+  "prior_evaluation_state": "S02_S04_S05_already_consumed; all new results must be disclosed post_hoc",
+  "tracked_text_sha256": {
+    "configs/reid-six-camera-repair.json": "db0f72242bcef4325df614f5311bc3bb8aae4779b0d132647e8a0943514d22f0",
+    "reports/reid-six-camera-repair-development.json": "97be9733ee35eb4ebe3b35de85192cdb3a5bfa0adfb583c2fbe0c466cd776570",
+    "configs/reid-six-camera-posthoc-s04-base.json": "d9f6791bad2c7032bd572079fddf991122c3cf341989f09fd4574db5ebce2beb",
+    "configs/reid-trained-development.json": "f98f1305a2c85965b30a66a1e1950ffcfef164b4029a551992c2756100661bcf",
+    "configs/reid-trained-development-s03.json": "00caed12357fc86266dcfd511840355649addda9975f20057e161e28c0ad6b57",
+    "configs/reid-development-window.json": "2bef51194f9393a5b285237ac61fffde72b9343edd1b94f8c7f07e702a3287a7",
+    "configs/reid-development-s03-window.json": "375d882ededc0078f34b4a6647c6b08873523e886f03952749cfd738d267950b",
+    "configs/feasibility-window.json": "1a21ef9c4302c802c5c52bfa953b7cedd8c6219e7496188485fd7b2f0a8b469d",
+    "configs/reid-evaluation-window.json": "a2643518f7cee3e5ad0eabb2b9e00d73f6960de44d0519d0db6e0254a81fde40",
+    "reports/reid-trained-model.json": "94c01743b4f957d44ca52a4c72127506900b54bf50d7284feda3d33abec4f812",
+    "src/roadeye/association.py": "82fa135e32d508b8bbae93414799496da463f9208e8cd7fef8254425edf7d532",
+    "src/roadeye/calibration.py": "00f533e65c510d576104d9b1c568cc6dcd8da66ab67297bb22cbb130fdace228",
+    "src/roadeye/descriptor_fusion.py": "f7daec1fe5bc212ac0e90a37ad72e680b1e882e0fd05b8fbf23ee66c3bb42df5",
+    "scripts/repair_six_camera.py": "9081285e09c4bb84adb9a43d12c300cd774732c52742177b439735a73447b76a"
+  },
+  "development_artifact_sha256": {
+    "S01:artifacts/reid-trained-calibration/s01-quality/prepared.json": "81a67616d508b4f74ef250f5e781615f06bb98d308e11dfb912216d43a83e3a8",
+    "S01:artifacts/reid-trained-calibration/s01-quality/embeddings.npz": "c6aabdc2a95d66bf1e44384b79013667d8918249add1bb4840664d6d72bb30f5",
+    "S01:artifacts/reid-trained-calibration/s01-quality/tracklets.json": "94baf29207c174e1053eb5de0e28d2f0ed7f8c725568c9582494fb57d2c8b545",
+    "S01:artifacts/reid-trained-calibration/s01-quality/observations.jsonl": "76c4ce5fe02bb73f865fa8f10c3e335b0d781cbd419ff1bbf1f904efb46e589b",
+    "S01:artifacts/reid-trained-calibration/s01-quality/topology.json": "4b6a3e0e62f3f4415441d89872cf071a34f31d541ba6546553069a51cfd9e7a2",
+    "S01:artifacts/reid-trained-calibration/s01-quality/evaluation/tracklet_gt_mapping.json": "99a0a4335d83dbb8658dad0929b0a7b08dcc8204e6a706d9a441ba355ce0dffc",
+    "S03:artifacts/reid-six-camera-repair/s03-quality/prepared.json": "aa20e54fef5dc31c726290b455ea93d98cbf5196d8758acaa0e40c9c5b7a2836",
+    "S03:artifacts/reid-six-camera-repair/s03-quality/embeddings.npz": "a796e77b2496809d6357c3058c85c7a3dcdc0a67fe1fa4e6e27137b168461801",
+    "S03:artifacts/reid-six-camera-repair/s03-quality/tracklets.json": "8194c1ca5e168f80cd900639a8e9c597a4c31d2b0c01a0fbc9aae8924ca4c5f1",
+    "S03:artifacts/reid-six-camera-repair/s03-quality/observations.jsonl": "fb2e3fd7d2c894f3a0406df57073c2a22b5ba04de24610ef4dea3ed679b3c185",
+    "S03:artifacts/reid-six-camera-repair/s03-quality/topology.json": "d25adba6051ca8c71145366793f74f991c45d9d07be44fa7777e244d351706cf",
+    "S03:artifacts/reid-six-camera-repair/s03-quality/evaluation/tracklet_gt_mapping.json": "082d8b61841572f21115e1fe2aaf91ccc91a334fed259cdbe6bd848a61a538d4"
+  },
+  "binary_sha256": {
+    "model": "1a7bddc94b065da1cc76f27f3455d61dc9752e687a87101c2eeb566353185cac"
+  }
+}

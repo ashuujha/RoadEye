@@ -16,6 +16,13 @@
 
 Hard gates remain unchanged: verify actual CityFlow camera coverage and Indian transcription/test capacity before implementation; never use ground truth at runtime or fabricate journeys. Allow up to one hour for Roboflow/IEEE checks and six hours for transcription review. Cut extra model variants, supplementary datasets, further tuning, and presentation polish first. Never cut evaluation, provenance, uncertainty, or CPU rehearsal.
 
+Hours 47-52 now include the completed S01/S03 association repair and one frozen
+S04/S05 post-hoc diagnostic. The development selection measured 7/8 correct
+evaluable links, but both post-hoc scenarios retained a two-camera fully verified
+maximum. The six-camera gate remains failed; no further tuning on consumed
+S02/S04/S05 data is allowed. Remaining work in this allocation is final leakage,
+timing, and claims verification.
+
 ## Completed Phase 2 repair, hours 10–18
 
 The repaired command processes the full frozen S04 window, isolates ground truth, makes causal decisions, and emits measured diagnostic results. The S04 window was selected with identity coverage during feasibility and is a diagnostic subset. See `reports/phase2-audit.md` and `reports/phase2-metrics.json`.

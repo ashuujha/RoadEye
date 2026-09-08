@@ -48,7 +48,10 @@ def freeze_window(dataset: Path, spec: dict, output: Path) -> None:
         "interval": "closed",
         "time_basis": "scenario_relative_seconds",
         "frame_time_rule": "offset_s + (one_based_frame - 1) / fps",
-        "selection_rule": "first_180_seconds_all_cameras_without_identity_annotations",
+        "selection_rule": spec.get(
+            "selection_rule",
+            f"closed_{spec['start_s']}_to_{spec['end_s']}_seconds_all_cameras_without_identity_annotations",
+        ),
         "cameras": cameras,
         "metadata_sha256": {
             "timestamps": sha256(offsets_path),

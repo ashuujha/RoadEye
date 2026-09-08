@@ -114,3 +114,10 @@ exact `review_status` of `reviewed` or `corrected`; `unreadable` is terminal but
 excluded from the denominator. Missing and unrecognized states are counted and
 abort the run before truth is loaded. Current test readiness is 0 reviewed,
 0 corrected, 0 unreadable, and 200 missing, so no test accuracy exists.
+
+The final S01/S03 development-calibrated six-camera repair also failed. Its
+single frozen post-hoc diagnostic predicted groups spanning 16 S04 cameras and
+eight S05 cameras, but each scenario's longest fully scored identity-consistent
+group remained two cameras. The large groups are not verified journeys. The test
+frontend therefore keeps the frozen S02 three-camera prediction and explicitly
+states the two-camera verified maximum. No fresh held-out six-camera claim exists.

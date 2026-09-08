@@ -178,6 +178,17 @@ appearance threshold. Further work should improve camera-domain robustness and
 descriptor separation using a new development protocol; it must not tune on the
 consumed S02/S04/S05 scenarios.
 
+The final repair adds S03's full six-camera metadata-selected window to S01
+development calibration and evaluates an optional HSV histogram over the same
+causal, hash-bound prefix crops. Weighted concatenation makes the association
+cosine exactly decomposable into Re-ID and color components. The selected color
+weight is zero, so the frozen post-hoc result uses only the trained Re-ID signal.
+Its 0.675 similarity threshold, zero margin, and 45-second gap were frozen before
+new S04/S05 predictions. The diagnostic increases raw spans to 16 and eight but
+also creates 20 and 26 mixed groups; fully scored consistent span remains two in
+both. This confirms a camera-domain descriptor problem, not a basis for relaxing
+identity-consistency checks.
+
 ## Indian detector and OCR evaluation boundary
 
 The Indian archive is treated as two related inputs: 181 JPEG scene images for
