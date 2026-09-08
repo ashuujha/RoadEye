@@ -34,3 +34,9 @@ redistribute the CityFlow-derived data bundle. Run
 model is not accepted until its manifest/hash, development history, and local
 CPU loading are verified. Never copy S01/S03 identities or associations into a
 runtime config or demo artifact.
+
+The accepted trained artifact and frozen S02 result are documented in
+`reports/reid-trained-model.json` and `reports/reid-trained-s02-audit.md`. S02 is
+now consumed. Never tune on S02 or present a later S02 variant as fresh held-out
+evidence. The current verified maximum remains two cameras; the three-camera
+predicted maximum includes unscored evidence and is not a verified journey.

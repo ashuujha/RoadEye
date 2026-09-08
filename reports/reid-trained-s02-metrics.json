@@ -1,0 +1,93 @@
+{
+  "scope": "S02_first_180_seconds_frozen_before_identity_scoring",
+  "run_role": "evaluation",
+  "scenario": "S02",
+  "window_start_s": 0.0,
+  "window_end_s": 180.0,
+  "baseline_tracklets": 1671,
+  "baseline_observations": 118794,
+  "mapping_counts": {
+    "ambiguous": 245,
+    "unmatched": 1339,
+    "matched": 87
+  },
+  "gt_rows_in_window": 18926,
+  "gt_camera_visits": 423,
+  "recovered_gt_camera_visits": 85,
+  "gt_camera_visit_coverage": 0.20094562647754138,
+  "association": {
+    "status": "MEASURED",
+    "predicted_links": 37,
+    "evaluable_links": 3,
+    "correct_links": 3,
+    "incorrect_links": 0,
+    "unscored_links": 34,
+    "link_precision_on_evaluable_links": 1.0,
+    "link_evaluation_coverage": 0.08108108108108109,
+    "all_link_precision_lower_bound": 0.08108108108108109,
+    "all_link_precision_upper_bound": 1.0,
+    "labeled_assigned_tracklets": 87,
+    "predicted_cross_camera_pairs_on_labeled_tracklets": 3,
+    "true_cross_camera_pairs_on_labeled_tracklets": 23,
+    "correct_cross_camera_pairs": 3,
+    "pairwise_global_id_precision": 1.0,
+    "pairwise_global_id_recall": 0.13043478260869565,
+    "true_cross_camera_pairs_on_all_mappable_tracklets": 23,
+    "pairwise_global_id_recall_all_mappable_tracklets": 0.13043478260869565
+  },
+  "group_quality": {
+    "counts": {
+      "unscored": 1419,
+      "fully_scored_consistent": 76,
+      "partially_scored": 8
+    },
+    "max_fully_scored_consistent_camera_coverage": 2,
+    "scope": "consistency_under_IoU_coverage_purity_mapping_protocol"
+  },
+  "appearance_retrieval": {
+    "queries_with_prior_cross_camera_positive": 20,
+    "queries_without_prior_positive": 67,
+    "rank1_correct": 10,
+    "rank1": 0.5,
+    "map": 0.6170454545454545,
+    "scope": "labeled_gallery_only_at_prefix_ready_time_no_topology_filter"
+  },
+  "max_predicted_camera_coverage": 3,
+  "global_ids": 1503,
+  "model": {
+    "model": "roadeye_cityflow_reid_r50_ibn",
+    "trained_for_vehicle_reid": true,
+    "description": "RoadEye-format FastReID SBS ResNet-50-IBN artifact; verify its adjacent training manifest before use",
+    "weights_sha256": "1a7bddc94b065da1cc76f27f3455d61dc9752e687a87101c2eeb566353185cac",
+    "weights_source": "private Colab result ZIP SHA-256 2d8b0992b30348ad4be99f35edebce38043365da5d7b2038307209a5765584d4",
+    "torch": "2.4.1+cpu",
+    "torchvision": "0.19.1+cpu",
+    "device": "cpu",
+    "dimensions": 2048,
+    "sampling": "first_K_observations_in_window; mean_of_normalized_prefix_features",
+    "quality_prefix": null,
+    "pooling": "mean_of_normalized_features_then_L2",
+    "transforms": "Compose(\n    Resize(size=(256, 256), interpolation=bicubic, max_size=None, antialias=True)\n    PILToTensor()\n)"
+  },
+  "gt_sha256": {
+    "c006": "01d8a4d8178a469ede059dbf0ba7a3146f8f65f7a6780e3546573f63f232f68e",
+    "c007": "d15ec96f9a210659aec7f9f8978e7efca62806eed93ec087ca4b34a4023df60f",
+    "c008": "43164679c034a6339ccb2be55a82eeccbf89180068448d85c074217e1f952b44",
+    "c009": "6a22902a36fba3b10acb1a9e103188953e6aa2de2417bfd99d20f4914c20bb10"
+  },
+  "run_sha256": "ab24d5d438ed8fd5eccc3024e0b2a8b08ed350475985b7ab0026607636127123",
+  "evaluation_policy": {
+    "iou_threshold": 0.5,
+    "min_matched_observations": 3,
+    "min_observation_coverage": 0.5,
+    "min_identity_purity": 0.8
+  },
+  "limitations": [
+    "S02 was untouched during S01/S03 training/model selection but has only four cameras; no six-camera or official hidden-test claim",
+    "unchanged pre-S02 association thresholds; no trained-model calibration and no S02 tuning",
+    "CityFlow labels are partial; unscored links are unknown, not incorrect",
+    "RoadEye-format FastReID SBS ResNet-50-IBN artifact; verify its adjacent training manifest before use",
+    "Baseline MTSC upstream causal behavior and training provenance are not independently audited",
+    "Approximate calibration proximity is not a verified road network"
+  ]
+}

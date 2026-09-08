@@ -24,6 +24,43 @@ from .tracklets import (
 ROOT = Path(__file__).resolve().parents[2]
 
 
+def validate_training_provenance(config: dict) -> dict | None:
+    """Validate a CityFlow-trained encoder report without exposing labels at runtime."""
+    if not config["cityflow_training"]:
+        if config.get("training_provenance"):
+            raise ValueError("Untrained configuration declares training provenance")
+        return None
+    relative = config.get("training_provenance")
+    if not relative:
+        raise ValueError("CityFlow-trained model requires a provenance report")
+    path = (ROOT / relative).resolve()
+    if not path.is_relative_to(ROOT.resolve()):
+        raise ValueError("Training provenance path escapes the project")
+    provenance = json.loads(path.read_text(encoding="utf-8"))
+    if provenance.get("status") != "PASS":
+        raise ValueError("Training artifact acceptance did not pass")
+    training = set(provenance["training_scenarios"])
+    evaluation = set(config["evaluation_scenarios"])
+    if training != set(config["development_scenarios"]) or training & evaluation:
+        raise ValueError("Training/evaluation scenario isolation mismatch")
+    if provenance["evaluation_scenarios_used"]:
+        raise ValueError("Training provenance declares evaluation scenario use")
+    if provenance["weights_sha256"] != config["embedding"].get("weights_sha256"):
+        raise ValueError("Runtime model does not match accepted training artifact")
+    accepted = set(config.get("accepted_training_limitations", []))
+    if (
+        provenance["training_python_3_11_status"] != "PASS"
+        and "colab_training_python_not_3_11" not in accepted
+    ):
+        raise ValueError("Training Python deviation was not explicitly accepted")
+    if (
+        provenance["training_code_archive_linkage_status"] != "PASS"
+        and "result_missing_training_code_archive_hash" not in accepted
+    ):
+        raise ValueError("Training code provenance limitation was not accepted")
+    return provenance
+
+
 def configuration(path: Path) -> tuple[dict, dict]:
     config = json.loads(path.read_text(encoding="utf-8"))
     window = json.loads((ROOT / config["window"]).read_text(encoding="utf-8"))
@@ -34,23 +71,36 @@ def configuration(path: Path) -> tuple[dict, dict]:
         raise ValueError("Invalid run role")
     if window["scenario"] not in config[f"{role}_scenarios"]:
         raise ValueError(f"Run window is not in declared {role} partition")
-    if config["cityflow_training"]:
-        raise ValueError("Phase 2 fallback does not train on CityFlow")
+    validate_training_provenance(config)
     if config.get("selection_manifest"):
         frozen = json.loads((ROOT / config["selection_manifest"]).read_text())
-        checks = {
-            path: frozen["config_sha256"],
-            ROOT / config["window"]: frozen["evaluation_window_sha256"],
-            ROOT / "configs/reid-experiment.json": frozen["protocol_sha256"],
-            ROOT / "reports/reid-development.json": frozen["development_report_sha256"],
-            **{
-                ROOT / name: digest
-                for name, digest in frozen["runtime_source_sha256"].items()
-            },
-        }
-        for source, digest in checks.items():
-            if text_sha256(source) != digest:
-                raise ValueError(f"Frozen experiment changed: {source.name}")
+        if "text_sha256" in frozen:
+            checks = {
+                ROOT / name: digest for name, digest in frozen["text_sha256"].items()
+            }
+            for source, digest in checks.items():
+                if text_sha256(source) != digest:
+                    raise ValueError(f"Frozen experiment changed: {source.name}")
+            for name, digest in frozen.get("binary_sha256", {}).items():
+                source = ROOT / name
+                if sha256(source) != digest:
+                    raise ValueError(f"Frozen binary changed: {source.name}")
+        else:
+            checks = {
+                path: frozen["config_sha256"],
+                ROOT / config["window"]: frozen["evaluation_window_sha256"],
+                ROOT / "configs/reid-experiment.json": frozen["protocol_sha256"],
+                ROOT / "reports/reid-development.json": frozen[
+                    "development_report_sha256"
+                ],
+                **{
+                    ROOT / name: digest
+                    for name, digest in frozen["runtime_source_sha256"].items()
+                },
+            }
+            for source, digest in checks.items():
+                if text_sha256(source) != digest:
+                    raise ValueError(f"Frozen experiment changed: {source.name}")
     return config, window
 
 
@@ -70,6 +120,10 @@ def prepare(config_path: Path, output: Path) -> dict:
         "sources": sources,
         "positions": positions,
     }
+    if config.get("training_provenance"):
+        signature["training_provenance_sha256"] = text_sha256(
+            ROOT / config["training_provenance"]
+        )
     ready = output / "prepared.json"
     if ready.exists():
         manifest = json.loads(ready.read_text())

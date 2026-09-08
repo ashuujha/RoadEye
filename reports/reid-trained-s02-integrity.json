@@ -1,0 +1,18 @@
+{
+  "status": "PASS",
+  "cached_inference_without_gt_or_network": "PASS",
+  "deterministic_prediction_hashes": "PASS",
+  "prefix_invariance_decision_counts": {
+    "50.0": 598,
+    "100.0": 915,
+    "150.0": 1379
+  },
+  "link_evidence_cutoff_checks": 37,
+  "association_seconds": 4.489223800017498,
+  "evidence_crop_hashes_verified": 4620,
+  "cpu_encoder_without_gt_or_network": {
+    "status": "PASS",
+    "tracklets": 3,
+    "max_absolute_error": 0.0
+  }
+}

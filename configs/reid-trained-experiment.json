@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "checkpoint": "returned S01/S03-trained encoder acceptance and one untouched S02 evaluation",
+  "evaluation": {
+    "partition": "validation",
+    "scenario": "S02",
+    "start_s": 0.0,
+    "end_s": 180.0
+  },
+  "window_outputs": {
+    "evaluation": "configs/reid-trained-evaluation-window.json"
+  },
+  "window_selection": "first 180 scenario seconds from all cameras using timestamps and frame counts only",
+  "model_selection": "best S01/S03 identity-disjoint development mAP; rank1 then earlier epoch tie-break",
+  "association_selection": "reuse the pre-S02 0.85 similarity and 0.03 ambiguity margin without trained-model threshold calibration",
+  "evaluation_rule": "freeze model, window, association policy, and source hashes before opening S02 identity annotations; run once",
+  "limitations": [
+    "S02 has four cameras and cannot verify a six-camera journey",
+    "association thresholds were not calibrated for the trained embedding distribution",
+    "the returned manifest does not cryptographically link the training code archive",
+    "Colab training used Python 3.13 and torch 2.11; local runtime acceptance uses Python 3.11 and torch 2.4 CPU"
+  ]
+}

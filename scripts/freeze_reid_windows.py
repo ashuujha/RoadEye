@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import argparse
 import json
 from pathlib import Path
 
@@ -64,11 +65,25 @@ def freeze_window(dataset: Path, spec: dict, output: Path) -> None:
 
 
 def main() -> None:
-    protocol = json.loads((ROOT / "configs/reid-experiment.json").read_text())
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "--protocol",
+        type=Path,
+        default=ROOT / "configs/reid-experiment.json",
+    )
+    args = parser.parse_args()
+    protocol = json.loads(args.protocol.read_text(encoding="utf-8"))
     dataset = ROOT / "data/cityflow/AICity22_Track1_MTMC_Tracking"
     for role in ("development", "evaluation"):
+        if role not in protocol:
+            continue
+        output = protocol.get("window_outputs", {}).get(
+            role, f"configs/reid-{role}-window.json"
+        )
         freeze_window(
-            dataset, protocol[role], ROOT / f"configs/reid-{role}-window.json"
+            dataset,
+            protocol[role],
+            ROOT / output,
         )
 
 

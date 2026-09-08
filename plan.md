@@ -7,11 +7,12 @@
 | 10–18 | CityFlow import, CPU embeddings, association baseline, evaluator | Critical |
 | 18–21 | Bounded pretrained vehicle Re-ID comparison and frozen evaluation | Critical repair; completed |
 | 21–24 | Private S01/S03 training bundle, portable Colab job, and CPU artifact contract | Critical repair; approved checkpoint |
-| 24–30 | Crop selection, evidence timeline, map, and replay | Critical |
-| 30–40 | Indian transcription/review, detector/OCR, preprocessing, and evaluation | Critical |
-| 40–45 | Plate search, hybrid evidence, OD, density heat map, and bottleneck proxies | Required |
-| 45–51 | Frozen evaluation, leakage checks, error analysis, and CPU timing | Critical |
-| 51–56 | Integration repair, offline rehearsal, claims, and evidence packaging | Critical |
+| 24–27 | Returned-model acceptance and one frozen S02 evaluation | Critical repair; completed |
+| 27–33 | Crop selection, evidence timeline, map, and replay | Critical |
+| 33–43 | Indian transcription/review, detector/OCR, preprocessing, and evaluation | Critical |
+| 43–47 | Plate search, hybrid evidence, OD, density heat map, and bottleneck proxies | Required |
+| 47–52 | Remaining frozen evaluation, leakage checks, error analysis, and CPU timing | Critical |
+| 52–56 | Integration repair, offline rehearsal, claims, and evidence packaging | Critical |
 
 Hard gates remain unchanged: verify actual CityFlow camera coverage and Indian transcription/test capacity before implementation; never use ground truth at runtime or fabricate journeys. Allow up to one hour for Roboflow/IEEE checks and six hours for transcription review. Cut extra model variants, supplementary datasets, further tuning, and presentation polish first. Never cut evaluation, provenance, uncertainty, or CPU rehearsal.
 
@@ -32,3 +33,9 @@ The portable job uses the official exact-hash VeRi checkpoint for initialization
 ### Hours 21–24 measured construction result
 
 The private ignored bundle contains 2,900 real S01/S03 crops across 11 cameras and 113 multi-camera identities: 2,318 crops/90 identities for training and 582 crops/23 identities for development, with zero identity overlap and zero crop exclusions. Archive integrity and every crop hash passed. The code-only Colab archive contains no data, weights, or credentials and passed its internal source-hash verification. A real 2048-dimensional encoder export reloaded on local CPU with exact tensor equality and zero maximum difference. These are construction and portability checks, not Re-ID accuracy results.
+
+## Completed returned-model evaluation, hours 24–27
+
+The returned epoch-7 encoder improved identity-disjoint S01/S03 development retrieval from 67/99 to 87/99 rank-1 and from 0.5732 to 0.8829 mAP. The exact weight hash loaded on Python 3.11 CPU. The result manifest nevertheless has two recorded limitations: Colab used Python 3.13/torch 2.11 rather than the documented training versions, and it did not cryptographically link the job code archive.
+
+Model, unchanged association thresholds, S02 metadata window, provenance, weights, and runtime source hashes were frozen before identity scoring. The one S02 run measured 3/3 correct evaluable links, 3/23 pairwise recall, 10/20 causal retrieval rank-1, and 0.6170 retrieval mAP. Only 3/37 links were evaluable, 34 remain unknown, and the longest fully scored journey spans two cameras. S02 has four cameras and cannot establish a six-camera result. S02 is now consumed; future variants there are post-hoc only.

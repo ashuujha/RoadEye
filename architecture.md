@@ -113,3 +113,25 @@ CPU import remain unverified until the private job is run and returned.
 Validation scenario S02 remains untouched for one separately approved frozen
 evaluation after model selection. S04 and S05 are consumed diagnostics and may
 only receive clearly labelled post-hoc comparisons.
+
+## Accepted trained encoder and S02 result
+
+The returned encoder is accepted through a strict three-member ZIP contract,
+full data/config/model hashes, recomputed best-epoch selection, and local CPU
+inference. Runtime configuration validates a tracked acceptance report, explicit
+training/evaluation scenario separation, exact weight hash, and explicitly
+accepted provenance limitations. A generic freeze manifest hashes the model,
+configuration, S02 window, acceptance report, and all runtime Python sources.
+Prediction artifacts are written and replayed deterministically before the
+separate evaluator opens GT.
+
+The S02 run uses the first 180 synchronized seconds from cameras c006–c009 and
+the existing association policy without trained-model threshold calibration.
+It embeds 1,540 of 1,671 baseline tracklets from 4,620 causal prefix crops. The
+model yields 37 predicted links and a three-camera predicted maximum, but only
+three links are evaluable and the fully scored consistent maximum is two
+cameras. Error analysis shows that 19/20 labelled queries have an admissible
+positive after pair-level gates, while only three have a positive above the
+0.85 similarity threshold. Development-only score calibration is therefore the
+highest-impact association repair. Since S02 is now consumed, any later S02
+comparison is post-hoc; training/tuning must remain on S01/S03.

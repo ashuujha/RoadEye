@@ -58,3 +58,13 @@ The runtime receives only the exported encoder and its provenance manifest,
 never training identities or associations. Until the private GPU job runs and
 the returned artifact passes local CPU verification, fine-tuned performance is
 **UNVERIFIED**.
+
+The returned model measured 87/99 rank-1 and 0.8829 mAP on its identity-disjoint
+S01/S03 development pools, versus 67/99 and 0.5732 at epoch zero. On the one
+frozen S02 run, only 3/37 predicted links were evaluable; all three were correct,
+while 34 remain unknown. Pairwise recall was 3/23, causal retrieval rank-1 was
+10/20, and the longest fully scored consistent journey covered two cameras.
+S02 contains four cameras, so it cannot verify the six-camera demo criterion.
+These are exact local-slice measurements with small/partial denominators, not
+city-wide or official benchmark accuracy. S02 is now consumed for model
+comparison and cannot be reused as a fresh evaluation after tuning.

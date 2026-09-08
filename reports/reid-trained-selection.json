@@ -1,0 +1,37 @@
+{
+  "schema_version": 1,
+  "selected_at_utc": "2026-09-08T06:19:59.855084+00:00",
+  "text_hash_rule": "SHA256 of UTF-8 file bytes with CRLF normalized to LF",
+  "text_sha256": {
+    "configs/reid-trained-evaluation.json": "f2224f866daebd8e70ec81d611097a4128ee0f4ce717f0a34846390f808357d4",
+    "configs/reid-trained-experiment.json": "04c9f14fe64636d9e300724ed1add9ce6edd5c64e881bd5fcb27cfc731c3bb97",
+    "configs/reid-trained-evaluation-window.json": "a40009575a4181b60ca505333477b99a9dcb24dffb19c51b4ae41fc9a899943b",
+    "reports/reid-trained-model.json": "94c01743b4f957d44ca52a4c72127506900b54bf50d7284feda3d33abec4f812",
+    "src/roadeye/__init__.py": "56a5b8c30d0dcf4b6b32e917b5e82878542927417ae9a768773f401a38952e3f",
+    "src/roadeye/association.py": "82fa135e32d508b8bbae93414799496da463f9208e8cd7fef8254425edf7d532",
+    "src/roadeye/embeddings.py": "f405c556635ef994b0d0477b4121cb0f7c2815a99e471d3745cd377fc6bc679d",
+    "src/roadeye/evaluation.py": "cbe04018162efe0e8eff72b52d5e72ae7421dbade9b3d914ca6b489167f3a453",
+    "src/roadeye/phase2.py": "e08fcf3546ec576241901640a0296af72b6ec02ef58315b850d37be2a6991408",
+    "src/roadeye/reid_training.py": "4530f02b2d60cfb1f9c1e09ee491a488019ea804a796e71b654b15a4ac1d3707",
+    "src/roadeye/tracklets.py": "b9aea34981fae380407f9545e03a52b24c512501b583c38ef33895ca14ea9679",
+    "src/roadeye/vehicle_encoder.py": "eab796a282814007915fcd2b3cf2ffc394d34f057e14cbf1d2c12f516c55e925"
+  },
+  "binary_sha256": {
+    "artifacts/reid-training/returned/accepted-2d8b0992/roadeye_cityflow_reid.pt": "1a7bddc94b065da1cc76f27f3455d61dc9752e687a87101c2eeb566353185cac"
+  },
+  "selected_model": "roadeye_cityflow_reid_r50_ibn",
+  "selected_weights_sha256": "1a7bddc94b065da1cc76f27f3455d61dc9752e687a87101c2eeb566353185cac",
+  "association_policy": {
+    "min_similarity": 0.85,
+    "margin": 0.03,
+    "max_gap_s": 45.0,
+    "max_camera_distance_m": 1500.0,
+    "overlap_distance_m": 150.0,
+    "max_speed_mps": 40.0,
+    "clock_tolerance_s": 2.0,
+    "position_tolerance_m": 100.0
+  },
+  "evaluation_scenario": "S02",
+  "evaluation_labels_opened_at_freeze": false,
+  "scope": "returned model acceptance and unchanged association policy only; S02 metrics do not exist yet"
+}

@@ -1,0 +1,60 @@
+{
+  "status": "PASS",
+  "scope": "returned_reid_artifact_integrity_selection_and_cpu_acceptance",
+  "result_zip": {
+    "filename": "roadeye-reid-result.zip",
+    "bytes": 87805212,
+    "sha256": "2d8b0992b30348ad4be99f35edebce38043365da5d7b2038307209a5765584d4",
+    "members": [
+      "history.json",
+      "roadeye_cityflow_reid.json",
+      "roadeye_cityflow_reid.pt"
+    ],
+    "zip_test": "PASS"
+  },
+  "manifest_sha256": "69cda60a7072105a43692b404fd3a038e1361ad6da58b1b11620d91455bda52d",
+  "history_sha256": "89e6b0254c237166ff63ba6cd1b293afe363ba851b8201e3c3e2e84d9c18d2c9",
+  "weights_sha256": "1a7bddc94b065da1cc76f27f3455d61dc9752e687a87101c2eeb566353185cac",
+  "training_scenarios": [
+    "S01",
+    "S03"
+  ],
+  "evaluation_scenarios_used": [],
+  "split_unit": "scoped_identity",
+  "epochs_completed": 15,
+  "best_epoch": 7,
+  "development": {
+    "queries": 99,
+    "baseline_rank1": 0.6767676767676768,
+    "selected_rank1": 0.8787878787878788,
+    "rank1_absolute_change": 0.202020202020202,
+    "baseline_map": 0.5732408585187906,
+    "selected_map": 0.88292361398422,
+    "map_absolute_change": 0.30968275546542945,
+    "scope": "identity_camera_pooled_cross_camera_development_retrieval"
+  },
+  "training_environment": {
+    "python": "3.13.15",
+    "platform": "Linux-6.6.122+-x86_64-with-glibc2.35",
+    "torch": "2.11.0+cu128",
+    "torchvision": "0.26.0+cu128",
+    "cuda_device": "Tesla T4"
+  },
+  "training_python_3_11_status": "FAIL",
+  "training_code_archive_linkage_status": "UNVERIFIED",
+  "cpu_acceptance": {
+    "status": "PASS",
+    "python": "3.11.9",
+    "platform": "Windows-10-10.0.26200-SP0",
+    "torch": "2.4.1+cpu",
+    "embedding_shape": [
+      1,
+      2048
+    ],
+    "finite": true,
+    "all_parameters_frozen": true,
+    "elapsed_seconds": 0.5659433000255376
+  },
+  "accuracy_claim": "development identity-camera pooled retrieval only",
+  "fresh_evaluation_scenario": "S02"
+}
