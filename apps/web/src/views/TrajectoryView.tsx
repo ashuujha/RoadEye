@@ -3,8 +3,6 @@ import { useQuery } from "@tanstack/react-query";
 
 import { api } from "../api";
 import type {
-  DemoStatus,
-  Journey,
   PlateSearchResult,
   VehicleSummary,
 } from "../api.generated";
@@ -13,7 +11,6 @@ import { NetworkMap } from "../components/NetworkMap";
 import { StatusBadge } from "../components/StatusBadge";
 
 type SearchMode = "plate" | "vehicle";
-type MapRecord = Record<string, string | number>;
 
 interface SubmittedSearch {
   readonly mode: SearchMode;
@@ -29,65 +26,6 @@ interface SearchCandidate {
   readonly annotation: string;
 }
 
-export interface JourneyMapModel {
-  readonly cameras: MapRecord[];
-  readonly links: MapRecord[];
-  readonly nodes: MapRecord[];
-}
-
-function projectedCoordinate(
-  value: number,
-  minimum: number,
-  maximum: number,
-  outputMinimum: number,
-  outputMaximum: number,
-): number {
-  if (minimum === maximum) return (outputMinimum + outputMaximum) / 2;
-  return outputMinimum + ((value - minimum) / (maximum - minimum)) * (outputMaximum - outputMinimum);
-}
-
-export function buildJourneyMapModel(
-  journey: Journey,
-  status?: DemoStatus,
-): JourneyMapModel {
-  const positions = new Map<
-    string,
-    { readonly latitude: number; readonly longitude: number; readonly kind: string }
-  >();
-  for (const visit of journey.visits) {
-    positions.set(visit.camera, status?.camera_positions[visit.camera] ?? visit.position);
-  }
-
-  const positionList = [...positions.values()];
-  const latitudes = positionList.map((position) => position.latitude);
-  const longitudes = positionList.map((position) => position.longitude);
-  const minimumLatitude = Math.min(...latitudes);
-  const maximumLatitude = Math.max(...latitudes);
-  const minimumLongitude = Math.min(...longitudes);
-  const maximumLongitude = Math.max(...longitudes);
-
-  const cameras = [...positions.entries()].map(([id, position]) => ({
-    id,
-    x: projectedCoordinate(position.longitude, minimumLongitude, maximumLongitude, 55, 545),
-    y: projectedCoordinate(position.latitude, minimumLatitude, maximumLatitude, 225, 35),
-    zone_id: position.kind,
-  }));
-
-  const links = journey.visits.slice(1).map((visit, index) => ({
-    source: journey.visits[index].camera,
-    target: visit.camera,
-    elapsed_seconds:
-      visit.incoming_link?.temporal_gap_s ??
-      visit.first_observed_s - journey.visits[index].last_observed_s,
-  }));
-
-  const nodes = journey.visits.map((visit, index) => ({
-    id: `${journey.global_id}:${index}:0`,
-    camera_id: visit.camera,
-  }));
-
-  return { cameras, links, nodes };
-}
 
 function formatSeconds(value: number): string {
   return `${value.toFixed(2)} s`;
@@ -189,9 +127,6 @@ export function TrajectoryView() {
   const activeSearchError =
     submitted?.mode === "plate" ? plateResultsQuery.error : vehicleResultsQuery.error;
   const journey = journeyQuery.data;
-  const mapModel = journey
-    ? buildJourneyMapModel(journey, demoStatusQuery.data)
-    : null;
 
   function selectMode(nextMode: SearchMode): void {
     setMode(nextMode);
@@ -328,7 +263,7 @@ export function TrajectoryView() {
                 {errorMessage(journeyQuery.error)}
               </div>
             )}
-            {journey && mapModel && (
+            {journey && (
               <>
                 <div className="panel version-banner">
                   <div className="version-info">
@@ -344,10 +279,8 @@ export function TrajectoryView() {
                 <div className="trajectory-split">
                   <div className="panel map-panel">
                     <NetworkMap
-                      cameras={mapModel.cameras}
-                      edges={[]}
-                      nodes={mapModel.nodes}
-                      links={mapModel.links}
+                      journey={journey}
+                      status={demoStatusQuery.data}
                       height={400}
                     />
                     <p className="trajectory-map-disclosure text-xs text-muted">

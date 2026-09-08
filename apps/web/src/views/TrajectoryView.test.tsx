@@ -3,7 +3,8 @@ import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
 
 import type { DemoStatus, Journey, PlateSearchStatus } from "../api.generated";
-import { buildJourneyMapModel, TrajectoryView } from "./TrajectoryView";
+import { TrajectoryView } from "./TrajectoryView";
+import { buildJourneyMapModel } from "../components/NetworkMap";
 
 const plateSearchStatus = {
   status: "UNVERIFIED",
@@ -129,5 +130,23 @@ describe("TrajectoryView", () => {
     ]);
     expect(model.cameras.every((camera) => Number.isFinite(camera.x))).toBe(true);
     expect(model.cameras.every((camera) => Number.isFinite(camera.y))).toBe(true);
+  });
+
+  it("does not invent connectors when explicit interpolation evidence is absent", () => {
+    const model = buildJourneyMapModel({
+      ...journey,
+      visits: journey.visits.map((visit) => ({ ...visit, interpolation_from_previous: null })),
+    });
+    expect(model.links).toEqual([]);
+  });
+
+  it("omits invalid camera coordinates and centers a single valid reference", () => {
+    const model = buildJourneyMapModel(null, { camera_positions: {
+      valid: { latitude: 0, longitude: 0, kind: "approximate" },
+      invalid: { latitude: NaN, longitude: 0, kind: "approximate" },
+    } });
+    expect(model.omittedCameraIds).toEqual(["invalid"]);
+    expect(model.cameras).toEqual([{ id: "valid", latitude: 0, longitude: 0, kind: "approximate", x: 300, y: 130 }]);
+    expect(buildJourneyMapModel(null).cameras).toEqual([]);
   });
 });

@@ -991,6 +991,32 @@ textarea:focus-visible {
   display: block;
 }
 
+.map-selection-controls {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 16px;
+  margin: 16px 0;
+}
+
+.map-selection-controls label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.map-visit-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-left: 24px;
+}
+
+.map-visit-list a {
+  margin-left: 12px;
+  color: var(--accent-primary);
+}
+
 .map-footnote {
   display: flex;
   justify-content: space-between;
