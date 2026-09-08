@@ -72,11 +72,7 @@ function App() {
       {page === "Analytics" && <AnalyticsView runId="" />}
 
       {page === "Evidence" && (
-        <CameraWorkspaceView
-          actor="read-only"
-          cameras={emptyRecords}
-          onSelectObservation={setSelectedObservationId}
-        />
+        <CameraWorkspaceView />
       )}
 
       <EvidenceDrawer
