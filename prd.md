@@ -75,3 +75,15 @@ chronological replay, and 37 link-evidence records. This is a delivery result, n
 an accuracy improvement. Its strongest displayed prediction spans three cameras;
 the verified maximum remains two cameras. Plate-string search and analytics remain
 unimplemented until their independent phases.
+
+The S01 development-only association calibration tested 30 predeclared settings;
+two passed its small evidence gate. The selected policy measured 5/6 correct
+evaluable development links, pairwise precision 1.0000, recall 0.4000, and a
+three-camera fully scored consistent maximum. A disclosed S05 post-hoc run with
+that frozen policy produced 113 links, of which 7/14 evaluable links were correct;
+99 remain unknown. Pairwise precision was 0.6000, pairwise recall was 12/507 among
+embedded labeled tracklets and 12/647 over all mappable baseline tracklets, and
+appearance rank-1 was 51/254. Its predicted maximum was five cameras, but its
+fully scored consistent maximum remained two. Therefore the required six-camera
+journey is still **FAIL**, and the S02 test demo remains unchanged. These S05
+numbers are post-hoc diagnostic evidence, not fresh held-out accuracy.

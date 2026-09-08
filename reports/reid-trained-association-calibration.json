@@ -1,0 +1,1270 @@
+{
+  "status": "PASS",
+  "scope": "S01_identity_disjoint_development_association_calibration",
+  "not_held_out_accuracy": true,
+  "protocol_sha256": "4db71806651d7b8a25a79fc93233d6a45584800dd7f7b2f9281734cc69eeefd1",
+  "development_config_sha256": "f98f1305a2c85965b30a66a1e1950ffcfef164b4029a551992c2756100661bcf",
+  "private_bundle_manifest_sha256": "ae5240cf4a0f7e1127774294b95674ddcfbcda13651e891a9c842c02429abaa0",
+  "private_bundle_counts": {
+    "records": 2900,
+    "train_records": 2318,
+    "development_records": 582,
+    "train_identities": 90,
+    "development_identities": 23,
+    "identity_overlap": 0,
+    "cameras": 11,
+    "identities_with_two_or_more_cameras": 113,
+    "excluded_crops": 0
+  },
+  "trained_weights_sha256": "1a7bddc94b065da1cc76f27f3455d61dc9752e687a87101c2eeb566353185cac",
+  "development_identity_count": 19,
+  "initial_all_identity_evaluator_summary": {
+    "mapping_counts": {
+      "unmatched": 784,
+      "ambiguous": 228,
+      "matched": 142
+    },
+    "appearance_retrieval": {
+      "queries_with_prior_cross_camera_positive": 40,
+      "queries_without_prior_positive": 62,
+      "rank1_correct": 31,
+      "rank1": 0.775,
+      "map": 0.8422916666666665,
+      "scope": "labeled_gallery_only_at_prefix_ready_time_no_topology_filter"
+    }
+  },
+  "candidate_count": 30,
+  "eligible_candidate_count": 2,
+  "selected": {
+    "policy": {
+      "min_similarity": 0.65,
+      "margin": 0.1,
+      "max_gap_s": 45.0,
+      "max_camera_distance_m": 1500.0,
+      "overlap_distance_m": 150.0,
+      "max_speed_mps": 40.0,
+      "clock_tolerance_s": 2.0,
+      "position_tolerance_m": 100.0
+    },
+    "metrics": {
+      "status": "MEASURED",
+      "development_identities": 19,
+      "mapped_development_tracklets": 24,
+      "relevant_predicted_links": 10,
+      "evaluable_development_links": 6,
+      "correct_development_links": 5,
+      "incorrect_development_links": 1,
+      "unscored_development_links": 4,
+      "ignored_links_without_development_endpoint": 92,
+      "development_link_precision": 0.8333333333333334,
+      "development_link_evaluation_coverage": 0.6,
+      "predicted_development_cross_camera_pairs": 6,
+      "true_development_cross_camera_pairs": 15,
+      "correct_development_cross_camera_pairs": 6,
+      "development_pairwise_precision": 1.0,
+      "development_pairwise_recall": 0.4,
+      "development_pairwise_f1": 0.5714285714285715,
+      "development_group_counts": {
+        "partially_scored": 3,
+        "fully_scored_consistent": 15,
+        "mixed_gt_identities": 1
+      },
+      "max_fully_scored_consistent_development_camera_coverage": 3
+    },
+    "eligible": true,
+    "predicted_links_all_tracklets": 102,
+    "max_predicted_camera_coverage_all_tracklets": 5
+  },
+  "candidates": [
+    {
+      "policy": {
+        "min_similarity": 0.45,
+        "margin": 0.02,
+        "max_gap_s": 45.0,
+        "max_camera_distance_m": 1500.0,
+        "overlap_distance_m": 150.0,
+        "max_speed_mps": 40.0,
+        "clock_tolerance_s": 2.0,
+        "position_tolerance_m": 100.0
+      },
+      "metrics": {
+        "status": "MEASURED",
+        "development_identities": 19,
+        "mapped_development_tracklets": 24,
+        "relevant_predicted_links": 28,
+        "evaluable_development_links": 13,
+        "correct_development_links": 6,
+        "incorrect_development_links": 7,
+        "unscored_development_links": 15,
+        "ignored_links_without_development_endpoint": 188,
+        "development_link_precision": 0.46153846153846156,
+        "development_link_evaluation_coverage": 0.4642857142857143,
+        "predicted_development_cross_camera_pairs": 12,
+        "true_development_cross_camera_pairs": 15,
+        "correct_development_cross_camera_pairs": 9,
+        "development_pairwise_precision": 0.75,
+        "development_pairwise_recall": 0.6,
+        "development_pairwise_f1": 0.6666666666666665,
+        "development_group_counts": {
+          "mixed_gt_identities": 8,
+          "partially_scored": 7,
+          "fully_scored_consistent": 1
+        },
+        "max_fully_scored_consistent_development_camera_coverage": 4
+      },
+      "eligible": false,
+      "predicted_links_all_tracklets": 216,
+      "max_predicted_camera_coverage_all_tracklets": 5
+    },
+    {
+      "policy": {
+        "min_similarity": 0.45,
+        "margin": 0.02,
+        "max_gap_s": 90.0,
+        "max_camera_distance_m": 1500.0,
+        "overlap_distance_m": 150.0,
+        "max_speed_mps": 40.0,
+        "clock_tolerance_s": 2.0,
+        "position_tolerance_m": 100.0
+      },
+      "metrics": {
+        "status": "MEASURED",
+        "development_identities": 19,
+        "mapped_development_tracklets": 24,
+        "relevant_predicted_links": 27,
+        "evaluable_development_links": 12,
+        "correct_development_links": 6,
+        "incorrect_development_links": 6,
+        "unscored_development_links": 15,
+        "ignored_links_without_development_endpoint": 194,
+        "development_link_precision": 0.5,
+        "development_link_evaluation_coverage": 0.4444444444444444,
+        "predicted_development_cross_camera_pairs": 12,
+        "true_development_cross_camera_pairs": 15,
+        "correct_development_cross_camera_pairs": 9,
+        "development_pairwise_precision": 0.75,
+        "development_pairwise_recall": 0.6,
+        "development_pairwise_f1": 0.6666666666666665,
+        "development_group_counts": {
+          "mixed_gt_identities": 7,
+          "partially_scored": 8,
+          "fully_scored_consistent": 1
+        },
+        "max_fully_scored_consistent_development_camera_coverage": 2
+      },
+      "eligible": false,
+      "predicted_links_all_tracklets": 221,
+      "max_predicted_camera_coverage_all_tracklets": 5
+    },
+    {
+      "policy": {
+        "min_similarity": 0.45,
+        "margin": 0.06,
+        "max_gap_s": 45.0,
+        "max_camera_distance_m": 1500.0,
+        "overlap_distance_m": 150.0,
+        "max_speed_mps": 40.0,
+        "clock_tolerance_s": 2.0,
+        "position_tolerance_m": 100.0
+      },
+      "metrics": {
+        "status": "MEASURED",
+        "development_identities": 19,
+        "mapped_development_tracklets": 24,
+        "relevant_predicted_links": 23,
+        "evaluable_development_links": 11,
+        "correct_development_links": 4,
+        "incorrect_development_links": 7,
+        "unscored_development_links": 12,
+        "ignored_links_without_development_endpoint": 158,
+        "development_link_precision": 0.36363636363636365,
+        "development_link_evaluation_coverage": 0.4782608695652174,
+        "predicted_development_cross_camera_pairs": 7,
+        "true_development_cross_camera_pairs": 15,
+        "correct_development_cross_camera_pairs": 4,
+        "development_pairwise_precision": 0.5714285714285714,
+        "development_pairwise_recall": 0.26666666666666666,
+        "development_pairwise_f1": 0.36363636363636365,
+        "development_group_counts": {
+          "mixed_gt_identities": 8,
+          "partially_scored": 5,
+          "fully_scored_consistent": 5
+        },
+        "max_fully_scored_consistent_development_camera_coverage": 1
+      },
+      "eligible": false,
+      "predicted_links_all_tracklets": 181,
+      "max_predicted_camera_coverage_all_tracklets": 5
+    },
+    {
+      "policy": {
+        "min_similarity": 0.45,
+        "margin": 0.06,
+        "max_gap_s": 90.0,
+        "max_camera_distance_m": 1500.0,
+        "overlap_distance_m": 150.0,
+        "max_speed_mps": 40.0,
+        "clock_tolerance_s": 2.0,
+        "position_tolerance_m": 100.0
+      },
+      "metrics": {
+        "status": "MEASURED",
+        "development_identities": 19,
+        "mapped_development_tracklets": 24,
+        "relevant_predicted_links": 23,
+        "evaluable_development_links": 9,
+        "correct_development_links": 4,
+        "incorrect_development_links": 5,
+        "unscored_development_links": 14,
+        "ignored_links_without_development_endpoint": 155,
+        "development_link_precision": 0.4444444444444444,
+        "development_link_evaluation_coverage": 0.391304347826087,
+        "predicted_development_cross_camera_pairs": 6,
+        "true_development_cross_camera_pairs": 15,
+        "correct_development_cross_camera_pairs": 4,
+        "development_pairwise_precision": 0.6666666666666666,
+        "development_pairwise_recall": 0.26666666666666666,
+        "development_pairwise_f1": 0.3809523809523809,
+        "development_group_counts": {
+          "mixed_gt_identities": 7,
+          "partially_scored": 5,
+          "fully_scored_consistent": 6
+        },
+        "max_fully_scored_consistent_development_camera_coverage": 2
+      },
+      "eligible": false,
+      "predicted_links_all_tracklets": 178,
+      "max_predicted_camera_coverage_all_tracklets": 5
+    },
+    {
+      "policy": {
+        "min_similarity": 0.45,
+        "margin": 0.1,
+        "max_gap_s": 45.0,
+        "max_camera_distance_m": 1500.0,
+        "overlap_distance_m": 150.0,
+        "max_speed_mps": 40.0,
+        "clock_tolerance_s": 2.0,
+        "position_tolerance_m": 100.0
+      },
+      "metrics": {
+        "status": "MEASURED",
+        "development_identities": 19,
+        "mapped_development_tracklets": 24,
+        "relevant_predicted_links": 15,
+        "evaluable_development_links": 8,
+        "correct_development_links": 5,
+        "incorrect_development_links": 3,
+        "unscored_development_links": 7,
+        "ignored_links_without_development_endpoint": 118,
+        "development_link_precision": 0.625,
+        "development_link_evaluation_coverage": 0.5333333333333333,
+        "predicted_development_cross_camera_pairs": 6,
+        "true_development_cross_camera_pairs": 15,
+        "correct_development_cross_camera_pairs": 6,
+        "development_pairwise_precision": 1.0,
+        "development_pairwise_recall": 0.4,
+        "development_pairwise_f1": 0.5714285714285715,
+        "development_group_counts": {
+          "mixed_gt_identities": 4,
+          "partially_scored": 4,
+          "fully_scored_consistent": 11
+        },
+        "max_fully_scored_consistent_development_camera_coverage": 3
+      },
+      "eligible": false,
+      "predicted_links_all_tracklets": 133,
+      "max_predicted_camera_coverage_all_tracklets": 5
+    },
+    {
+      "policy": {
+        "min_similarity": 0.45,
+        "margin": 0.1,
+        "max_gap_s": 90.0,
+        "max_camera_distance_m": 1500.0,
+        "overlap_distance_m": 150.0,
+        "max_speed_mps": 40.0,
+        "clock_tolerance_s": 2.0,
+        "position_tolerance_m": 100.0
+      },
+      "metrics": {
+        "status": "MEASURED",
+        "development_identities": 19,
+        "mapped_development_tracklets": 24,
+        "relevant_predicted_links": 15,
+        "evaluable_development_links": 6,
+        "correct_development_links": 4,
+        "incorrect_development_links": 2,
+        "unscored_development_links": 9,
+        "ignored_links_without_development_endpoint": 116,
+        "development_link_precision": 0.6666666666666666,
+        "development_link_evaluation_coverage": 0.4,
+        "predicted_development_cross_camera_pairs": 5,
+        "true_development_cross_camera_pairs": 15,
+        "correct_development_cross_camera_pairs": 5,
+        "development_pairwise_precision": 1.0,
+        "development_pairwise_recall": 0.3333333333333333,
+        "development_pairwise_f1": 0.5,
+        "development_group_counts": {
+          "partially_scored": 6,
+          "fully_scored_consistent": 12,
+          "mixed_gt_identities": 2
+        },
+        "max_fully_scored_consistent_development_camera_coverage": 2
+      },
+      "eligible": false,
+      "predicted_links_all_tracklets": 131,
+      "max_predicted_camera_coverage_all_tracklets": 5
+    },
+    {
+      "policy": {
+        "min_similarity": 0.55,
+        "margin": 0.02,
+        "max_gap_s": 45.0,
+        "max_camera_distance_m": 1500.0,
+        "overlap_distance_m": 150.0,
+        "max_speed_mps": 40.0,
+        "clock_tolerance_s": 2.0,
+        "position_tolerance_m": 100.0
+      },
+      "metrics": {
+        "status": "MEASURED",
+        "development_identities": 19,
+        "mapped_development_tracklets": 24,
+        "relevant_predicted_links": 22,
+        "evaluable_development_links": 10,
+        "correct_development_links": 6,
+        "incorrect_development_links": 4,
+        "unscored_development_links": 12,
+        "ignored_links_without_development_endpoint": 174,
+        "development_link_precision": 0.6,
+        "development_link_evaluation_coverage": 0.45454545454545453,
+        "predicted_development_cross_camera_pairs": 12,
+        "true_development_cross_camera_pairs": 15,
+        "correct_development_cross_camera_pairs": 9,
+        "development_pairwise_precision": 0.75,
+        "development_pairwise_recall": 0.6,
+        "development_pairwise_f1": 0.6666666666666665,
+        "development_group_counts": {
+          "mixed_gt_identities": 4,
+          "partially_scored": 8,
+          "fully_scored_consistent": 4
+        },
+        "max_fully_scored_consistent_development_camera_coverage": 4
+      },
+      "eligible": false,
+      "predicted_links_all_tracklets": 196,
+      "max_predicted_camera_coverage_all_tracklets": 5
+    },
+    {
+      "policy": {
+        "min_similarity": 0.55,
+        "margin": 0.02,
+        "max_gap_s": 90.0,
+        "max_camera_distance_m": 1500.0,
+        "overlap_distance_m": 150.0,
+        "max_speed_mps": 40.0,
+        "clock_tolerance_s": 2.0,
+        "position_tolerance_m": 100.0
+      },
+      "metrics": {
+        "status": "MEASURED",
+        "development_identities": 19,
+        "mapped_development_tracklets": 24,
+        "relevant_predicted_links": 23,
+        "evaluable_development_links": 10,
+        "correct_development_links": 6,
+        "incorrect_development_links": 4,
+        "unscored_development_links": 13,
+        "ignored_links_without_development_endpoint": 174,
+        "development_link_precision": 0.6,
+        "development_link_evaluation_coverage": 0.43478260869565216,
+        "predicted_development_cross_camera_pairs": 12,
+        "true_development_cross_camera_pairs": 15,
+        "correct_development_cross_camera_pairs": 9,
+        "development_pairwise_precision": 0.75,
+        "development_pairwise_recall": 0.6,
+        "development_pairwise_f1": 0.6666666666666665,
+        "development_group_counts": {
+          "mixed_gt_identities": 6,
+          "partially_scored": 7,
+          "fully_scored_consistent": 3
+        },
+        "max_fully_scored_consistent_development_camera_coverage": 1
+      },
+      "eligible": false,
+      "predicted_links_all_tracklets": 197,
+      "max_predicted_camera_coverage_all_tracklets": 5
+    },
+    {
+      "policy": {
+        "min_similarity": 0.55,
+        "margin": 0.06,
+        "max_gap_s": 45.0,
+        "max_camera_distance_m": 1500.0,
+        "overlap_distance_m": 150.0,
+        "max_speed_mps": 40.0,
+        "clock_tolerance_s": 2.0,
+        "position_tolerance_m": 100.0
+      },
+      "metrics": {
+        "status": "MEASURED",
+        "development_identities": 19,
+        "mapped_development_tracklets": 24,
+        "relevant_predicted_links": 19,
+        "evaluable_development_links": 9,
+        "correct_development_links": 4,
+        "incorrect_development_links": 5,
+        "unscored_development_links": 10,
+        "ignored_links_without_development_endpoint": 150,
+        "development_link_precision": 0.4444444444444444,
+        "development_link_evaluation_coverage": 0.47368421052631576,
+        "predicted_development_cross_camera_pairs": 7,
+        "true_development_cross_camera_pairs": 15,
+        "correct_development_cross_camera_pairs": 4,
+        "development_pairwise_precision": 0.5714285714285714,
+        "development_pairwise_recall": 0.26666666666666666,
+        "development_pairwise_f1": 0.36363636363636365,
+        "development_group_counts": {
+          "mixed_gt_identities": 6,
+          "partially_scored": 6,
+          "fully_scored_consistent": 6
+        },
+        "max_fully_scored_consistent_development_camera_coverage": 2
+      },
+      "eligible": false,
+      "predicted_links_all_tracklets": 169,
+      "max_predicted_camera_coverage_all_tracklets": 5
+    },
+    {
+      "policy": {
+        "min_similarity": 0.55,
+        "margin": 0.06,
+        "max_gap_s": 90.0,
+        "max_camera_distance_m": 1500.0,
+        "overlap_distance_m": 150.0,
+        "max_speed_mps": 40.0,
+        "clock_tolerance_s": 2.0,
+        "position_tolerance_m": 100.0
+      },
+      "metrics": {
+        "status": "MEASURED",
+        "development_identities": 19,
+        "mapped_development_tracklets": 24,
+        "relevant_predicted_links": 20,
+        "evaluable_development_links": 8,
+        "correct_development_links": 4,
+        "incorrect_development_links": 4,
+        "unscored_development_links": 12,
+        "ignored_links_without_development_endpoint": 149,
+        "development_link_precision": 0.5,
+        "development_link_evaluation_coverage": 0.4,
+        "predicted_development_cross_camera_pairs": 6,
+        "true_development_cross_camera_pairs": 15,
+        "correct_development_cross_camera_pairs": 4,
+        "development_pairwise_precision": 0.6666666666666666,
+        "development_pairwise_recall": 0.26666666666666666,
+        "development_pairwise_f1": 0.3809523809523809,
+        "development_group_counts": {
+          "mixed_gt_identities": 6,
+          "partially_scored": 6,
+          "fully_scored_consistent": 6
+        },
+        "max_fully_scored_consistent_development_camera_coverage": 2
+      },
+      "eligible": false,
+      "predicted_links_all_tracklets": 169,
+      "max_predicted_camera_coverage_all_tracklets": 5
+    },
+    {
+      "policy": {
+        "min_similarity": 0.55,
+        "margin": 0.1,
+        "max_gap_s": 45.0,
+        "max_camera_distance_m": 1500.0,
+        "overlap_distance_m": 150.0,
+        "max_speed_mps": 40.0,
+        "clock_tolerance_s": 2.0,
+        "position_tolerance_m": 100.0
+      },
+      "metrics": {
+        "status": "MEASURED",
+        "development_identities": 19,
+        "mapped_development_tracklets": 24,
+        "relevant_predicted_links": 13,
+        "evaluable_development_links": 7,
+        "correct_development_links": 5,
+        "incorrect_development_links": 2,
+        "unscored_development_links": 6,
+        "ignored_links_without_development_endpoint": 117,
+        "development_link_precision": 0.7142857142857143,
+        "development_link_evaluation_coverage": 0.5384615384615384,
+        "predicted_development_cross_camera_pairs": 6,
+        "true_development_cross_camera_pairs": 15,
+        "correct_development_cross_camera_pairs": 6,
+        "development_pairwise_precision": 1.0,
+        "development_pairwise_recall": 0.4,
+        "development_pairwise_f1": 0.5714285714285715,
+        "development_group_counts": {
+          "mixed_gt_identities": 3,
+          "partially_scored": 4,
+          "fully_scored_consistent": 12
+        },
+        "max_fully_scored_consistent_development_camera_coverage": 3
+      },
+      "eligible": false,
+      "predicted_links_all_tracklets": 130,
+      "max_predicted_camera_coverage_all_tracklets": 5
+    },
+    {
+      "policy": {
+        "min_similarity": 0.55,
+        "margin": 0.1,
+        "max_gap_s": 90.0,
+        "max_camera_distance_m": 1500.0,
+        "overlap_distance_m": 150.0,
+        "max_speed_mps": 40.0,
+        "clock_tolerance_s": 2.0,
+        "position_tolerance_m": 100.0
+      },
+      "metrics": {
+        "status": "MEASURED",
+        "development_identities": 19,
+        "mapped_development_tracklets": 24,
+        "relevant_predicted_links": 13,
+        "evaluable_development_links": 6,
+        "correct_development_links": 4,
+        "incorrect_development_links": 2,
+        "unscored_development_links": 7,
+        "ignored_links_without_development_endpoint": 113,
+        "development_link_precision": 0.6666666666666666,
+        "development_link_evaluation_coverage": 0.46153846153846156,
+        "predicted_development_cross_camera_pairs": 5,
+        "true_development_cross_camera_pairs": 15,
+        "correct_development_cross_camera_pairs": 5,
+        "development_pairwise_precision": 1.0,
+        "development_pairwise_recall": 0.3333333333333333,
+        "development_pairwise_f1": 0.5,
+        "development_group_counts": {
+          "partially_scored": 5,
+          "fully_scored_consistent": 13,
+          "mixed_gt_identities": 2
+        },
+        "max_fully_scored_consistent_development_camera_coverage": 2
+      },
+      "eligible": false,
+      "predicted_links_all_tracklets": 126,
+      "max_predicted_camera_coverage_all_tracklets": 5
+    },
+    {
+      "policy": {
+        "min_similarity": 0.65,
+        "margin": 0.02,
+        "max_gap_s": 45.0,
+        "max_camera_distance_m": 1500.0,
+        "overlap_distance_m": 150.0,
+        "max_speed_mps": 40.0,
+        "clock_tolerance_s": 2.0,
+        "position_tolerance_m": 100.0
+      },
+      "metrics": {
+        "status": "MEASURED",
+        "development_identities": 19,
+        "mapped_development_tracklets": 24,
+        "relevant_predicted_links": 20,
+        "evaluable_development_links": 9,
+        "correct_development_links": 6,
+        "incorrect_development_links": 3,
+        "unscored_development_links": 11,
+        "ignored_links_without_development_endpoint": 140,
+        "development_link_precision": 0.6666666666666666,
+        "development_link_evaluation_coverage": 0.45,
+        "predicted_development_cross_camera_pairs": 12,
+        "true_development_cross_camera_pairs": 15,
+        "correct_development_cross_camera_pairs": 9,
+        "development_pairwise_precision": 0.75,
+        "development_pairwise_recall": 0.6,
+        "development_pairwise_f1": 0.6666666666666665,
+        "development_group_counts": {
+          "mixed_gt_identities": 4,
+          "partially_scored": 6,
+          "fully_scored_consistent": 6
+        },
+        "max_fully_scored_consistent_development_camera_coverage": 4
+      },
+      "eligible": false,
+      "predicted_links_all_tracklets": 160,
+      "max_predicted_camera_coverage_all_tracklets": 5
+    },
+    {
+      "policy": {
+        "min_similarity": 0.65,
+        "margin": 0.02,
+        "max_gap_s": 90.0,
+        "max_camera_distance_m": 1500.0,
+        "overlap_distance_m": 150.0,
+        "max_speed_mps": 40.0,
+        "clock_tolerance_s": 2.0,
+        "position_tolerance_m": 100.0
+      },
+      "metrics": {
+        "status": "MEASURED",
+        "development_identities": 19,
+        "mapped_development_tracklets": 24,
+        "relevant_predicted_links": 19,
+        "evaluable_development_links": 9,
+        "correct_development_links": 6,
+        "incorrect_development_links": 3,
+        "unscored_development_links": 10,
+        "ignored_links_without_development_endpoint": 142,
+        "development_link_precision": 0.6666666666666666,
+        "development_link_evaluation_coverage": 0.47368421052631576,
+        "predicted_development_cross_camera_pairs": 12,
+        "true_development_cross_camera_pairs": 15,
+        "correct_development_cross_camera_pairs": 9,
+        "development_pairwise_precision": 0.75,
+        "development_pairwise_recall": 0.6,
+        "development_pairwise_f1": 0.6666666666666665,
+        "development_group_counts": {
+          "mixed_gt_identities": 5,
+          "partially_scored": 5,
+          "fully_scored_consistent": 6
+        },
+        "max_fully_scored_consistent_development_camera_coverage": 4
+      },
+      "eligible": false,
+      "predicted_links_all_tracklets": 161,
+      "max_predicted_camera_coverage_all_tracklets": 5
+    },
+    {
+      "policy": {
+        "min_similarity": 0.65,
+        "margin": 0.06,
+        "max_gap_s": 45.0,
+        "max_camera_distance_m": 1500.0,
+        "overlap_distance_m": 150.0,
+        "max_speed_mps": 40.0,
+        "clock_tolerance_s": 2.0,
+        "position_tolerance_m": 100.0
+      },
+      "metrics": {
+        "status": "MEASURED",
+        "development_identities": 19,
+        "mapped_development_tracklets": 24,
+        "relevant_predicted_links": 17,
+        "evaluable_development_links": 9,
+        "correct_development_links": 6,
+        "incorrect_development_links": 3,
+        "unscored_development_links": 8,
+        "ignored_links_without_development_endpoint": 126,
+        "development_link_precision": 0.6666666666666666,
+        "development_link_evaluation_coverage": 0.5294117647058824,
+        "predicted_development_cross_camera_pairs": 12,
+        "true_development_cross_camera_pairs": 15,
+        "correct_development_cross_camera_pairs": 9,
+        "development_pairwise_precision": 0.75,
+        "development_pairwise_recall": 0.6,
+        "development_pairwise_f1": 0.6666666666666665,
+        "development_group_counts": {
+          "mixed_gt_identities": 4,
+          "partially_scored": 5,
+          "fully_scored_consistent": 7
+        },
+        "max_fully_scored_consistent_development_camera_coverage": 4
+      },
+      "eligible": false,
+      "predicted_links_all_tracklets": 143,
+      "max_predicted_camera_coverage_all_tracklets": 5
+    },
+    {
+      "policy": {
+        "min_similarity": 0.65,
+        "margin": 0.06,
+        "max_gap_s": 90.0,
+        "max_camera_distance_m": 1500.0,
+        "overlap_distance_m": 150.0,
+        "max_speed_mps": 40.0,
+        "clock_tolerance_s": 2.0,
+        "position_tolerance_m": 100.0
+      },
+      "metrics": {
+        "status": "MEASURED",
+        "development_identities": 19,
+        "mapped_development_tracklets": 24,
+        "relevant_predicted_links": 15,
+        "evaluable_development_links": 8,
+        "correct_development_links": 6,
+        "incorrect_development_links": 2,
+        "unscored_development_links": 7,
+        "ignored_links_without_development_endpoint": 130,
+        "development_link_precision": 0.75,
+        "development_link_evaluation_coverage": 0.5333333333333333,
+        "predicted_development_cross_camera_pairs": 11,
+        "true_development_cross_camera_pairs": 15,
+        "correct_development_cross_camera_pairs": 9,
+        "development_pairwise_precision": 0.8181818181818182,
+        "development_pairwise_recall": 0.6,
+        "development_pairwise_f1": 0.6923076923076923,
+        "development_group_counts": {
+          "mixed_gt_identities": 3,
+          "partially_scored": 4,
+          "fully_scored_consistent": 9
+        },
+        "max_fully_scored_consistent_development_camera_coverage": 4
+      },
+      "eligible": false,
+      "predicted_links_all_tracklets": 145,
+      "max_predicted_camera_coverage_all_tracklets": 5
+    },
+    {
+      "policy": {
+        "min_similarity": 0.65,
+        "margin": 0.1,
+        "max_gap_s": 45.0,
+        "max_camera_distance_m": 1500.0,
+        "overlap_distance_m": 150.0,
+        "max_speed_mps": 40.0,
+        "clock_tolerance_s": 2.0,
+        "position_tolerance_m": 100.0
+      },
+      "metrics": {
+        "status": "MEASURED",
+        "development_identities": 19,
+        "mapped_development_tracklets": 24,
+        "relevant_predicted_links": 10,
+        "evaluable_development_links": 6,
+        "correct_development_links": 5,
+        "incorrect_development_links": 1,
+        "unscored_development_links": 4,
+        "ignored_links_without_development_endpoint": 92,
+        "development_link_precision": 0.8333333333333334,
+        "development_link_evaluation_coverage": 0.6,
+        "predicted_development_cross_camera_pairs": 6,
+        "true_development_cross_camera_pairs": 15,
+        "correct_development_cross_camera_pairs": 6,
+        "development_pairwise_precision": 1.0,
+        "development_pairwise_recall": 0.4,
+        "development_pairwise_f1": 0.5714285714285715,
+        "development_group_counts": {
+          "partially_scored": 3,
+          "fully_scored_consistent": 15,
+          "mixed_gt_identities": 1
+        },
+        "max_fully_scored_consistent_development_camera_coverage": 3
+      },
+      "eligible": true,
+      "predicted_links_all_tracklets": 102,
+      "max_predicted_camera_coverage_all_tracklets": 5
+    },
+    {
+      "policy": {
+        "min_similarity": 0.65,
+        "margin": 0.1,
+        "max_gap_s": 90.0,
+        "max_camera_distance_m": 1500.0,
+        "overlap_distance_m": 150.0,
+        "max_speed_mps": 40.0,
+        "clock_tolerance_s": 2.0,
+        "position_tolerance_m": 100.0
+      },
+      "metrics": {
+        "status": "MEASURED",
+        "development_identities": 19,
+        "mapped_development_tracklets": 24,
+        "relevant_predicted_links": 9,
+        "evaluable_development_links": 5,
+        "correct_development_links": 4,
+        "incorrect_development_links": 1,
+        "unscored_development_links": 4,
+        "ignored_links_without_development_endpoint": 87,
+        "development_link_precision": 0.8,
+        "development_link_evaluation_coverage": 0.5555555555555556,
+        "predicted_development_cross_camera_pairs": 5,
+        "true_development_cross_camera_pairs": 15,
+        "correct_development_cross_camera_pairs": 5,
+        "development_pairwise_precision": 1.0,
+        "development_pairwise_recall": 0.3333333333333333,
+        "development_pairwise_f1": 0.5,
+        "development_group_counts": {
+          "partially_scored": 3,
+          "fully_scored_consistent": 16,
+          "mixed_gt_identities": 1
+        },
+        "max_fully_scored_consistent_development_camera_coverage": 3
+      },
+      "eligible": true,
+      "predicted_links_all_tracklets": 96,
+      "max_predicted_camera_coverage_all_tracklets": 5
+    },
+    {
+      "policy": {
+        "min_similarity": 0.75,
+        "margin": 0.02,
+        "max_gap_s": 45.0,
+        "max_camera_distance_m": 1500.0,
+        "overlap_distance_m": 150.0,
+        "max_speed_mps": 40.0,
+        "clock_tolerance_s": 2.0,
+        "position_tolerance_m": 100.0
+      },
+      "metrics": {
+        "status": "MEASURED",
+        "development_identities": 19,
+        "mapped_development_tracklets": 24,
+        "relevant_predicted_links": 11,
+        "evaluable_development_links": 4,
+        "correct_development_links": 4,
+        "incorrect_development_links": 0,
+        "unscored_development_links": 7,
+        "ignored_links_without_development_endpoint": 115,
+        "development_link_precision": 1.0,
+        "development_link_evaluation_coverage": 0.36363636363636365,
+        "predicted_development_cross_camera_pairs": 5,
+        "true_development_cross_camera_pairs": 15,
+        "correct_development_cross_camera_pairs": 5,
+        "development_pairwise_precision": 1.0,
+        "development_pairwise_recall": 0.3333333333333333,
+        "development_pairwise_f1": 0.5,
+        "development_group_counts": {
+          "mixed_gt_identities": 1,
+          "partially_scored": 5,
+          "fully_scored_consistent": 14
+        },
+        "max_fully_scored_consistent_development_camera_coverage": 3
+      },
+      "eligible": false,
+      "predicted_links_all_tracklets": 126,
+      "max_predicted_camera_coverage_all_tracklets": 5
+    },
+    {
+      "policy": {
+        "min_similarity": 0.75,
+        "margin": 0.02,
+        "max_gap_s": 90.0,
+        "max_camera_distance_m": 1500.0,
+        "overlap_distance_m": 150.0,
+        "max_speed_mps": 40.0,
+        "clock_tolerance_s": 2.0,
+        "position_tolerance_m": 100.0
+      },
+      "metrics": {
+        "status": "MEASURED",
+        "development_identities": 19,
+        "mapped_development_tracklets": 24,
+        "relevant_predicted_links": 12,
+        "evaluable_development_links": 4,
+        "correct_development_links": 4,
+        "incorrect_development_links": 0,
+        "unscored_development_links": 8,
+        "ignored_links_without_development_endpoint": 116,
+        "development_link_precision": 1.0,
+        "development_link_evaluation_coverage": 0.3333333333333333,
+        "predicted_development_cross_camera_pairs": 6,
+        "true_development_cross_camera_pairs": 15,
+        "correct_development_cross_camera_pairs": 5,
+        "development_pairwise_precision": 0.8333333333333334,
+        "development_pairwise_recall": 0.3333333333333333,
+        "development_pairwise_f1": 0.47619047619047616,
+        "development_group_counts": {
+          "mixed_gt_identities": 2,
+          "partially_scored": 4,
+          "fully_scored_consistent": 13
+        },
+        "max_fully_scored_consistent_development_camera_coverage": 3
+      },
+      "eligible": false,
+      "predicted_links_all_tracklets": 128,
+      "max_predicted_camera_coverage_all_tracklets": 5
+    },
+    {
+      "policy": {
+        "min_similarity": 0.75,
+        "margin": 0.06,
+        "max_gap_s": 45.0,
+        "max_camera_distance_m": 1500.0,
+        "overlap_distance_m": 150.0,
+        "max_speed_mps": 40.0,
+        "clock_tolerance_s": 2.0,
+        "position_tolerance_m": 100.0
+      },
+      "metrics": {
+        "status": "MEASURED",
+        "development_identities": 19,
+        "mapped_development_tracklets": 24,
+        "relevant_predicted_links": 10,
+        "evaluable_development_links": 4,
+        "correct_development_links": 4,
+        "incorrect_development_links": 0,
+        "unscored_development_links": 6,
+        "ignored_links_without_development_endpoint": 108,
+        "development_link_precision": 1.0,
+        "development_link_evaluation_coverage": 0.4,
+        "predicted_development_cross_camera_pairs": 5,
+        "true_development_cross_camera_pairs": 15,
+        "correct_development_cross_camera_pairs": 5,
+        "development_pairwise_precision": 1.0,
+        "development_pairwise_recall": 0.3333333333333333,
+        "development_pairwise_f1": 0.5,
+        "development_group_counts": {
+          "mixed_gt_identities": 1,
+          "partially_scored": 5,
+          "fully_scored_consistent": 14
+        },
+        "max_fully_scored_consistent_development_camera_coverage": 3
+      },
+      "eligible": false,
+      "predicted_links_all_tracklets": 118,
+      "max_predicted_camera_coverage_all_tracklets": 5
+    },
+    {
+      "policy": {
+        "min_similarity": 0.75,
+        "margin": 0.06,
+        "max_gap_s": 90.0,
+        "max_camera_distance_m": 1500.0,
+        "overlap_distance_m": 150.0,
+        "max_speed_mps": 40.0,
+        "clock_tolerance_s": 2.0,
+        "position_tolerance_m": 100.0
+      },
+      "metrics": {
+        "status": "MEASURED",
+        "development_identities": 19,
+        "mapped_development_tracklets": 24,
+        "relevant_predicted_links": 11,
+        "evaluable_development_links": 4,
+        "correct_development_links": 4,
+        "incorrect_development_links": 0,
+        "unscored_development_links": 7,
+        "ignored_links_without_development_endpoint": 107,
+        "development_link_precision": 1.0,
+        "development_link_evaluation_coverage": 0.36363636363636365,
+        "predicted_development_cross_camera_pairs": 6,
+        "true_development_cross_camera_pairs": 15,
+        "correct_development_cross_camera_pairs": 5,
+        "development_pairwise_precision": 0.8333333333333334,
+        "development_pairwise_recall": 0.3333333333333333,
+        "development_pairwise_f1": 0.47619047619047616,
+        "development_group_counts": {
+          "mixed_gt_identities": 2,
+          "partially_scored": 4,
+          "fully_scored_consistent": 13
+        },
+        "max_fully_scored_consistent_development_camera_coverage": 3
+      },
+      "eligible": false,
+      "predicted_links_all_tracklets": 118,
+      "max_predicted_camera_coverage_all_tracklets": 5
+    },
+    {
+      "policy": {
+        "min_similarity": 0.75,
+        "margin": 0.1,
+        "max_gap_s": 45.0,
+        "max_camera_distance_m": 1500.0,
+        "overlap_distance_m": 150.0,
+        "max_speed_mps": 40.0,
+        "clock_tolerance_s": 2.0,
+        "position_tolerance_m": 100.0
+      },
+      "metrics": {
+        "status": "MEASURED",
+        "development_identities": 19,
+        "mapped_development_tracklets": 24,
+        "relevant_predicted_links": 8,
+        "evaluable_development_links": 4,
+        "correct_development_links": 4,
+        "incorrect_development_links": 0,
+        "unscored_development_links": 4,
+        "ignored_links_without_development_endpoint": 82,
+        "development_link_precision": 1.0,
+        "development_link_evaluation_coverage": 0.5,
+        "predicted_development_cross_camera_pairs": 5,
+        "true_development_cross_camera_pairs": 15,
+        "correct_development_cross_camera_pairs": 5,
+        "development_pairwise_precision": 1.0,
+        "development_pairwise_recall": 0.3333333333333333,
+        "development_pairwise_f1": 0.5,
+        "development_group_counts": {
+          "partially_scored": 4,
+          "fully_scored_consistent": 16
+        },
+        "max_fully_scored_consistent_development_camera_coverage": 3
+      },
+      "eligible": false,
+      "predicted_links_all_tracklets": 90,
+      "max_predicted_camera_coverage_all_tracklets": 5
+    },
+    {
+      "policy": {
+        "min_similarity": 0.75,
+        "margin": 0.1,
+        "max_gap_s": 90.0,
+        "max_camera_distance_m": 1500.0,
+        "overlap_distance_m": 150.0,
+        "max_speed_mps": 40.0,
+        "clock_tolerance_s": 2.0,
+        "position_tolerance_m": 100.0
+      },
+      "metrics": {
+        "status": "MEASURED",
+        "development_identities": 19,
+        "mapped_development_tracklets": 24,
+        "relevant_predicted_links": 8,
+        "evaluable_development_links": 4,
+        "correct_development_links": 4,
+        "incorrect_development_links": 0,
+        "unscored_development_links": 4,
+        "ignored_links_without_development_endpoint": 77,
+        "development_link_precision": 1.0,
+        "development_link_evaluation_coverage": 0.5,
+        "predicted_development_cross_camera_pairs": 5,
+        "true_development_cross_camera_pairs": 15,
+        "correct_development_cross_camera_pairs": 5,
+        "development_pairwise_precision": 1.0,
+        "development_pairwise_recall": 0.3333333333333333,
+        "development_pairwise_f1": 0.5,
+        "development_group_counts": {
+          "partially_scored": 4,
+          "fully_scored_consistent": 16
+        },
+        "max_fully_scored_consistent_development_camera_coverage": 3
+      },
+      "eligible": false,
+      "predicted_links_all_tracklets": 85,
+      "max_predicted_camera_coverage_all_tracklets": 5
+    },
+    {
+      "policy": {
+        "min_similarity": 0.85,
+        "margin": 0.02,
+        "max_gap_s": 45.0,
+        "max_camera_distance_m": 1500.0,
+        "overlap_distance_m": 150.0,
+        "max_speed_mps": 40.0,
+        "clock_tolerance_s": 2.0,
+        "position_tolerance_m": 100.0
+      },
+      "metrics": {
+        "status": "MEASURED",
+        "development_identities": 19,
+        "mapped_development_tracklets": 24,
+        "relevant_predicted_links": 4,
+        "evaluable_development_links": 2,
+        "correct_development_links": 2,
+        "incorrect_development_links": 0,
+        "unscored_development_links": 2,
+        "ignored_links_without_development_endpoint": 63,
+        "development_link_precision": 1.0,
+        "development_link_evaluation_coverage": 0.5,
+        "predicted_development_cross_camera_pairs": 2,
+        "true_development_cross_camera_pairs": 15,
+        "correct_development_cross_camera_pairs": 2,
+        "development_pairwise_precision": 1.0,
+        "development_pairwise_recall": 0.13333333333333333,
+        "development_pairwise_f1": 0.23529411764705882,
+        "development_group_counts": {
+          "fully_scored_consistent": 20,
+          "partially_scored": 2
+        },
+        "max_fully_scored_consistent_development_camera_coverage": 2
+      },
+      "eligible": false,
+      "predicted_links_all_tracklets": 67,
+      "max_predicted_camera_coverage_all_tracklets": 5
+    },
+    {
+      "policy": {
+        "min_similarity": 0.85,
+        "margin": 0.02,
+        "max_gap_s": 90.0,
+        "max_camera_distance_m": 1500.0,
+        "overlap_distance_m": 150.0,
+        "max_speed_mps": 40.0,
+        "clock_tolerance_s": 2.0,
+        "position_tolerance_m": 100.0
+      },
+      "metrics": {
+        "status": "MEASURED",
+        "development_identities": 19,
+        "mapped_development_tracklets": 24,
+        "relevant_predicted_links": 4,
+        "evaluable_development_links": 2,
+        "correct_development_links": 2,
+        "incorrect_development_links": 0,
+        "unscored_development_links": 2,
+        "ignored_links_without_development_endpoint": 64,
+        "development_link_precision": 1.0,
+        "development_link_evaluation_coverage": 0.5,
+        "predicted_development_cross_camera_pairs": 2,
+        "true_development_cross_camera_pairs": 15,
+        "correct_development_cross_camera_pairs": 2,
+        "development_pairwise_precision": 1.0,
+        "development_pairwise_recall": 0.13333333333333333,
+        "development_pairwise_f1": 0.23529411764705882,
+        "development_group_counts": {
+          "fully_scored_consistent": 20,
+          "partially_scored": 2
+        },
+        "max_fully_scored_consistent_development_camera_coverage": 2
+      },
+      "eligible": false,
+      "predicted_links_all_tracklets": 68,
+      "max_predicted_camera_coverage_all_tracklets": 5
+    },
+    {
+      "policy": {
+        "min_similarity": 0.85,
+        "margin": 0.06,
+        "max_gap_s": 45.0,
+        "max_camera_distance_m": 1500.0,
+        "overlap_distance_m": 150.0,
+        "max_speed_mps": 40.0,
+        "clock_tolerance_s": 2.0,
+        "position_tolerance_m": 100.0
+      },
+      "metrics": {
+        "status": "MEASURED",
+        "development_identities": 19,
+        "mapped_development_tracklets": 24,
+        "relevant_predicted_links": 3,
+        "evaluable_development_links": 2,
+        "correct_development_links": 2,
+        "incorrect_development_links": 0,
+        "unscored_development_links": 1,
+        "ignored_links_without_development_endpoint": 54,
+        "development_link_precision": 1.0,
+        "development_link_evaluation_coverage": 0.6666666666666666,
+        "predicted_development_cross_camera_pairs": 2,
+        "true_development_cross_camera_pairs": 15,
+        "correct_development_cross_camera_pairs": 2,
+        "development_pairwise_precision": 1.0,
+        "development_pairwise_recall": 0.13333333333333333,
+        "development_pairwise_f1": 0.23529411764705882,
+        "development_group_counts": {
+          "fully_scored_consistent": 21,
+          "partially_scored": 1
+        },
+        "max_fully_scored_consistent_development_camera_coverage": 2
+      },
+      "eligible": false,
+      "predicted_links_all_tracklets": 57,
+      "max_predicted_camera_coverage_all_tracklets": 4
+    },
+    {
+      "policy": {
+        "min_similarity": 0.85,
+        "margin": 0.06,
+        "max_gap_s": 90.0,
+        "max_camera_distance_m": 1500.0,
+        "overlap_distance_m": 150.0,
+        "max_speed_mps": 40.0,
+        "clock_tolerance_s": 2.0,
+        "position_tolerance_m": 100.0
+      },
+      "metrics": {
+        "status": "MEASURED",
+        "development_identities": 19,
+        "mapped_development_tracklets": 24,
+        "relevant_predicted_links": 3,
+        "evaluable_development_links": 2,
+        "correct_development_links": 2,
+        "incorrect_development_links": 0,
+        "unscored_development_links": 1,
+        "ignored_links_without_development_endpoint": 55,
+        "development_link_precision": 1.0,
+        "development_link_evaluation_coverage": 0.6666666666666666,
+        "predicted_development_cross_camera_pairs": 2,
+        "true_development_cross_camera_pairs": 15,
+        "correct_development_cross_camera_pairs": 2,
+        "development_pairwise_precision": 1.0,
+        "development_pairwise_recall": 0.13333333333333333,
+        "development_pairwise_f1": 0.23529411764705882,
+        "development_group_counts": {
+          "fully_scored_consistent": 21,
+          "partially_scored": 1
+        },
+        "max_fully_scored_consistent_development_camera_coverage": 2
+      },
+      "eligible": false,
+      "predicted_links_all_tracklets": 58,
+      "max_predicted_camera_coverage_all_tracklets": 4
+    },
+    {
+      "policy": {
+        "min_similarity": 0.85,
+        "margin": 0.1,
+        "max_gap_s": 45.0,
+        "max_camera_distance_m": 1500.0,
+        "overlap_distance_m": 150.0,
+        "max_speed_mps": 40.0,
+        "clock_tolerance_s": 2.0,
+        "position_tolerance_m": 100.0
+      },
+      "metrics": {
+        "status": "MEASURED",
+        "development_identities": 19,
+        "mapped_development_tracklets": 24,
+        "relevant_predicted_links": 2,
+        "evaluable_development_links": 2,
+        "correct_development_links": 2,
+        "incorrect_development_links": 0,
+        "unscored_development_links": 0,
+        "ignored_links_without_development_endpoint": 38,
+        "development_link_precision": 1.0,
+        "development_link_evaluation_coverage": 1.0,
+        "predicted_development_cross_camera_pairs": 2,
+        "true_development_cross_camera_pairs": 15,
+        "correct_development_cross_camera_pairs": 2,
+        "development_pairwise_precision": 1.0,
+        "development_pairwise_recall": 0.13333333333333333,
+        "development_pairwise_f1": 0.23529411764705882,
+        "development_group_counts": {
+          "fully_scored_consistent": 22
+        },
+        "max_fully_scored_consistent_development_camera_coverage": 2
+      },
+      "eligible": false,
+      "predicted_links_all_tracklets": 40,
+      "max_predicted_camera_coverage_all_tracklets": 4
+    },
+    {
+      "policy": {
+        "min_similarity": 0.85,
+        "margin": 0.1,
+        "max_gap_s": 90.0,
+        "max_camera_distance_m": 1500.0,
+        "overlap_distance_m": 150.0,
+        "max_speed_mps": 40.0,
+        "clock_tolerance_s": 2.0,
+        "position_tolerance_m": 100.0
+      },
+      "metrics": {
+        "status": "MEASURED",
+        "development_identities": 19,
+        "mapped_development_tracklets": 24,
+        "relevant_predicted_links": 2,
+        "evaluable_development_links": 2,
+        "correct_development_links": 2,
+        "incorrect_development_links": 0,
+        "unscored_development_links": 0,
+        "ignored_links_without_development_endpoint": 36,
+        "development_link_precision": 1.0,
+        "development_link_evaluation_coverage": 1.0,
+        "predicted_development_cross_camera_pairs": 2,
+        "true_development_cross_camera_pairs": 15,
+        "correct_development_cross_camera_pairs": 2,
+        "development_pairwise_precision": 1.0,
+        "development_pairwise_recall": 0.13333333333333333,
+        "development_pairwise_f1": 0.23529411764705882,
+        "development_group_counts": {
+          "fully_scored_consistent": 22
+        },
+        "max_fully_scored_consistent_development_camera_coverage": 2
+      },
+      "eligible": false,
+      "predicted_links_all_tracklets": 38,
+      "max_predicted_camera_coverage_all_tracklets": 4
+    }
+  ]
+}

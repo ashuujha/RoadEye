@@ -45,3 +45,11 @@ The hours 27–33 interface is documented in `reports/frontend-audit.md`. Keep i
 runtime artifact allowlist free of evaluator mappings and CityFlow identities.
 Preserve the local Leaflet bundle and the observed/interpolated, approximate-position,
 and uncalibrated-score labels. Plate search and analytics are not implemented yet.
+
+The S01 development-only association sweep and S05 post-hoc result are recorded
+in `reports/reid-trained-posthoc-s05-audit.md`. Do not tune from S05 or present it
+as fresh held-out evidence. Its five-camera predicted maximum includes ambiguous
+or unmatched members; its fully scored consistent maximum is two. The test demo
+therefore stays on the frozen S02 artifacts. The six-camera criterion remains
+failed until an independently predicted group is fully verified under the frozen
+evaluation protocol.

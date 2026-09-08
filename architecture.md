@@ -153,3 +153,27 @@ timeline distinguishes observed visits from interpolation and reports link cosin
 similarity, ambiguity margin, temporal gap, and constraint reason as model evidence,
 never as calibrated probability or runtime ground-truth verification. The service
 does not load an ML model, rerun association, or alter frozen predictions.
+
+## Development-calibrated association diagnostic
+
+The trained encoder's association score was calibrated only on the 19 S01
+identities assigned to the identity-disjoint development split. The sweep leaves
+all other predicted tracklets in the candidate pool as distractors and scores
+only links that touch a development identity. It requires at least five evaluable
+links and 0.80 direct-link precision before a candidate is eligible. Source,
+configuration, model, and development-report hashes are frozen before post-hoc
+execution.
+
+The selected cosine threshold is 0.65 with a 0.10 ambiguity margin and 45-second
+maximum gap. The S05 runtime still receives only observations, approximate
+topology, embeddings, and the frozen policy. Its evaluator opens labels only
+after predictions are written. Independent replay blocks GT and network access,
+checks every crop hash and link evidence cutoff, and reproduces prediction hashes.
+
+The post-hoc S05 result confirms an architecture limit rather than the demo goal:
+the maximum predicted group spans five cameras, the maximum fully scored
+consistent group spans two, and seven mixed-identity groups exist. Pair-level
+analysis shows most labeled positives survive topology but few exceed the
+appearance threshold. Further work should improve camera-domain robustness and
+descriptor separation using a new development protocol; it must not tune on the
+consumed S02/S04/S05 scenarios.

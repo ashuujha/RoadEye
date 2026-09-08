@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "purpose": "development_only_association_calibration_after_encoder_freeze",
+  "development_partition": "train",
+  "development_scenario": "S01",
+  "development_identity_source": "private_S01_S03_training_bundle_development_split",
+  "similarity_grid": [0.45, 0.55, 0.65, 0.75, 0.85],
+  "margin_grid": [0.02, 0.06, 0.1],
+  "max_gap_s_grid": [45.0, 90.0],
+  "selection": {
+    "minimum_evaluable_development_links": 5,
+    "minimum_development_link_precision": 0.8,
+    "objective": "maximum_development_pairwise_f1",
+    "tie_break": "longer_fully_scored_camera_span_then_fewer_mixed_groups_then_higher_link_precision_then_higher_threshold"
+  },
+  "evaluation_rule": "S01 development identities only select policy; S02 S04 S05 are consumed and any comparison is post_hoc",
+  "claims": [
+    "Calibration metrics are development results, not held-out accuracy",
+    "Training-split identities never contribute to policy selection metrics",
+    "Runtime association receives thresholds only and never receives CityFlow identities",
+    "A six-camera post-hoc result must still be fully scored and identity-consistent"
+  ]
+}

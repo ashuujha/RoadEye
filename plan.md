@@ -54,3 +54,20 @@ The interface does not change the model result: the predicted maximum is three
 cameras and the previously measured fully scored consistent maximum remains two.
 Plate search and aggregate analytics remain in their later phases. See
 `reports/frontend-audit.md`.
+
+## Completed critical Re-ID repair from hours 47–52 allocation
+
+Part of the reserved evaluation/error-analysis allocation was executed early to
+resolve the six-camera blocker before starting ANPR. Thirty S01 development-only
+association settings were measured and two passed the declared evidence gate.
+The selected policy measured 5/6 correct evaluable development links and a
+three-camera fully scored maximum.
+
+The frozen S05 post-hoc diagnostic embedded 2,272/6,609 baseline tracklets and
+produced 113 links. Only 14 were evaluable: seven correct and seven incorrect;
+99 remain unknown. Its largest prediction spans five cameras, but the largest
+fully scored consistent group spans two. The six-camera requirement therefore
+remains failed. S05 was already consumed and was not retuned. The planned hours
+33–43 Indian ANPR phase remains next; the total 56-hour budget is unchanged and
+the remaining hours 47–52 work must focus on integration evaluation rather than
+another S05 iteration. See `reports/reid-trained-posthoc-s05-audit.md`.

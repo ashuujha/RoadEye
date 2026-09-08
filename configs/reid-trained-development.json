@@ -1,0 +1,50 @@
+{
+  "schema_version": 3,
+  "dataset_root": "data/cityflow",
+  "window": "configs/reid-development-window.json",
+  "evaluation_scope": "S01_baseline_tracklets_scored_on_identity_disjoint_development_IDs_only",
+  "development_scenarios": ["S01", "S03"],
+  "evaluation_scenarios": ["S02", "S04", "S05"],
+  "cityflow_training": true,
+  "training_provenance": "reports/reid-trained-model.json",
+  "accepted_training_limitations": [
+    "colab_training_python_not_3_11",
+    "result_missing_training_code_archive_hash"
+  ],
+  "threshold_selection": "development-only grid after the trained encoder was frozen",
+  "embedding": {
+    "kind": "roadeye_cityflow_reid_r50_ibn",
+    "weights": "artifacts/reid-training/returned/accepted-2d8b0992/roadeye_cityflow_reid.pt",
+    "weights_sha256": "1a7bddc94b065da1cc76f27f3455d61dc9752e687a87101c2eeb566353185cac",
+    "weights_source": "private Colab result ZIP SHA-256 2d8b0992b30348ad4be99f35edebce38043365da5d7b2038307209a5765584d4",
+    "samples_per_tracklet": 3,
+    "batch_size": 16,
+    "cpu_threads": 4,
+    "quality_prefix": {
+      "max_wait_s": 3.0,
+      "min_interval_s": 0.5,
+      "min_side_px": 24,
+      "min_area_px": 2304,
+      "min_laplacian_variance": 20.0
+    }
+  },
+  "association": {
+    "min_similarity": 0.85,
+    "margin": 0.03,
+    "max_gap_s": 45.0,
+    "max_camera_distance_m": 1500.0,
+    "overlap_distance_m": 150.0,
+    "max_speed_mps": 40.0,
+    "clock_tolerance_s": 2.0,
+    "position_tolerance_m": 100.0
+  },
+  "evaluation": {
+    "iou_threshold": 0.5,
+    "min_matched_observations": 3,
+    "min_observation_coverage": 0.5,
+    "min_identity_purity": 0.8
+  },
+  "run_role": "development",
+  "split_limitation": "Only bundle-designated development identities may affect calibration metrics; S01 has five cameras and cannot itself prove a six-camera journey",
+  "invalid_box_policy": "error"
+}
