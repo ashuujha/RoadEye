@@ -1,0 +1,52 @@
+{
+  "schema_version": 1,
+  "dataset_root": "data",
+  "archive": "data/indian-kedar.zip",
+  "split_manifest": "configs/anpr-split.json",
+  "audit_report": "reports/anpr-data-audit.json",
+  "transcriptions": "data/anpr/transcriptions.csv",
+  "development_predictions": "artifacts/anpr/ocr-development-predictions.jsonl",
+  "test_predictions": "artifacts/anpr/ocr-test-predictions.jsonl",
+  "model_directory": "artifacts/models/easyocr",
+  "detector": {
+    "initial_weights": "artifacts/models/ultralytics/yolov8n.pt",
+    "initial_weights_url": "https://github.com/ultralytics/assets/releases/download/v8.3.0/yolov8n.pt",
+    "dataset_directory": "artifacts/anpr/detection-dataset",
+    "run_directory": "artifacts/anpr/detector",
+    "epochs": 30,
+    "image_size": 640,
+    "batch_size": 8,
+    "confidence_grid": [0.1, 0.2, 0.3, 0.4, 0.5],
+    "iou_threshold": 0.5,
+    "seed": 20260908
+  },
+  "splits": {
+    "plate_crop": {
+      "seed": "roadeye-anpr-ocr-v1",
+      "require_single_box": true,
+      "near_duplicate_hamming": 0,
+      "order": ["test", "development", "unused"],
+      "counts": {
+        "test": 200,
+        "development": 50,
+        "unused": null
+      }
+    },
+    "scene": {
+      "seed": "roadeye-anpr-detection-v1",
+      "require_single_box": false,
+      "near_duplicate_hamming": 4,
+      "order": ["test", "development", "train"],
+      "counts": {
+        "test": 36,
+        "development": 36,
+        "train": null
+      }
+    }
+  },
+  "ocr": {
+    "variants": ["color_upscale", "clahe", "otsu"],
+    "languages": ["en"],
+    "recognition_network": "standard"
+  }
+}

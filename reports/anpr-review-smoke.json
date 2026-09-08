@@ -1,0 +1,18 @@
+{
+  "status": "PASS",
+  "scope": "development_only_transcription_review_page",
+  "browser": "local_google_chrome_headless",
+  "chrome_exit_code": 0,
+  "javascript_syntax": "PASS_node_check",
+  "active_split": "development",
+  "rendered_items": 50,
+  "embedded_test_images": 0,
+  "exported_manifest_rows": 250,
+  "freeze_without_review": "PASS_rejected_with_terminal_review_error",
+  "screenshot_artifact": "artifacts/anpr/transcription-review-smoke.png",
+  "screenshot_committed": false,
+  "limitations": [
+    "Browser rendering and JavaScript parsing were checked; a human must perform the transcriptions",
+    "The test review page cannot be generated until development preprocessing is frozen"
+  ]
+}

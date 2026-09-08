@@ -1,0 +1,30 @@
+{
+  "status": "MEASURED",
+  "scope": "frozen_independent_scene_test_split_plate_detection",
+  "images": 36,
+  "ground_truth_boxes": 61,
+  "true_positives": 52,
+  "false_positives": 3,
+  "false_negatives": 9,
+  "precision": 0.9454545454545454,
+  "precision_wilson95": [
+    0.8514693945594621,
+    0.9812767844453155
+  ],
+  "recall": 0.8524590163934426,
+  "recall_wilson95": [
+    0.742767647052789,
+    0.9203883149206723
+  ],
+  "f1": 0.8965517241379309,
+  "confidence_threshold": 0.5,
+  "iou_threshold": 0.5,
+  "mean_cpu_latency_ms": 98.46377372741699,
+  "p95_cpu_latency_ms": 98.46377372741699,
+  "best_weights_sha256": "6598143743e5edab23c9e9474f757dc4290310c3c45dce157dc7459235da3585",
+  "limitations": [
+    "Small local test split from one Kaggle dataset",
+    "Near-duplicate scene review is not yet complete",
+    "This metric measures boxes only, not plate strings"
+  ]
+}

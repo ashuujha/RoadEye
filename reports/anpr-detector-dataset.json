@@ -1,0 +1,10 @@
+{
+  "status": "PASS",
+  "scope": "hash_verified_scene_only_detection_dataset",
+  "counts": {
+    "train": 105,
+    "val": 36,
+    "test": 36
+  },
+  "test_not_referenced_by_training_yaml": true
+}

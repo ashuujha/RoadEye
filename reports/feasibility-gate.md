@@ -4,8 +4,8 @@
 
 - `py -3.11` is available and reports Python 3.11.9. A `.venv` was created at `C:\RoadEye\.venv`.
 - `pip` upgraded to 26.2.1 successfully.
-- A stale pip process (PID 16176) was identified from its command line and stopped. `pip install --no-cache-dir -r requirements-cpu.txt` then completed successfully. Pinned packages, including Torch CPU and EasyOCR, are installed. Import verification is pending because the broad EasyOCR import command was interrupted while initializing; package installation itself is PASS.
-- The initial invocation also produced a transient permission error invoking `.venv\Scripts\python.exe`; subsequent invocation worked. Retry is required before implementation.
+- A stale pip process (PID 16176) was identified from its command line and stopped. `pip install --no-cache-dir -r requirements-cpu.txt` then completed successfully.
+- Phase 33 re-verification passed editable install, `pip check`, and direct imports on Python 3.11.9. Tested versions include NumPy 1.26.4, OpenCV 4.11.0, Torch 2.4.1+cpu, torchvision 0.19.1+cpu, EasyOCR 1.7.2, and Ultralytics 8.3.0.
 
 ## CityFlow-V2 — PASS (hard gate)
 
@@ -16,20 +16,18 @@
 
 The CityFlow hard gate is cleared. Do not commit the archive or extracted raw data. No Phase 2 work has started.
 
-## Indian License Plates with Labels (Kaggle kedarsai) — FAIL (hard gate)
+## Indian License Plates with Labels (Kaggle kedarsai) - PARTIAL PASS after Phase 33 re-audit
 
-The archive downloaded successfully without credentials:
+The archive downloaded successfully without credentials from the recorded Kaggle API URL. A complete extraction and extension-aware audit corrected the initial JPEG-only count:
 
-- URL: `https://www.kaggle.com/api/v1/datasets/download/kedarsai/indian-license-plates-with-labels?datasetVersionNumber=1`
-- Local archive size: **65,813,703 bytes**.
-- Archive listing: **2,021 `.txt` labels** and **2,021 `.jpg` image paths** (4,104 entries including both sets).
-- Extracted decodable image files: **181 `.jpg`** were present in this archive view.
-- Sample label `labels/00000000.txt`: two YOLO rows containing class and normalized box coordinates only, e.g. `0 0.507305 0.174466 0.852273 0.242771`.
-- No plate-string field, transcription file, OCR text, XML, CSV, or JSON was found in the archive listing. These are bounding-box annotations, not usable full-string OCR ground truth.
+- Archive size: **65,813,703 bytes** with **4,104 entries**: 2,021 YOLO `.txt` labels, 1,902 PNG plate crops, and 181 JPEG scene images.
+- Decodable images: **2,083**. Paired with labels: **2,021**; 62 PNG files have no label.
+- Supplied annotations remain **bounding boxes only**. There is no plate-string field or transcription file.
+- Exact decoded-pixel grouping found **1,102 unique images** and 919 duplicate copies. The conservative split manifest contains **1,098 independent families** after scene pHash grouping.
+- The frozen OCR benchmark capacity is **250 independent plate-crop representatives**: 50 development and 200 test. This meets the requested 150-300 test-image range once human strings exist.
+- The frozen detection split contains 105 train, 36 development, and 36 test scene representatives.
 
-Achievable independent test size from the extracted image set is at most **181 before duplicate/near-duplicate review**, and therefore cannot meet the requested 150–300 target with a defensible held-out split plus development/training data. After de-duplication the number is **UNVERIFIED** until a review is performed. Manual transcription would be required, but transcription alone cannot make the current archive a sufficiently sized independent benchmark.
-
-**Stopping rule triggered:** no usable transcriptions and no defensible benchmark capacity established. Do not silently substitute a dataset. User must decide whether to pivot to the thamizhsterio archive or another explicitly approved source.
+**Capacity gate: PASS. Transcription availability: FAIL pending the user-approved manual workflow.** Bounding boxes never count as OCR truth. Phase 33 produced a development-only review tool; OCR scoring remains UNVERIFIED until 50 development plates are reviewed, preprocessing is frozen, and then 200 sealed test plates are reviewed. See `reports/anpr-data-audit.json` and `reports/anpr-transcription-runbook.md`.
 
 ## Supplementary checks — UNVERIFIED
 
@@ -42,7 +40,8 @@ Achievable independent test size from the extracted image set is at most **181 b
 | Gate | Status | Reason |
 |---|---|---|
 | CityFlow supports the planned real multi-camera journey | **PASS** | Real archive inspected; identity 260 spans 24 cameras in S04 with metadata, calibration, videos, baseline tracks, and released train GT. |
-| Indian benchmark supports honest OCR evaluation | **FAIL** | Downloaded archive is box-only and exposes at most 181 images before de-duplication, with no transcriptions. |
+| Indian benchmark has enough independent images | **PASS** | Corrected audit found 200 frozen independent test crop families plus 50 development families. |
+| Indian benchmark has usable plate strings | **FAIL** | The archive is box-only; human review is still required before OCR scoring. |
 | Python CPU environment installs cleanly | **PASS** | Stale pip process stopped; no-cache install completed. |
 
-No Phase 2 work has started. The Indian OCR hard gate remains failed and requires the approved manual-transcription/supplementary-dataset decision. Await user clearance before proceeding to hours 10–18.
+Historical note: this report originally stopped before Phase 2. The user later approved the manual-transcription pivot and cleared Phase 2. CityFlow, Re-ID, and demo phases have since run. The current manual boundary is documented in `reports/anpr-audit.md`.

@@ -9,7 +9,7 @@
 | 21–24 | Private S01/S03 training bundle, portable Colab job, and CPU artifact contract | Critical repair; approved checkpoint |
 | 24–27 | Returned-model acceptance and one frozen S02 evaluation | Critical repair; completed |
 | 27–33 | Crop selection, evidence timeline, map, and replay | Critical; completed |
-| 33–43 | Indian transcription/review, detector/OCR, preprocessing, and evaluation | Critical |
+| 33-43 | Indian transcription/review, detector/OCR, preprocessing, and evaluation; detector measured, manual OCR truth pending | **Critical, in progress** |
 | 43–47 | Plate search, hybrid evidence, OD, density heat map, and bottleneck proxies | Required |
 | 47–52 | Remaining frozen evaluation, leakage checks, error analysis, and CPU timing | Critical |
 | 52–56 | Integration repair, offline rehearsal, claims, and evidence packaging | Critical |
@@ -67,7 +67,15 @@ The frozen S05 post-hoc diagnostic embedded 2,272/6,609 baseline tracklets and
 produced 113 links. Only 14 were evaluable: seven correct and seven incorrect;
 99 remain unknown. Its largest prediction spans five cameras, but the largest
 fully scored consistent group spans two. The six-camera requirement therefore
-remains failed. S05 was already consumed and was not retuned. The planned hours
-33–43 Indian ANPR phase remains next; the total 56-hour budget is unchanged and
+remains failed. S05 was already consumed and was not retuned. The hours
+33–43 Indian ANPR phase is now in progress; the total 56-hour budget is unchanged and
 the remaining hours 47–52 work must focus on integration evaluation rather than
 another S05 iteration. See `reports/reid-trained-posthoc-s05-audit.md`.
+
+## Indian ANPR checkpoint, hours 33-43 in progress
+
+The complete archive re-audit corrected the feasibility count from 181 JPEGs to 2,083 decodable images: 181 scenes and 1,902 plate crops. Exact duplicate and conservative scene near-duplicate grouping produced 1,098 independent families. The frozen OCR allocation is 50 development plus 200 test crop families; the frozen detector allocation is 105 train, 36 development, and 36 test scene families.
+
+The CPU-trained detector completed its single test evaluation: 52 TP, 3 FP, and 9 FN over 61 boxes, for 0.9455 precision, 0.8525 recall, and 0.8966 F1 at confidence/IoU 0.50. These are box metrics only. Full-string OCR remains **UNVERIFIED** because the source has no text labels and zero human-reviewed strings exist.
+
+The manual work is deliberately two-stage. Review 50 development plates, freeze one of three preprocessing variants, then generate and review the sealed 200-plate test page. The next hours 43-47 phase cannot start until that checkpoint is completed or the user explicitly changes scope. The six-camera journey remains a separate failed criterion; no ANPR result changes it.

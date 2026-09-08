@@ -1,0 +1,26 @@
+{
+  "status": "PASS",
+  "scope": "scene_train_and_development_only_detector_training",
+  "device": "cpu",
+  "epochs_requested": 30,
+  "initial_weights_sha256": "f59b3d833e2ff32e194b5bb8e08d211dc7c5bdf144b90d2c8412c47ccfc83b36",
+  "best_weights": "artifacts/anpr/detector/roadeye/weights/best.pt",
+  "best_weights_sha256": "6598143743e5edab23c9e9474f757dc4290310c3c45dce157dc7459235da3585",
+  "test_opened": false,
+  "epochs_completed": 30,
+  "elapsed_hours_reported_by_ultralytics": 0.57,
+  "best_epoch": 30,
+  "best_epoch_development_metrics": {
+    "precision": 0.92372,
+    "recall": 0.90164,
+    "map50": 0.94518,
+    "map50_95": 0.76239
+  },
+  "training_source_sha256_at_run": {
+    "src/roadeye/anpr.py": "a1ac219523096b703ff2daa173be5cd3e70979fba725dc69e4c41cc2695491e5",
+    "scripts/run_anpr.py": "5f058731ee3d1ce5e38b188048cc5e312e8e02a1cee6b68fcf77f9a288190c4d",
+    "configs/anpr.json": "66312e134a12196575c40e7294739222b94de6ef8cdfc895c62205828099004e",
+    "configs/anpr-split.json": "7542a92a9b21d9597978bb7e0c0d091b2c956602924ef885173efa01fec52b75"
+  },
+  "post_run_source_change": "Review/export isolation, confidence intervals, and offline verification were added after training; detector training logic was unchanged"
+}

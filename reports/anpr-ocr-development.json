@@ -1,0 +1,18 @@
+{
+  "status": "UNVERIFIED",
+  "scope": "recognition_on_ground_truth_plate_crops",
+  "reviewed_transcriptions": 0,
+  "development": {
+    "status": "UNVERIFIED",
+    "reason": "no_reviewed_transcriptions"
+  },
+  "test": {
+    "status": "UNVERIFIED",
+    "reason": "test_preprocessing_must_be_frozen_after_development_review"
+  },
+  "limitations": [
+    "This phase evaluates recognition on supplied plate boxes, not end-to-end scene ANPR",
+    "Ground truth must have review_status=reviewed; suggestions are never labels",
+    "Scores are EasyOCR confidences and are not calibrated probabilities"
+  ]
+}

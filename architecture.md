@@ -177,3 +177,25 @@ analysis shows most labeled positives survive topology but few exceed the
 appearance threshold. Further work should improve camera-domain robustness and
 descriptor separation using a new development protocol; it must not tune on the
 consumed S02/S04/S05 scenarios.
+
+## Indian detector and OCR evaluation boundary
+
+The Indian archive is treated as two related inputs: 181 JPEG scene images for
+plate detection and 1,840 labeled PNG plate crops for recognition. Exact decoded
+pixel duplicates are assigned to one family before any split. Scene images also
+use a conservative 64-bit DCT perceptual-hash connected component at Hamming
+distance four. Only family representatives enter training or evaluation.
+
+The detector uses a local YOLOv8n checkpoint, 105 scene training representatives,
+36 development representatives for the confidence threshold, and 36 sealed test
+representatives. EasyOCR runs recognition-only on supplied plate crops using
+three fixed CPU preprocessing variants. Models are prepared explicitly and
+hashed; demo/runtime construction sets downloads off.
+
+The transcription boundary is sequential. A self-contained page first exposes
+only 50 development families. Test rows must remain unreviewed while one
+preprocessing variant is selected and all source/model/input hashes are frozen.
+Only then can the page expose 200 test families for one scoring run. Hash-bound
+CSV rows marked `reviewed` are truth; `suggested`, `pending`, and `unreadable`
+rows never enter an accuracy denominator. This produces a recognition-on-crops
+metric and does not conflate detector performance with full-string OCR.

@@ -1,0 +1,14 @@
+{
+  "status": "PASS",
+  "scope": "local_cpu_cached_model_offline_integrity",
+  "network_guard": "socket_and_urllib_connections_rejected",
+  "detector_images": 2,
+  "ocr_images": 1,
+  "ocr_variants": 3,
+  "detector_replay_equal": true,
+  "ocr_replay_equal": true,
+  "detector_weights_sha256": "6598143743e5edab23c9e9474f757dc4290310c3c45dce157dc7459235da3585",
+  "ocr_model_sha256": {
+    "english_g2.pth": "e2272681d9d67a04e2dff396b6e95077bc19001f8f6d3593c307b9852e1c29e8"
+  }
+}

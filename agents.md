@@ -53,3 +53,13 @@ or unmatched members; its fully scored consistent maximum is two. The test demo
 therefore stays on the frozen S02 artifacts. The six-camera criterion remains
 failed until an independently predicted group is fully verified under the frozen
 evaluation protocol.
+
+The Indian ANPR checkpoint is documented in `reports/anpr-audit.md`. Run its
+tracked tooling with `.venv\Scripts\python.exe scripts\run_anpr.py <action>`.
+The current manual action is in `reports/anpr-transcription-runbook.md`: review
+the 50 development families, export to the ignored
+`data/anpr/transcriptions.csv`, and freeze OCR before reviewing any of the 200
+test families. Never mark EasyOCR suggestions as reviewed on the user's behalf.
+`evaluate-ocr-test` is a one-time sealed scoring command after at least 150 test
+strings are human verified. Detector weights, OCR weights, predictions, review
+HTML, screenshots, and transcription CSVs stay ignored.

@@ -87,3 +87,18 @@ appearance rank-1 was 51/254. Its predicted maximum was five cameras, but its
 fully scored consistent maximum remained two. Therefore the required six-camera
 journey is still **FAIL**, and the S02 test demo remains unchanged. These S05
 numbers are post-hoc diagnostic evidence, not fresh held-out accuracy.
+
+## Current Indian ANPR evidence
+
+The corrected archive audit found 2,083 decodable images rather than the earlier
+JPEG-only count of 181. After exact-duplicate grouping, the frozen OCR benchmark
+has 50 independent development plate crops and 200 independent test plate crops.
+The source still has no plate-string annotations. Human transcription remains a
+hard requirement; model suggestions cannot be promoted to labels.
+
+The scene detector's one frozen 36-image test measured 52/55 precision (0.9455,
+Wilson 95% 0.8515-0.9813), 52/61 recall (0.8525, 0.7428-0.9204), and 0.8966 F1
+at confidence 0.50 and IoU 0.50. This is a plate-box result only. Full-string
+accuracy, character error rate, end-to-end ANPR, and the 90% target remain
+**UNVERIFIED** until manual development review, preprocessing freeze, and one
+sealed test evaluation are complete.
