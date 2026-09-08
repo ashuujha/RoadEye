@@ -205,6 +205,12 @@ header.login-header span {
   display: flex;
   align-items: center;
   gap: 12px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
   user-select: none;
 }
 
