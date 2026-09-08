@@ -140,7 +140,7 @@ export function NetworkMap({ journey, status, cameraCounts = [], height = 420, o
                   <title>{link.source + " to " + link.target + ": inferred geometry; identity not scored in runtime"}</title>
                   <line x1={from.x} y1={from.y} x2={to.x} y2={to.y} stroke="#8BAFC8" strokeWidth="2.5" strokeDasharray="6 4" markerEnd={"url(#" + arrowId + ")"} />
                   {link.elapsed_seconds !== null && (
-                    <text x={(from.x + to.x) / 2} y={(from.y + to.y) / 2 - 10} fill="#8BAFC8" fontSize="10" textAnchor="middle">
+                    <text x={(from.x + to.x) / 2} y={(from.y + to.y) / 2 - 10 - (model.links.length > 2 ? (index % 3) * 32 : 0)} fill="#8BAFC8" fontSize="10" textAnchor="middle">
                       {"gap " + link.elapsed_seconds.toFixed(2) + " s"}
                     </text>
                   )}

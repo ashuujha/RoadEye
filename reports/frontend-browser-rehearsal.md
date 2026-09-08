@@ -1,5 +1,10 @@
 # Frontend browser rehearsal (post-56h)
 
+Current layout status (2026-09-09 IST): PASS for all three reported display
+issues at the exercised S02/S06 desktop/mobile states. See the three layout
+repair sections below for changes, failed attempts, route-only checks, and
+private evidence paths. The original rehearsal findings are preserved here.
+
 Rehearsed source: 22ba094 (application changes through 70cbc7e).
 Date: 2026-09-09 IST. Browser: Playwright Chromium 151.0.7922.34, headless.
 Viewports: 1440x1000 desktop and 390x844 mobile.
@@ -180,6 +185,56 @@ sample-2 workspace drawers, crop-byte hashes, claim labels, and keyboard closing
 passed. No HTTP errors, browser exceptions, or console errors in the route run.
 Only Evidence was rehearsed. Map label repair is still pending here.
 Previous layout checkpoint: 7451df1 (checkpoint/trajectory-layout-fixed).
+
+### Layout repair 3: Map (post-56h, 2026-09-09 IST)
+
+PASS: one existing SVG text y-position attribute now staggers gap labels for
+maps with more than two connectors. No new component, helper, collision engine,
+library, stylesheet, or data transformation. Text, font size, camera positions,
+connectors, API calls, and evidence-selection behavior are unchanged.
+
+The first map run (2026-09-08T22-24-56-000Z) passed label-label assertions but
+visual inspection found its S02 gap label partly behind camera c007. That attempt
+is a visual FAIL, not an accepted result. The final change preserves placement
+for maps with up to two connectors. The ignored diagnostic additionally checks
+camera overlap and canvas clipping; no collision detection was added to the app.
+
+Command: node artifacts/frontend-rehearsal/rehearse.cjs --route Map.
+Final run: artifacts/frontend-rehearsal/2026-09-08T22-25-29-318Z/results.json.
+Result: 6 PASS / 0 FAIL. Both default predictions have zero gap-label pair
+intersections, zero gap-label/camera bounding-box intersections, and no clipped
+gap labels at 1440x1000 and 390x844. S06's original three pairwise collisions
+are gone. Desktop screenshots confirm separated labels and restored S02 layout.
+Camera/connector/visit counts remain S02 4/2/3 and S06 6/4/5; connector toggling,
+exact crop/frame drawers, crop-byte hashes, and claim labels pass. No HTTP errors,
+browser exceptions, or console errors. Only Map was rehearsed at this step.
+Previous layout checkpoint: 91d21db (checkpoint/evidence-layout-fixed).
+
+### Final layout handoff
+
+All three reported display issues are PASS for the exercised states. Application
+diff against 3e8562f is six CSS declarations (four Trajectories, two Evidence)
+and one NetworkMap text-position attribute. Source comparison confirms no changes
+to backend, configs, test_frontend, API clients, or evidence.ts. Master,
+backend-audited, and backup-before-cleanup remain at ff3a618. Existing user/graph
+changes remain unstaged. Required Graphify AST refreshes were run; no graph
+health-gate investigation or semantic rebuild was undertaken.
+
+Only the respective route was rehearsed after each fix: Trajectories 11/0,
+Evidence 12/0, Map 6/0 PASS/FAIL. This is Chromium desktop/mobile emulation,
+not a production-hosting or all-browser verification. Arbitrary other journey
+label arrangements remain UNVERIFIED; no universal collision-free claim is made.
+Full typecheck/unit/build and Analytics were not rerun for these layout-only
+changes. No backend evaluation or Re-ID work occurred. All local rehearsal
+services stopped; no listeners remained on ports 8011, 8012, 5173, or 5174.
+No push, merge, remote configuration, or GitHub default-branch change occurred.
+Stop here and wait for the user's go-ahead before the publishing plan.
+
+Final private result SHA-256 values, in the route order above:
+
+- Trajectories: A3C370ACC9AC02F5DDD8951ECD1E6D2AD39594AC279D7CD366A959A243ED97CE
+- Evidence: 659C9DE65BB24FE88D90490B38281ADCF5D44E0159CCE412EE1F1205C33432C9
+- Map: 05DFA007F50F24DAAD45230F4E4292683FA81DD2DB7782C0459EE1F7D7C18D8D
 
 ### Original rehearsal handoff
 
