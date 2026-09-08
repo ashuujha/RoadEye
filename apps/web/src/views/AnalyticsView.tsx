@@ -1,287 +1,150 @@
-import React, { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+
+import { api } from "../api";
+import type { AnalyticsResponse } from "../api.generated";
 import { StatusBadge } from "../components/StatusBadge";
-import { IconAnalytics, IconAlertTriangle } from "../components/Icons";
 
-type RecordData = Record<string, any>;
-
-interface AnalyticsViewProps {
-  runId: string;
-  metricsData?: RecordData;
+function seconds(value: number | null): string {
+  return value === null ? "Unavailable" : value.toFixed(2) + " s";
 }
 
-export function AnalyticsView({ runId, metricsData }: AnalyticsViewProps) {
-  const [tab, setTab] = useState<"volume" | "flow" | "od" | "travel">("volume");
-  const m = metricsData;
+function share(value: number): string {
+  return (value * 100).toFixed(1) + "%";
+}
+
+export function AnalyticsSummary({ data }: { data: AnalyticsResponse }) {
+  const { summary } = data;
+  const maximumVisits = Math.max(1, ...data.camera_density.map((row) => row.observed_runtime_visit_count));
+
+  return (
+    <div className="analytics-content">
+      <div className="panel analytics-provenance">
+        <StatusBadge status="uncertain" label="UNVERIFIED / PREDICTION-ONLY" />
+        <p>{data.disclosure ?? "Aggregates of frozen runtime predictions."}</p>
+        <p>Scenario: <strong>{data.scenario}</strong> / observed interval: {seconds(summary.first_observed_s)} to {seconds(summary.last_observed_s)}</p>
+        <details>
+          <summary>Prediction source provenance</summary>
+          <p className="mono evidence-hash">SHA-256 {data.source_prediction_sha256}</p>
+        </details>
+      </div>
+
+      <div className="analytics-metric-grid">
+        {[
+          ["Predicted vehicle IDs", summary.predicted_global_vehicle_ids],
+          ["Multi-camera predicted IDs", summary.multi_camera_predicted_vehicle_ids],
+          ["Observed runtime visits", summary.observed_runtime_visits],
+          ["Predicted transitions", summary.predicted_transitions],
+        ].map(([label, value]) => (
+          <div key={label} className="panel analytics-metric">
+            <span>{label}</span>
+            <strong className="mono">{value}</strong>
+          </div>
+        ))}
+      </div>
+
+      <section className="panel analytics-panel">
+        <h2 className="panel-title">Camera visit counts</h2>
+        <p className="text-muted">Observed runtime visits and model-predicted identities. These counts are not traffic density or total traffic volume.</p>
+        {data.camera_density.length === 0 ? <p className="empty-text">No camera visit rows are available.</p> : (
+          <div className="analytics-table-scroll">
+            <table className="data-table">
+              <thead><tr><th>Camera</th><th>Observed visits</th><th>Predicted IDs</th><th>Multi-camera IDs</th><th>Share of runtime visits</th></tr></thead>
+              <tbody>
+                {data.camera_density.map((row) => (
+                  <tr key={row.camera}>
+                    <td className="mono">{row.camera}</td>
+                    <td>
+                      <span className="mono">{row.observed_runtime_visit_count}</span>
+                      <div className="volume-bar-bg" aria-hidden="true">
+                        <div className="volume-bar-fill" style={{ width: (row.observed_runtime_visit_count / maximumVisits) * 100 + "%" }} />
+                      </div>
+                    </td>
+                    <td className="mono">{row.predicted_unique_vehicle_count}</td>
+                    <td className="mono">{row.multi_camera_predicted_vehicle_count}</td>
+                    <td className="mono">{share(row.share_of_observed_runtime_visits)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </section>
+
+      <section className="panel analytics-panel">
+        <h2 className="panel-title">Predicted origin-destination endpoints</h2>
+        <p className="text-muted">First and last cameras of multi-camera predictions; not verified OD flow or complete trips.</p>
+        {data.origin_destination_pairs.length === 0 ? <p className="empty-text">No predicted OD pairs are available.</p> : (
+          <div className="analytics-table-scroll">
+            <table className="data-table">
+              <thead><tr><th>Origin camera</th><th>Destination camera</th><th>Predicted IDs</th><th>Share of multi-camera predictions</th></tr></thead>
+              <tbody>
+                {data.origin_destination_pairs.map((row) => (
+                  <tr key={row.origin_camera + ":" + row.destination_camera}>
+                    <td className="mono">{row.origin_camera}</td>
+                    <td className="mono">{row.destination_camera}</td>
+                    <td className="mono">{row.predicted_vehicle_count}</td>
+                    <td className="mono">{share(row.share_of_multi_camera_predictions)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </section>
+
+      <section className="panel analytics-panel">
+        <h2 className="panel-title">Transition-support proxies</h2>
+        <p className="text-muted">Ranked predicted transition counts; not congestion measurements. Observed boundary gaps are not route travel times and can be negative when camera visits overlap.</p>
+        {data.bottleneck_proxies.length === 0 ? <p className="empty-text">No predicted transition proxies are available.</p> : (
+          <div className="analytics-table-scroll">
+            <table className="data-table">
+              <thead><tr><th>Rank</th><th>From</th><th>To</th><th>Predicted transitions</th><th>Transition share</th><th>Median boundary gap</th><th>Maximum boundary gap</th></tr></thead>
+              <tbody>
+                {data.bottleneck_proxies.map((row) => (
+                  <tr key={row.from_camera + ":" + row.to_camera}>
+                    <td>{row.rank}</td>
+                    <td className="mono">{row.from_camera}</td>
+                    <td className="mono">{row.to_camera}</td>
+                    <td className="mono">{row.predicted_transition_count}</td>
+                    <td className="mono">{share(row.share_of_predicted_transitions)}</td>
+                    <td className="mono">{seconds(row.median_observed_boundary_gap_s)}</td>
+                    <td className="mono">{seconds(row.maximum_observed_boundary_gap_s)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </section>
+      <p className="text-muted">Prediction counts do not establish identity accuracy. Runtime analytics use no ground-truth identities, plate strings, or owner data.</p>
+    </div>
+  );
+}
+
+export function AnalyticsView() {
+  const result = useQuery({
+    queryKey: ["analytics"],
+    queryFn: ({ signal }) => api.analytics({ signal }),
+    staleTime: 60_000,
+  });
 
   return (
     <div className="view-container analytics-view">
       <div className="view-header">
         <div>
-          <h1 className="view-title">Urban Traffic Analytics & Flows</h1>
-          <p className="view-subtitle">
-            Privacy-preserving aggregate traffic metrics, enrolled camera flows, and origin-destination matrices.
-          </p>
+          <h1 className="view-title">Prediction Analytics</h1>
+          <p className="view-subtitle">Camera visits, predicted endpoints, and transition support from the audited runtime artifacts.</p>
         </div>
-
-        <div className="tab-group" role="tablist">
-          <button
-            className={`tab-btn ${tab === "volume" ? "active" : ""}`}
-            onClick={() => setTab("volume")}
-            role="tab"
-          >
-            Volume & Recognition
-          </button>
-          <button
-            className={`tab-btn ${tab === "flow" ? "active" : ""}`}
-            onClick={() => setTab("flow")}
-            role="tab"
-          >
-            Camera Flows (A→B)
-          </button>
-          <button
-            className={`tab-btn ${tab === "od" ? "active" : ""}`}
-            onClick={() => setTab("od")}
-            role="tab"
-          >
-            Origin-Destination (OD)
-          </button>
-          <button
-            className={`tab-btn ${tab === "travel" ? "active" : ""}`}
-            onClick={() => setTab("travel")}
-            role="tab"
-          >
-            Travel Time & Congestion
-          </button>
-        </div>
+        <StatusBadge status="uncertain" label="UNVERIFIED" />
       </div>
-
-      {!runId ? (
-        <div className="panel empty-state-panel">
-          <p>Please select an active run in the scope bar to view computed traffic analytics.</p>
+      {result.isPending ? (
+        <div className="panel" role="status">Loading prediction aggregates...</div>
+      ) : result.isError ? (
+        <div className="panel status-banner banner-danger" role="alert">
+          <p>{result.error.message}</p>
+          <button type="button" className="btn btn-secondary" onClick={() => void result.refetch()}>Retry analytics</button>
         </div>
-      ) : !m ? (
-        <div className="panel loading-panel">
-          <div className="spinner" />
-          <p>Aggregating 5-minute event windows and calculating flow matrices…</p>
-        </div>
-      ) : (
-        <div className="analytics-content">
-          {/* Summary KPIs */}
-          <div className="analytics-summary-grid">
-            <div className="panel kpi-box">
-              <span className="kpi-label">Total Vehicle Passages</span>
-              <span className="kpi-value mono">{m.vehicle_passages ?? "—"}</span>
-              <span className="kpi-hint">Deduped crossings</span>
-            </div>
-            <div className="panel kpi-box">
-              <span className="kpi-label">Accepted Plates</span>
-              <span className="kpi-value mono text-success">{m.accepted_plates ?? "—"}</span>
-              <span className="kpi-hint">High confidence readings</span>
-            </div>
-            <div className="panel kpi-box">
-              <span className="kpi-label">Recognition Coverage</span>
-              <span className="kpi-value mono text-copper">
-                {m.recognition_coverage !== undefined ? `${(m.recognition_coverage * 100).toFixed(1)}%` : "—"}
-              </span>
-              <span className="kpi-hint">Accepted / total passages</span>
-            </div>
-            <div className="panel kpi-box">
-              <span className="kpi-label">Sample Size</span>
-              <span className="kpi-value mono">{m.sample_size ?? "—"}</span>
-              <span className="kpi-hint">Observations in window</span>
-            </div>
-          </div>
-
-          {/* Tab 1: Volume & Recognition */}
-          {tab === "volume" && (
-            <div className="panel analytics-panel">
-              <div className="panel-header">
-                <h3 className="panel-title">Passage Volumes & Recognition Coverage by Camera</h3>
-                <span className="panel-meta">Enrolled Sensor Coverage</span>
-              </div>
-
-              <div className="volume-bars-detailed">
-                {m.counts?.map((c: RecordData) => {
-                  const max = Math.max(1, ...m.counts.map((x: RecordData) => x.passages || 0));
-                  const pct = Math.round(((c.passages || 0) / max) * 100);
-
-                  return (
-                    <div key={c.camera_id} className="volume-detail-row">
-                      <div className="vol-cam-col">
-                        <span className="mono font-bold text-base">{c.camera_id}</span>
-                        <StatusBadge status={c.coverage_state} size="sm" />
-                      </div>
-                      <div className="vol-bar-col">
-                        <div className="vol-meter-bg">
-                          <div className="vol-meter-fill" style={{ width: `${pct}%` }} />
-                        </div>
-                      </div>
-                      <div className="vol-stats-col mono">
-                        <span><b>{c.passages}</b> passages</span>
-                        <span className="text-xs text-muted">
-                          {c.accepted_plates} accepted · {c.review_required || 0} review
-                        </span>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          )}
-
-          {/* Tab 2: Camera Flows (A -> B) */}
-          {tab === "flow" && (
-            <div className="panel analytics-panel">
-              <div className="panel-header">
-                <h3 className="panel-title">Directional Link Flows Between Adjacent Cameras</h3>
-                <span className="panel-meta">A → B Traversal Counts</span>
-              </div>
-
-              {m.flow && m.flow.length > 0 ? (
-                <table className="data-table">
-                  <thead>
-                    <tr>
-                      <th>Source Camera (A)</th>
-                      <th>Target Camera (B)</th>
-                      <th>Observed Link Volume</th>
-                      <th>Median Travel Time</th>
-                      <th>Flow Direction</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {m.flow.map((f: RecordData, idx: number) => (
-                      <tr key={idx}>
-                        <td className="mono font-bold">{f.source}</td>
-                        <td className="mono font-bold">{f.target}</td>
-                        <td className="mono text-copper font-semibold">{f.count || f.volume || 0} vehicles</td>
-                        <td className="mono">{f.median_seconds ? `${Math.round(f.median_seconds)}s` : "—"}</td>
-                        <td>
-                          <span className="flow-badge">Directed Route</span>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              ) : (
-                <p className="empty-text">No multi-camera directional flows formed in this window.</p>
-              )}
-            </div>
-          )}
-
-          {/* Tab 3: Origin-Destination (OD) Matrix with Cell Suppression */}
-          {tab === "od" && (
-            <div className="panel analytics-panel">
-              <div className="panel-header">
-                <h3 className="panel-title">Origin-Destination (OD) Matrix</h3>
-                <span className="panel-meta">Privacy-Preserving Cell Suppression</span>
-              </div>
-
-              <div className="privacy-notice">
-                <IconAlertTriangle size={14} className="text-warning inline-icon" />
-                <span>
-                  Cells with counts below the privacy threshold are marked <b>&lt;Suppressed&gt;</b> to prevent re-identification.
-                </span>
-              </div>
-
-              {m.od && m.od.length > 0 ? (
-                <table className="data-table">
-                  <thead>
-                    <tr>
-                      <th>Origin Zone / Camera</th>
-                      <th>Destination Zone / Camera</th>
-                      <th>Trip Volume</th>
-                      <th>Suppression Status</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {m.od.map((row: RecordData, idx: number) => (
-                      <tr key={idx}>
-                        <td className="mono font-semibold">{row.origin || row.source}</td>
-                        <td className="mono font-semibold">{row.destination || row.target}</td>
-                        <td className="mono">
-                          {row.count !== undefined && row.count !== null ? (
-                            row.count < 3 ? (
-                              <span className="suppressed-cell">&lt;Suppressed&gt;</span>
-                            ) : (
-                              row.count
-                            )
-                          ) : (
-                            <span className="suppressed-cell">&lt;Suppressed&gt;</span>
-                          )}
-                        </td>
-                        <td>
-                          {row.count !== undefined && row.count < 3 ? (
-                            <span className="tag-suppressed">Protected</span>
-                          ) : (
-                            <span className="tag-published">Published</span>
-                          )}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              ) : (
-                <p className="empty-text">No origin-destination trips completed within this time range.</p>
-              )}
-            </div>
-          )}
-
-          {/* Tab 4: Travel Time & Congestion */}
-          {tab === "travel" && (
-            <div className="panel analytics-panel">
-              <div className="panel-header">
-                <h3 className="panel-title">Corridor Travel Time & Congestion Proxies</h3>
-                <span className="panel-meta">Algorithmic Travel Time Estimates</span>
-              </div>
-
-              {m.travel_times && m.travel_times.length > 0 ? (
-                <table className="data-table">
-                  <thead>
-                    <tr>
-                      <th>Corridor Segment</th>
-                      <th>Sample Count</th>
-                      <th>Median Travel Time</th>
-                      <th>p95 Travel Time</th>
-                      <th>Congestion Proxy</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {m.travel_times.map((t: RecordData, idx: number) => (
-                      <tr key={idx}>
-                        <td className="mono font-bold">{t.segment || `${t.source} → ${t.target}`}</td>
-                        <td className="mono">{t.samples || 0}</td>
-                        <td className="mono">{t.median_seconds ? `${Math.round(t.median_seconds)}s` : "—"}</td>
-                        <td className="mono">{t.p95_seconds ? `${Math.round(t.p95_seconds)}s` : "—"}</td>
-                        <td>
-                          <StatusBadge
-                            status={t.congestion_index > 1.3 ? "review_required" : "accepted"}
-                            label={t.congestion_index > 1.3 ? "Elevated Delay" : "Nominal Flow"}
-                            size="sm"
-                          />
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              ) : (
-                <p className="empty-text">No travel time segments calculated for this interval.</p>
-              )}
-            </div>
-          )}
-
-          {/* Limitations Disclosure */}
-          {m.limitations && m.limitations.length > 0 && (
-            <div className="panel limitations-panel">
-              <h4 className="limitations-title">Analytics Truth & Governance Notes</h4>
-              <ul className="limitations-list">
-                {m.limitations.map((l: string, idx: number) => (
-                  <li key={idx}>{l}</li>
-                ))}
-              </ul>
-            </div>
-          )}
-        </div>
-      )}
+      ) : <AnalyticsSummary data={result.data} />}
     </div>
   );
 }

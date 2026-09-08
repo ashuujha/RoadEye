@@ -1726,6 +1726,32 @@ textarea:focus-visible {
   font-size: 11px;
 }
 
+.analytics-content {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.analytics-metric-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
+}
+
+.analytics-metric {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.analytics-metric strong {
+  font-size: 24px;
+}
+
+.analytics-table-scroll {
+  overflow-x: auto;
+}
+
 /* --- 18. SYSTEM, HEALTH & RUNNER --- */
 .health-grid-cards {
   display: grid;

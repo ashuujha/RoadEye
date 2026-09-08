@@ -52,7 +52,7 @@ function App() {
 
       {page === "Trajectories" && <TrajectoryView />}
 
-      {page === "Analytics" && <AnalyticsView runId="" />}
+      {page === "Analytics" && <AnalyticsView />}
 
       {page === "Evidence" && (
         <CameraWorkspaceView />
