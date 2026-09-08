@@ -64,7 +64,7 @@ thumbnails decoded after scrolling, as did all 48 crop/frame images belonging
 to the two default selected journeys. Offscreen lazy images were explicitly
 scrolled into view before this conclusion.
 
-## Display failures (unfixed)
+## Original display failures (repair results below)
 
 1. **FAIL F01: S06 map gap-label collisions.** On the default five-camera
    prediction at 1440px, the labels for 21.50 s, 27.60 s and 13.00 s have three
@@ -144,6 +144,27 @@ Selected screenshots (local ignored artifacts):
 - [Evidence mobile overflow](../artifacts/frontend-rehearsal/2026-09-08T22-12-08-450Z/S02-evidence-mobile-overflow.png)
 
 ## Handoff
+
+### Layout repair 1: Trajectories (post-56h, 2026-09-09 IST)
+
+PASS: four CSS declarations in style.css constrain the existing table panel,
+enable horizontal scrolling, and let the ID/status row wrap. No JSX, API, data,
+search, or evidence-selection changes. The first attempt reduced overflow to
+471px but exposed the status-row overflow; that failure remains in private run
+2026-09-08T22-22-02-693Z. The additional flex-wrap declaration fixed it.
+
+Command: node artifacts/frontend-rehearsal/rehearse.cjs --route Trajectories.
+Run: artifacts/frontend-rehearsal/2026-09-08T22-22-26-127Z/results.json.
+Result: 11 PASS / 0 FAIL. S02/S06 desktop document widths are 1440/1440;
+mobile widths are 390/390, replacing 952/859. Both association panels accept
+horizontal scrolling. All three indexed plate searches return their exact
+sample-2 crop and boxed frame; served crop bytes match the indexed SHA-256.
+No HTTP errors, browser exceptions, or console errors. Only Trajectories was
+rehearsed; the other two display failures are still pending at this checkpoint.
+The ignored existing harness now filters routes and asserts width/scroll checks.
+Its historical hash above describes the original rehearsal version.
+
+### Original rehearsal handoff
 
 All rehearsal server/browser processes were stopped. Application source,
 backend source, configurations and frozen artifacts remain unchanged.

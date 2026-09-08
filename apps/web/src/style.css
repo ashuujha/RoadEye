@@ -1759,6 +1759,16 @@ textarea:focus-visible {
   min-width: 0;
 }
 
+.trajectory-view .table-panel {
+  min-width: 0;
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+.trajectory-view .version-info {
+  flex-wrap: wrap;
+}
+
 .trajectory-map-disclosure,
 .trajectory-score-note {
   margin-top: 10px;
