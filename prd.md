@@ -102,10 +102,7 @@ hard requirement; model suggestions cannot be promoted to labels.
 
 The scene detector's one frozen 36-image test measured 52/55 precision (0.9455,
 Wilson 95% 0.8515-0.9813), 52/61 recall (0.8525, 0.7428-0.9204), and 0.8966 F1
-at confidence 0.50 and IoU 0.50. This is a plate-box result only. Full-string
-accuracy, character error rate, end-to-end ANPR, and the 90% target remain
-**UNVERIFIED** until manual development review, preprocessing freeze, and one
-sealed test evaluation are complete.
+at confidence 0.50 and IoU 0.50. This is a plate-box result only.
 
 Development review is now complete on 48 readable families. The selected
 `color_upscale` recognizer measured 10/48 exact strings (20.83%, Wilson 95%
@@ -113,11 +110,19 @@ Development review is now complete on 48 readable families. The selected
 does not replace the still-unverified sealed test result. The measured shortfall
 must remain visible; the stated 90% target has not been achieved.
 
-Sealed test scoring accepts only personally reviewed hash-bound rows with an
-exact `review_status` of `reviewed` or `corrected`; `unreadable` is terminal but
-excluded from the denominator. Missing and unrecognized states are counted and
-abort the run before truth is loaded. Current test readiness is 0 reviewed,
-0 corrected, 0 unreadable, and 200 missing, so no test accuracy exists.
+Sealed test readiness passed with 31 reviewed, 164 corrected, five unreadable,
+zero missing, and zero unrecognized rows: 195/200 were readable. The one frozen
+test score measured 27/195 exact strings (13.85%; Wilson 95% 9.69-19.40%), 489
+character edits over 1,865 truth characters (26.22% CER), and 67.81/124.89 ms
+mean/p95 CPU recognition latency. The 90% full-string target is **FAIL**. This is
+recognition on supplied plate crops, not end-to-end scene ANPR; end-to-end quality
+remains **UNVERIFIED**.
+
+Prediction-only runtime plate search is integrated without changing vehicle
+association. Frozen S02 produced one searchable entry from 216 stored multi-camera
+evidence crops; S06 produced two from 849. These strings and their uncalibrated
+scores are **UNVERIFIED**, sparse inspection aids. The low sealed score and runtime
+coverage prohibit a reliable operational ANPR claim.
 
 The final S01/S03 development-calibrated six-camera repair also failed. Its
 single frozen post-hoc diagnostic predicted groups spanning 16 S04 cameras and

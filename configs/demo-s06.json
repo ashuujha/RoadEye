@@ -9,8 +9,11 @@
   "disclosure": "S06 — unverified prediction, no ground truth available",
   "evaluation_notice": "S06 has no released ground truth. These predictions are excluded from accuracy metrics and do not change the verified six-camera criterion, which remains FAIL.",
   "plate_search": {
-    "enabled": false,
-    "availability": "BLOCKED_PENDING_SEALED_OCR",
-    "reason": "Awaiting the sealed OCR evaluation and a hash-bound runtime OCR prediction index; no plate matches are available yet."
+    "enabled": true,
+    "availability": "READY",
+    "index": "plate-index.json",
+    "index_sha256": "949e14bc45e122060c4f90ec1435f38dc4d2b679eec5edf6055da1b3a2a1a5d5",
+    "manifest": "plate-runtime-manifest.json",
+    "manifest_sha256": "ef4c02ce0da1a982a1f6879b1eeb2fa3b23b99a63027ca0d5a7fb849cc71ef4a"
   }
 }

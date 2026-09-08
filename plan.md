@@ -79,34 +79,36 @@ remains failed. S05 was already consumed and was not retuned. The hours
 the remaining hours 47–52 work must focus on integration evaluation rather than
 another S05 iteration. See `reports/reid-trained-posthoc-s05-audit.md`.
 
-## Indian ANPR checkpoint, hours 33-43 in progress
+## Completed Indian ANPR checkpoint, hours 33-43
 
 The complete archive re-audit corrected the feasibility count from 181 JPEGs to 2,083 decodable images: 181 scenes and 1,902 plate crops. Exact duplicate and conservative scene near-duplicate grouping produced 1,098 independent families. The frozen OCR allocation is 50 development plus 200 test crop families; the frozen detector allocation is 105 train, 36 development, and 36 test scene families.
 
-The CPU-trained detector completed its single test evaluation: 52 TP, 3 FP, and 9 FN over 61 boxes, for 0.9455 precision, 0.8525 recall, and 0.8966 F1 at confidence/IoU 0.50. These are box metrics only. Full-string OCR remains **UNVERIFIED** because the source has no text labels and zero human-reviewed strings exist.
+The CPU-trained detector completed its single test evaluation: 52 TP, 3 FP, and 9 FN over 61 boxes, for 0.9455 precision, 0.8525 recall, and 0.8966 F1 at confidence/IoU 0.50. These are box metrics only.
 
 The 50-family development review is complete with 48 readable plates. The frozen
 `color_upscale` variant measured 10/48 exact strings and 0.2309 CER. The sealed
-200-family test review page is ready; test scoring and the hours 43-47 phase remain
-blocked on that manual review. The six-camera journey remains a separate failed
-criterion; no ANPR result changes it.
+200-family test review passed readiness with 31 reviewed, 164 corrected, five
+unreadable, and zero missing/unrecognized rows. The one sealed test measured
+27/195 exact strings (13.85%; Wilson 95% 9.69-19.40%), 26.22% CER, and
+67.81/124.89 ms mean/p95 CPU recognition latency. The 90% target is **FAIL**.
+The six-camera journey remains a separate failed criterion; no ANPR result changes
+it.
 
 The sealed-test review now has a deterministic, ground-truth-blind triage helper.
 It verifies the frozen OCR sources and all 200 test predictions, then orders
 unfinished work by model score for reviewer convenience. It does not mark any
 row reviewed, inspect plate truth, or relax the 150-readable/every-row-terminal
-gate. Plate search and hybrid evidence remain blocked until the human review and
-single sealed test score are complete.
+gate. It was consumed by the completed human review and single sealed score.
 
-## Completed hours 43-47 prediction analytics checkpoint
+## Completed hours 43-47 analytics, plate search, and hybrid evidence
 
 The portion that does not depend on missing plate truth is complete: OD endpoints,
 camera visit intensity, and transition-support proxies are computed over frozen
 runtime predictions, exposed through the read-only API, and rendered in the test
 frontend with `UNVERIFIED` labels. Visit counts are not called traffic density and
-transition gaps are not called congestion/travel time. Plate search and hybrid
-evidence stay blocked until all 200 test plates receive terminal human review and
-the one sealed OCR evaluation completes. The plate-search API, strict hash-bound
-index contract, prediction-evidence validation, and disabled frontend state are
-now scaffolded. Current calls return zero results with an explicit blocked reason;
-runtime OCR generation and configuration are the remaining integration work.
+transition gaps are not called congestion/travel time. Plate search now uses
+offline CPU detector/OCR predictions over the existing multi-camera journey crops,
+strict index/manifest hashes, exact evidence joins, and a frontend handoff to the
+source visit/sample. OCR never alters vehicle association. Coverage is sparse:
+S02 indexed one of 216 crops and S06 indexed two of 849, so usefulness and CityFlow
+plate accuracy remain **UNVERIFIED** rather than being inferred from implementation.

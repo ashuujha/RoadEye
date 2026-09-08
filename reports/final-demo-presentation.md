@@ -34,8 +34,8 @@ flowchart LR
   P --> API[Read-only FastAPI]
   API --> UI[Local map, timeline, replay, analytics]
 
-  X -. pending runtime wiring .-> D[Plate detector]
-  D -. pending runtime wiring .-> O[OCR recognizer]
+  X --> D[Plate detector]
+  D --> O[OCR recognizer]
   O -. predicted text only .-> I[Hash-bound plate index]
   I -. optional .-> API
 
@@ -60,9 +60,9 @@ inside the evaluator. All runtime artifacts are local and hash checked.
 - Read-only evidence API and local frontend with crop selection, boxed source
   frames, approximate camera map, chronological timeline, and replay.
 - Prediction-only camera activity, endpoint, and transition-support analytics.
-- Indian plate detector evaluation and a sealed, human-review-gated OCR protocol.
-- Plate-search API/index validation and frontend controls, currently blocked until
-  sealed OCR scoring and runtime OCR indexing.
+- Indian plate detector evaluation and one sealed, human-review-gated OCR score.
+- Hash-bound runtime OCR manifests and plate-search indexes for S02 and S06,
+  with exact crop-to-journey evidence handoff.
 
 **Speaker note**
 
@@ -130,52 +130,49 @@ six-camera criterion.
 These are detector bounding-box metrics, not OCR accuracy and not end-to-end ANPR.
 The latency is a small local observation and may vary with machine load.
 
-## Slide 7 - OCR result placeholder
+## Slide 7 - Sealed OCR result
 
-**UNVERIFIED until the sealed test command succeeds.**
-
-Replace this block only from the final `anpr-ocr-test` report:
+**FAIL - the measured 90% full-string target was not met.**
 
 | Measure | Sealed result |
 |---|---:|
-| Terminal review rows | `[PENDING: must be 200/200]` |
-| Readable rows | `[PENDING: must be >=150]` |
-| Unreadable rows | `[PENDING]` |
-| Exact full-string matches | `[PENDING numerator/denominator]` |
-| Full-string accuracy | `[PENDING]` |
-| Wilson 95% interval | `[PENDING]` |
-| Character error rate | `[PENDING]` |
-| CPU mean / p95 latency | `[PENDING]` |
-| 90% target | `[PENDING PASS or FAIL from measured accuracy]` |
-
-Development-only context, not the final claim: frozen `color_upscale` achieved
-10/48 exact strings (20.83%; Wilson 95% 11.73-34.26%) and 0.2309 CER on 48
-readable development families.
+| Terminal review rows | 200/200 |
+| Reviewed / corrected / unreadable | 31 / 164 / 5 |
+| Readable rows | 195/200 |
+| Exact full-string matches | 27/195 |
+| Full-string accuracy | 13.85% |
+| Wilson 95% interval | 9.69-19.40% |
+| Character error rate | 489/1,865 = 26.22% |
+| Nonempty coverage | 195/195 = 100% |
+| CPU mean / p95 latency | 67.81 / 124.89 ms per readable crop |
+| 90% target | **FAIL** |
 
 **Speaker note**
 
-Never replace the placeholder from model suggestions or partial review. Every one
-of the 200 rows must have a terminal human status and at least 150 must be readable.
+This is the one frozen independent score for `color_upscale`, reported despite
+the unfavorable result. It measures recognition on supplied plate crops, not
+plate detection plus OCR on full scenes and not operational ANPR accuracy.
 
-## Slide 8 - Plate search and evidence fusion
+## Slide 8 - Plate search and hybrid evidence
 
-**Current state: scaffold PASS; live OCR results UNVERIFIED.**
+**PASS - integrated; UNVERIFIED - plate strings and usefulness.**
 
-- `/api/plate-search/status` exposes readiness and claim boundaries.
-- `/api/plate-search` returns zero results while sealed OCR/runtime indexing is
-  unavailable.
-- A future enabled index must be SHA-256 pinned to the current journey prediction,
-  OCR selection report, sealed test report, and runtime OCR manifest.
-- Every result must resolve to an existing RoadEye ID, visit, crop, source time,
-  tracklet, and camera.
-- Exact, prefix, and contains matching is supported over normalized predicted text.
-- OCR score is uncalibrated; plate text is a prediction; no owner record exists.
+- S02: 216 stored multi-camera evidence crops, seven detector boxes, seven OCR
+  attempts, one searchable string, zero processing failures.
+- S06: 849 crops, 19 boxes, 18 OCR attempts, two searchable strings, zero failures.
+- Each config pins both index and runtime-manifest hashes; startup verifies the
+  current journey hash, crop joins, entry payload, counts, and claim boundaries.
+- Exact, prefix, and contains search opens the exact existing visit/sample and
+  displays OCR beside appearance evidence.
+- OCR does not merge, rerank, or alter vehicle identities. Scores are uncalibrated;
+  strings are predictions; no owner record or watchlist exists.
 
 **Speaker note**
 
-After scoring, the remaining work is to run the frozen detector/OCR on runtime
-CityFlow evidence, create the validated index, and enable its exact hash in the
-chosen demo config. Benchmark transcriptions are never copied into that index.
+The integration works, but detector coverage on tiny CityFlow vehicle crops is
+very low and the sealed recognizer result is weak. Plate search is therefore an
+inspectable demo path, not a reliable retrieval or surveillance claim. Indian
+benchmark transcriptions never enter either runtime index.
 
 ## Slide 9 - Analytics framing
 
@@ -209,9 +206,8 @@ interface over prediction data, not a city traffic measurement.
    uncalibrated incoming-link evidence.
 4. Replay the chronological visits; call dashed lines inferred geometry.
 5. Show the analytics panel and its `UNVERIFIED` framing.
-6. Show plate search:
-   - before OCR integration: visibly blocked, zero results, explicit reason;
-   - after integration: query one real runtime prediction and open its linked journey.
+6. Search one real runtime plate prediction and open its exact linked visit/crop;
+   point out the low uncalibrated OCR score and sparse coverage.
 7. Optionally restart with S06, keep the yellow no-ground-truth banner visible,
    and open one five-camera prediction as an unverified scale illustration.
 
@@ -225,8 +221,9 @@ interface over prediction data, not a city traffic measurement.
 | S06 five-camera journey is the same vehicle | **UNVERIFIED** |
 | Verified six-camera journey | **FAIL** |
 | Detector box precision/recall/F1 above | **PASS - measured frozen test** |
-| Sealed OCR accuracy | **UNVERIFIED until placeholder is replaced** |
-| 90% OCR target | **UNVERIFIED; later PASS/FAIL from sealed result** |
+| Sealed OCR full-string accuracy | **13.85% - measured frozen test** |
+| 90% OCR target | **FAIL** |
+| Runtime plate-search integration | **PASS engineering; plate strings UNVERIFIED** |
 | Analytics measure traffic, OD flow, or congestion | **UNVERIFIED and not claimed** |
 | Plate/vehicle ownership lookup | **Out of scope and not implemented** |
 
@@ -235,4 +232,4 @@ interface over prediction data, not a city traffic measurement.
 RoadEye’s demonstrated strength is inspectable, provenance-bound cross-camera
 evidence on a CPU-local stack. Its current accuracy boundary is equally clear:
 two cameras verified, five cameras predicted without S06 truth, and sealed OCR
-still awaiting human-reviewed evaluation.
+measured at 13.85% full-string accuracy against a failed 90% target.

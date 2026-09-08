@@ -64,6 +64,13 @@ def _sha256(path: Path) -> str:
     return digest.hexdigest()
 
 
+def _canonical_sha256(value: object) -> str:
+    encoded = json.dumps(
+        value, sort_keys=True, separators=(",", ":"), allow_nan=False
+    ).encode("utf-8")
+    return hashlib.sha256(encoded).hexdigest()
+
+
 def _require_exact_keys(value: Any, expected: set[str], *, label: str) -> dict[str, Any]:
     if not isinstance(value, dict) or set(value) != expected:
         raise ValueError(f"{label} must contain exactly {sorted(expected)}")
@@ -118,6 +125,18 @@ class _PlateEntry:
             "prediction_status": PREDICTION_LABEL,
         }
 
+    def public_evidence(self) -> dict[str, Any]:
+        """Return the OCR fields that accompany an existing evidence sample."""
+
+        return {
+            "predicted_plate_text": self.predicted_plate_text,
+            "normalized_plate_text": self.normalized_plate_text,
+            "ocr_score": self.ocr_score,
+            "score_kind": "uncalibrated_ocr_model_score_not_probability",
+            "is_probability": False,
+            "prediction_status": PREDICTION_LABEL,
+        }
+
 
 class PlateSearchIndex:
     """Validated optional index over OCR predictions attached to runtime evidence."""
@@ -146,6 +165,7 @@ class PlateSearchIndex:
         journeys: list[dict[str, Any]],
         scenario: str,
         source_prediction_sha256: str,
+        require_manifest: bool = False,
     ) -> PlateSearchIndex:
         if settings is None:
             return cls(availability=BLOCKED_AVAILABILITY, reason=DEFAULT_BLOCKED_REASON)
@@ -168,11 +188,26 @@ class PlateSearchIndex:
                 raise ValueError("disabled plate search requires a reason")
             return cls(availability=BLOCKED_AVAILABILITY, reason=reason.strip())
 
-        allowed = {"enabled", "availability", "index", "index_sha256"}
-        if set(settings) != allowed:
+        generator_allowed = {
+            "enabled",
+            "availability",
+            "index",
+            "index_sha256",
+        }
+        runtime_allowed = {
+            *generator_allowed,
+            "manifest",
+            "manifest_sha256",
+        }
+        if require_manifest and set(settings) != runtime_allowed:
+            raise ValueError(
+                "enabled runtime plate_search configuration must contain exactly "
+                f"{sorted(runtime_allowed)}"
+            )
+        if set(settings) not in (generator_allowed, runtime_allowed):
             raise ValueError(
                 "enabled plate_search configuration must contain exactly "
-                f"{sorted(allowed)}"
+                f"{sorted(runtime_allowed)} for runtime loading"
             )
         if settings["availability"] != READY_AVAILABILITY:
             raise ValueError("enabled plate search must declare READY availability")
@@ -190,12 +225,78 @@ class PlateSearchIndex:
         if _sha256(index_path) != expected_hash:
             raise ValueError("plate search index hash mismatch")
         payload = json.loads(index_path.read_text(encoding="utf-8"))
-        return cls._from_payload(
+        result = cls._from_payload(
             payload,
             journeys=journeys,
             scenario=scenario,
             source_prediction_sha256=source_prediction_sha256,
         )
+        if set(settings) == generator_allowed:
+            return result
+        manifest_relative = settings["manifest"]
+        if not isinstance(manifest_relative, str) or not manifest_relative:
+            raise ValueError("enabled plate search requires a manifest path")
+        manifest_path = (artifact_root / manifest_relative).resolve()
+        if not manifest_path.is_relative_to(artifact_root.resolve()):
+            raise ValueError("plate search manifest path escapes runtime artifacts")
+        if not manifest_path.is_file():
+            raise ValueError("plate search runtime manifest is missing")
+        manifest_hash = _require_sha256(
+            settings["manifest_sha256"], label="plate search manifest hash"
+        )
+        if _sha256(manifest_path) != manifest_hash:
+            raise ValueError("plate search runtime manifest hash mismatch")
+        if result.provenance is None or result.provenance.get(
+            "runtime_ocr_manifest_sha256"
+        ) != manifest_hash:
+            raise ValueError("plate search index and manifest hashes disagree")
+        cls._validate_manifest(
+            json.loads(manifest_path.read_text(encoding="utf-8")),
+            scenario=scenario,
+            source_prediction_sha256=source_prediction_sha256,
+            entries=payload["entries"],
+        )
+        return result
+
+    @staticmethod
+    def _validate_manifest(
+        manifest: Any,
+        *,
+        scenario: str,
+        source_prediction_sha256: str,
+        entries: list[dict[str, Any]],
+    ) -> None:
+        if not isinstance(manifest, dict) or manifest.get("schema_version") != 1:
+            raise ValueError("unsupported plate search runtime manifest")
+        if manifest.get("build_status") != "PASS":
+            raise ValueError("plate search runtime manifest build did not pass")
+        if manifest.get("prediction_status") != "UNVERIFIED":
+            raise ValueError("plate search runtime predictions must be unverified")
+        if manifest.get("scenario") != scenario:
+            raise ValueError("plate search runtime manifest scenario mismatch")
+        source = manifest.get("source")
+        if not isinstance(source, dict) or source.get(
+            "journeys_sha256"
+        ) != source_prediction_sha256:
+            raise ValueError("plate search runtime manifest journey hash mismatch")
+        if manifest.get("entry_payload_sha256") != _canonical_sha256(entries):
+            raise ValueError("plate search runtime manifest entry hash mismatch")
+        results = manifest.get("results")
+        counts = results.get("counts") if isinstance(results, dict) else None
+        if not isinstance(counts, dict) or counts.get("indexed_entries") != len(entries):
+            raise ValueError("plate search runtime manifest entry count mismatch")
+        boundaries = manifest.get("claim_boundaries")
+        required_false = (
+            "benchmark_transcriptions_opened",
+            "cityflow_identity_ground_truth_opened",
+            "changes_vehicle_association",
+            "ocr_score_is_probability",
+            "predicted_text_is_ground_truth",
+        )
+        if not isinstance(boundaries, dict) or any(
+            boundaries.get(key) is not False for key in required_false
+        ):
+            raise ValueError("plate search runtime manifest violates claim boundaries")
 
     @classmethod
     def _from_payload(
@@ -382,3 +483,17 @@ class PlateSearchIndex:
         response["result_count"] = len(results)
         response["results"] = results
         return response
+
+    def evidence(
+        self, global_id: str, visit_index: int, sample_index: int
+    ) -> dict[str, Any] | None:
+        """Return an optional OCR prediction without affecting journey identity."""
+
+        for entry in self.entries:
+            if (
+                entry.global_id == global_id
+                and entry.visit_index == visit_index
+                and entry.sample_index == sample_index
+            ):
+                return entry.public_evidence()
+        return None

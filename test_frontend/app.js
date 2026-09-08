@@ -199,7 +199,9 @@ function renderPlateResults(response) {
     const notice = document.createElement("span");
     notice.textContent = `OCR ${result.ocr_score.toFixed(3)} · uncalibrated prediction`;
     row.append(plate, evidence, notice);
-    row.addEventListener("click", () => selectJourney(result.global_id));
+    row.addEventListener("click", () =>
+      selectJourney(result.global_id, result.visit_index, result.sample_index),
+    );
     elements.plateResults.append(row);
   });
 }
@@ -237,15 +239,15 @@ function renderVehicles() {
   });
 }
 
-async function selectJourney(globalId) {
+async function selectJourney(globalId, visitIndex = 0, sampleIndex = 0) {
   stopReplay();
   state.selectedId = globalId;
   state.journey = await getJson(`/api/vehicles/${encodeURIComponent(globalId)}`);
-  state.visitIndex = 0;
-  state.sampleIndex = 0;
+  state.visitIndex = visitIndex;
+  state.sampleIndex = sampleIndex;
   renderVehicles();
   renderJourney();
-  selectVisit(0);
+  selectVisit(visitIndex, sampleIndex);
 }
 
 function markerIcon(sequence, active = false) {
@@ -305,10 +307,10 @@ function renderJourney() {
   });
 }
 
-function selectVisit(index) {
+function selectVisit(index, sampleIndex = 0) {
   if (!state.journey) return;
   state.visitIndex = index;
-  state.sampleIndex = 0;
+  state.sampleIndex = sampleIndex;
   document.querySelectorAll(".visit").forEach((row, rowIndex) => row.classList.toggle("selected", rowIndex === index));
   state.markers.forEach((marker, markerIndex) => marker.setIcon(markerIcon(markerIndex + 1, markerIndex === index)));
   const visit = state.journey.visits[index];
@@ -363,6 +365,16 @@ function renderEvidence() {
       `Source frame with predicted baseline box · score ${sample.baseline_score.value.toFixed(2)} (${sample.baseline_score.kind.replaceAll("_", " ")}; not a probability)`,
     ),
   );
+  if (sample.plate_prediction) {
+    const plate = document.createElement("div");
+    plate.className = "plate-evidence-note";
+    const title = document.createElement("strong");
+    title.textContent = `Predicted plate: ${sample.plate_prediction.predicted_plate_text}`;
+    const notice = document.createElement("span");
+    notice.textContent = `OCR ${sample.plate_prediction.ocr_score.toFixed(3)} · uncalibrated prediction, not ground truth`;
+    plate.append(title, notice);
+    elements.evidenceContent.append(plate);
+  }
 }
 
 function stopReplay() {

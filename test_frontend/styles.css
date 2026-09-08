@@ -38,6 +38,7 @@ h2 { font-size: 1.05rem; }
 main { display: grid; grid-template-columns: 320px minmax(0, 1fr); min-height: calc(100vh - 74px); }
 .search-panel { padding: 18px; border-right: 1px solid var(--line); background: #091622; }
 .plate-search-card { display: grid; gap: 10px; }
+.plate-evidence-note { display: grid; gap: 4px; padding: 12px; border: 1px solid #e4b45a; border-radius: 10px; background: #2a2418; color: #fff4d6; }
 .sidebar-heading { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
 .mini-status { padding: 4px 7px; border: 1px solid var(--line); border-radius: 999px; color: var(--muted); font-size: .62rem; font-weight: 850; }
 .mini-status.blocked { color: #ffb4b4; border-color: #713e49; background: #281923; }

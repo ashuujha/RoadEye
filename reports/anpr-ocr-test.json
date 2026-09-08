@@ -1,0 +1,35 @@
+{
+  "status": "MEASURED",
+  "scope": "frozen_independent_plate_crop_full_string_test",
+  "selected_variant": "color_upscale",
+  "frozen_test_images": 200,
+  "readable_test_images": 195,
+  "unreadable_test_images": 5,
+  "metrics": {
+    "images": 195,
+    "exact_matches": 27,
+    "full_string_accuracy": 0.13846153846153847,
+    "full_string_accuracy_wilson95": [
+      0.09693460932442044,
+      0.19395773859811632
+    ],
+    "character_edits": 489,
+    "ground_truth_characters": 1865,
+    "character_error_rate": 0.2621983914209115,
+    "nonempty_predictions": 195,
+    "coverage": 1.0,
+    "mean_latency_ms": 67.80941282243778,
+    "p95_latency_ms": 124.88831996452056
+  },
+  "prediction_counts": {
+    "images": 200,
+    "predictions": 200
+  },
+  "test_predictions_sha256": "cdaa88c66879b431215f281e6c51be2172581bc78abda54f699ae14277b570b6",
+  "transcription_sha256": "c45250f308ba9bb6ce1caec311adeaf57274df5a2098e2422fcc158034950e86",
+  "limitations": [
+    "Recognition uses supplied plate boxes and is not end-to-end scene ANPR",
+    "One manually reviewed local Kaggle test split is not city-wide accuracy",
+    "OCR confidence is not a calibrated probability"
+  ]
+}

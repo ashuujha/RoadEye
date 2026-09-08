@@ -124,6 +124,7 @@ class DemoRepository:
             journeys=self.journeys,
             scenario=self.config["scenario"],
             source_prediction_sha256=self.run["prediction_sha256"]["journeys"],
+            require_manifest=True,
         )
 
     def _verify_hashes(self) -> None:
@@ -264,6 +265,9 @@ class DemoRepository:
                         "kind": sample["score_kind"],
                         "is_probability": False,
                     },
+                    "plate_prediction": self._plate_search.evidence(
+                        global_id, index, sample_index
+                    ),
                 }
                 for sample_index, sample in enumerate(visit["evidence_samples"])
             ]

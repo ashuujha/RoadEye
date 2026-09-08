@@ -6,8 +6,11 @@
   "dataset_root": "data/cityflow",
   "frontend_root": "test_frontend",
   "plate_search": {
-    "enabled": false,
-    "availability": "BLOCKED_PENDING_SEALED_OCR",
-    "reason": "Awaiting the sealed OCR evaluation and a hash-bound runtime OCR prediction index; no plate matches are available yet."
+    "enabled": true,
+    "availability": "READY",
+    "index": "plate-index.json",
+    "index_sha256": "f08b19b2b390c99f2fac83a1b699415b0f1795626364806536a632ee57154be9",
+    "manifest": "plate-runtime-manifest.json",
+    "manifest_sha256": "40e515996ae551357a7f6cef36ba249332df3d10c244f4b27049aef4a0681ff5"
   }
 }

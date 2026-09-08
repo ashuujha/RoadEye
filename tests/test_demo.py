@@ -20,6 +20,32 @@ def write_json(path: Path, value: object) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
+def runtime_manifest(
+    *, scenario: str, journeys_sha256: str, entries: list[dict]
+) -> dict:
+    entry_hash = hashlib.sha256(
+        json.dumps(
+            entries, sort_keys=True, separators=(",", ":"), allow_nan=False
+        ).encode("utf-8")
+    ).hexdigest()
+    return {
+        "schema_version": 1,
+        "build_status": "PASS",
+        "prediction_status": "UNVERIFIED",
+        "scenario": scenario,
+        "source": {"journeys_sha256": journeys_sha256},
+        "results": {"counts": {"indexed_entries": len(entries)}},
+        "entry_payload_sha256": entry_hash,
+        "claim_boundaries": {
+            "benchmark_transcriptions_opened": False,
+            "cityflow_identity_ground_truth_opened": False,
+            "changes_vehicle_association": False,
+            "ocr_score_is_probability": False,
+            "predicted_text_is_ground_truth": False,
+        },
+    }
+
+
 def fixture_config(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Path:
     from roadeye import demo
 
@@ -264,6 +290,17 @@ def test_demo_loads_only_prediction_linked_plate_entries(tmp_path, monkeypatch):
             }
         ],
     }
+    manifest = runtime_manifest(
+        scenario="S02_fixture",
+        journeys_sha256=runtime["prediction_sha256"]["journeys"],
+        entries=plate_index["entries"],
+    )
+    manifest_hash = write_json(
+        artifacts / "plate-runtime-manifest.json", manifest
+    )
+    plate_index["ocr_provenance"][
+        "runtime_ocr_manifest_sha256"
+    ] = manifest_hash
     index_hash = write_json(artifacts / "plate-index.json", plate_index)
     value = json.loads(config.read_text(encoding="utf-8"))
     value["plate_search"] = {
@@ -271,6 +308,8 @@ def test_demo_loads_only_prediction_linked_plate_entries(tmp_path, monkeypatch):
         "availability": "READY",
         "index": "plate-index.json",
         "index_sha256": index_hash,
+        "manifest": "plate-runtime-manifest.json",
+        "manifest_sha256": manifest_hash,
     }
     config.write_text(json.dumps(value), encoding="utf-8")
 
@@ -281,6 +320,10 @@ def test_demo_loads_only_prediction_linked_plate_entries(tmp_path, monkeypatch):
     assert result["results"][0]["prediction_status"] == (
         "predicted_plate_text_not_ground_truth"
     )
+    journey = repository.journey("roadeye_fixture")
+    plate = journey["visits"][0]["evidence_samples"][0]["plate_prediction"]
+    assert plate["predicted_plate_text"] == "KA01AB1234"
+    assert plate["is_probability"] is False
 
 
 def test_frontend_contains_disabled_plate_search_contract():

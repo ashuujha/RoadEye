@@ -163,16 +163,18 @@ transition frequency/boundary gaps are not congestion or route travel time.
 
 ## Plate-search integration boundary
 
-The local service now exposes a disabled-by-default plate-search contract and
-frontend state. While sealed OCR scoring is pending, `/api/plate-search/status`
-reports `BLOCKED_PENDING_SEALED_OCR` and `/api/plate-search` returns zero results.
-It does not read test transcriptions, create synthetic plates, or silently fall
-back to model suggestions.
+The local service exposes a plate-search contract and prediction-linked frontend
+state. The sealed OCR result is recorded, and both S02 and S06 now load an enabled
+index plus runtime manifest from their own ignored prediction directory. It does
+not read test transcriptions, create synthetic plates, or silently fall back to
+model suggestions.
 
-Future runtime OCR wiring must produce a separate JSON index inside the selected
-prediction directory. Configuration enables it only by relative path and exact
-SHA-256. The index is bound to the scenario and current `journeys.json` hash, plus
-the OCR selection report, sealed test report, and runtime OCR manifest hashes.
+Runtime OCR produces a separate JSON index and manifest inside the selected
+prediction directory. Configuration enables them only by relative paths and exact
+SHA-256 values. The index is bound to the scenario and current `journeys.json`
+hash, plus the OCR selection report, sealed test report, and runtime OCR manifest
+hashes. The service also verifies the manifest's source journey hash, entry hash,
+entry count, unverified status, and ground-truth/association claim boundaries.
 Every predicted plate entry must resolve to an existing RoadEye ID, visit, sample,
 tracklet, camera, observation time, and crop hash. Exact-key validation excludes
 owner fields and evaluator identities. Search normalizes uppercase alphanumerics,
@@ -180,10 +182,13 @@ ranks exact before prefix before contains matches, and labels both OCR score and
 plate text as uncalibrated runtime predictions rather than probabilities or truth.
 
 Indian benchmark strings remain isolated evaluation truth. They measure the
-frozen recognizer but are never copied onto CityFlow journeys. Runtime plate
-detection/OCR over CityFlow evidence is the remaining integration step after the
-sealed score is recorded; its generated manifest and output index must satisfy
-the boundary above before the UI can leave its blocked state.
+frozen recognizer but are never copied onto CityFlow journeys. The runtime builder
+processes all stored evidence samples for multi-camera journeys with the frozen
+detector threshold and OCR variant on CPU under a network block. It records source,
+model, code, crop-set, exclusion, failure, output, and timing evidence. Search
+selection opens the indexed visit/sample and adds the OCR prediction alongside
+the existing appearance evidence; OCR never merges, reranks, or changes a RoadEye
+identity.
 
 ## Development-calibrated association diagnostic
 
