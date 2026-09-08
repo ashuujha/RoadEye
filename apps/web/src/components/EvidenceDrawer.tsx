@@ -1,246 +1,152 @@
-import React, { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { client, unwrap } from "../api";
-import { IconClose, IconExternalLink, IconShield, IconClock } from "./Icons";
+import { api } from "../api";
+import { resolveEvidence, validEvidenceSelection, type EvidenceSelection } from "../evidence";
+import { IconClose, IconExternalLink } from "./Icons";
 import { StatusBadge } from "./StatusBadge";
 
 interface EvidenceDrawerProps {
-  observationId: string | null;
-  onClose: () => void;
-  onOpenReview?: (obsId: string) => void;
+  readonly selection: EvidenceSelection | null;
+  readonly onClose: () => void;
 }
 
-type RecordData = Record<string, any>;
+function EvidenceImage({ url, label }: { url: string; label: string }) {
+  const [failed, setFailed] = useState(false);
+  return (
+    <figure className="drawer-evidence-image">
+      {failed ? <p className="status-banner banner-danger" role="alert">{label} could not be loaded.</p> : (
+        <img src={url} alt={label} onError={() => setFailed(true)} />
+      )}
+      <figcaption>
+        <a href={url} target="_blank" rel="noreferrer"><IconExternalLink size={14} /> {label}</a>
+      </figcaption>
+    </figure>
+  );
+}
 
-export function EvidenceDrawer({ observationId, onClose, onOpenReview }: EvidenceDrawerProps) {
-  const drawerRef = useRef<HTMLDivElement>(null);
-
-  // Close on Escape
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape" && observationId) {
-        onClose();
-      }
-    };
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [observationId, onClose]);
-
+export function EvidenceDrawer({ selection, onClose }: EvidenceDrawerProps) {
+  const panel = useRef<HTMLDivElement>(null);
+  const closeButton = useRef<HTMLButtonElement>(null);
+  const isOpen = selection !== null;
+  const valid = selection !== null && validEvidenceSelection(selection);
   const detail = useQuery({
-    queryKey: ["drawer-observation", observationId],
-    enabled: !!observationId,
-    queryFn: async () =>
-      unwrap(
-        await client.GET("/v1/observations/{observation_id}", {
-          params: { path: { observation_id: observationId! } },
-        })
-      ).data as RecordData,
+    queryKey: ["drawer-evidence", selection?.globalId, selection?.visitIndex, selection?.sampleIndex, selection?.cropSha256],
+    enabled: valid,
+    queryFn: async ({ signal }) => {
+      if (!selection) throw new Error("No evidence selected.");
+      const journey = await api.journey(selection.globalId, { signal });
+      return resolveEvidence(journey, selection);
+    },
+    staleTime: 60_000,
+    retry: false,
   });
 
-  if (!observationId) return null;
+  useEffect(() => {
+    if (!isOpen) return;
+    const previousFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    closeButton.current?.focus();
 
-  const data = detail.data;
-  const evidenceId = data?.passage?.evidence_id || data?.evidence_id;
+    function handleKey(event: KeyboardEvent) {
+      if (event.key === "Escape") {
+        event.preventDefault();
+        onClose();
+      }
+      if (event.key === "Tab") {
+        const controls = panel.current?.querySelectorAll<HTMLElement>("button:not([disabled]), a[href], summary, [tabindex='0']");
+        if (!controls?.length) return;
+        const first = controls[0];
+        const last = controls[controls.length - 1];
+        if (event.shiftKey && document.activeElement === first) {
+          event.preventDefault(); last.focus();
+        } else if (!event.shiftKey && document.activeElement === last) {
+          event.preventDefault(); first.focus();
+        }
+      }
+    }
+    document.addEventListener("keydown", handleKey);
+    return () => {
+      document.removeEventListener("keydown", handleKey);
+      document.body.style.overflow = previousOverflow;
+      previousFocus?.focus();
+    };
+  }, [isOpen, onClose]);
+
+  if (!selection) return null;
+  const data = valid ? detail.data : undefined;
+  const cropUrl = valid ? api.evidenceCropUrl(selection.globalId, selection.visitIndex, selection.sampleIndex) : "";
+  const frameUrl = valid ? api.evidenceFrameUrl(selection.globalId, selection.visitIndex, selection.sampleIndex) : "";
+  const incoming = data?.visit.incoming_link;
 
   return (
-    <div className="drawer-overlay" onClick={onClose} role="dialog" aria-modal="true" aria-labelledby="drawer-title">
-      <div className="drawer-panel" ref={drawerRef} onClick={(e) => e.stopPropagation()}>
+    <div className="drawer-overlay" onClick={onClose}>
+      <div className="drawer-panel" ref={panel} onClick={(event) => event.stopPropagation()} role="dialog" aria-modal="true" aria-labelledby="drawer-title">
         <div className="drawer-header">
           <div>
-            <div className="drawer-kicker">EVIDENCE RECORD</div>
-            <h2 id="drawer-title" className="drawer-title">
-              {data ? `${data.camera_id} · ${data.plate || "Unreadable"}` : "Loading evidence…"}
-            </h2>
+            <div className="drawer-kicker">READ-ONLY PREDICTION EVIDENCE</div>
+            <h2 id="drawer-title" className="drawer-title">{data ? data.visit.camera + " / frame " + data.sample.frame : "Prediction evidence"}</h2>
           </div>
-          <button className="btn-icon" onClick={onClose} aria-label="Close evidence drawer">
-            <IconClose size={20} />
-          </button>
+          <button type="button" ref={closeButton} className="btn-icon" onClick={onClose} aria-label="Close evidence drawer"><IconClose size={20} /></button>
         </div>
-
         <div className="drawer-body">
-          {detail.isPending && (
-            <div className="drawer-loading">
-              <div className="spinner" />
-              <p>Fetching immutable observation record & evidence hashes…</p>
+          <StatusBadge status="uncertain" label="UNVERIFIED / NOT GROUND TRUTH" />
+          {!valid && <p className="status-banner banner-danger" role="alert">Invalid evidence selection.</p>}
+          {valid && detail.isPending && <p role="status">Loading the selected journey sample...</p>}
+          {valid && detail.isError && (
+            <div className="status-banner banner-danger" role="alert">
+              <p>{detail.error.message}</p>
+              <button type="button" className="btn btn-secondary" onClick={() => void detail.refetch()}>Retry evidence</button>
             </div>
           )}
-
-          {detail.error && (
-            <div className="alert-box alert-danger">
-              <p>Failed to load evidence record: {detail.error.message}</p>
-            </div>
-          )}
-
           {data && (
             <>
-              {/* Evidence Crop and Imagery */}
+              <p>{data.journey.disclosure ?? "Runtime identity predictions are not ground truth."}</p>
               <section className="drawer-section">
-                <div className="section-title">Optical Evidence Crop</div>
-                <div className="evidence-preview-wrapper">
-                  {evidenceId ? (
-                    <div className="crop-container">
-                      <img
-                        src={`/v1/evidence/${evidenceId}`}
-                        alt={`Optical crop for observation ${data.id}`}
-                        className="crop-image"
-                        onError={(e) => {
-                          (e.target as HTMLElement).style.display = "none";
-                        }}
-                      />
-                      <div className="crop-actions">
-                        <a
-                          href={`/v1/evidence/${evidenceId}`}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="btn btn-secondary btn-sm"
-                        >
-                          <IconExternalLink size={14} />
-                          <span>View Full Res Crop</span>
-                        </a>
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="crop-placeholder">
-                      <span>No direct crop asset referenced</span>
-                    </div>
-                  )}
-
-                  <div className="crop-metadata">
-                    <div className="meta-row">
-                      <span className="meta-label">Capture Time</span>
-                      <span className="meta-val mono">
-                        {data.captured_at ? new Date(data.captured_at).toISOString() : "Unknown"}
-                      </span>
-                    </div>
-                    <div className="meta-row">
-                      <span className="meta-label">Camera / Lane</span>
-                      <span className="meta-val">
-                        {data.camera_id} {data.lane ? `· Lane ${data.lane}` : ""}
-                      </span>
-                    </div>
-                    <div className="meta-row">
-                      <span className="meta-label">Decision Status</span>
-                      <span className="meta-val">
-                        <StatusBadge status={data.status} />
-                      </span>
-                    </div>
-                    <div className="meta-row">
-                      <span className="meta-label">Calibrated Score</span>
-                      <span className="meta-val mono">
-                        {typeof data.score === "number" ? data.score.toFixed(3) : "N/A"}
-                        <span className="meta-sub"> (algorithmic consensus)</span>
-                      </span>
-                    </div>
-                    {data.evidence_sha256 && (
-                      <div className="meta-row">
-                        <span className="meta-label">SHA-256 Digest</span>
-                        <span className="meta-val mono text-xs" title={data.evidence_sha256}>
-                          <IconShield size={12} className="inline-icon" />
-                          {data.evidence_sha256.slice(0, 16)}…
-                        </span>
-                      </div>
-                    )}
-                  </div>
-                </div>
+                <h3 className="section-title">Selected evidence sample {selection.sampleIndex + 1}</h3>
+                <EvidenceImage key={cropUrl} url={cropUrl} label="Hash-bound vehicle crop" />
+                <EvidenceImage key={frameUrl} url={frameUrl} label="Exact source frame with predicted box" />
+                <dl className="drawer-evidence-metadata">
+                  <dt>RoadEye predicted ID</dt><dd className="mono">{data.journey.global_id}</dd>
+                  <dt>Tracklet / visit</dt><dd className="mono">{data.visit.tracklet_key} / {data.visit.sequence}</dd>
+                  <dt>Observed sample time</dt><dd>{data.sample.time_s.toFixed(2)} s (scenario-relative)</dd>
+                  <dt>Observed visit window</dt><dd>{data.visit.first_observed_s.toFixed(2)} to {data.visit.last_observed_s.toFixed(2)} s</dd>
+                  <dt>Identity available at</dt><dd>{data.visit.identified_at_s.toFixed(2)} s</dd>
+                  <dt>Bounding box (x, y, w, h)</dt><dd className="mono">{data.sample.bbox_xywh.join(", ")}</dd>
+                  <dt>Crop SHA-256</dt><dd className="mono evidence-hash">{data.sample.crop_sha256}</dd>
+                  <dt>Approximate camera position</dt><dd>{data.visit.position.latitude.toFixed(5)}, {data.visit.position.longitude.toFixed(5)} / {data.visit.position.kind}</dd>
+                  <dt>Baseline appearance score</dt><dd>{data.sample.baseline_score.value.toFixed(3)} / {data.sample.baseline_score.kind}</dd>
+                </dl>
+                <p className="text-xs text-muted">Appearance scores are uncalibrated and are not probabilities.</p>
               </section>
-
-              {/* Machine Decision Breakdown */}
-              {data.machine && (
-                <section className="drawer-section">
-                  <div className="section-title">Consensus & Model Attribution</div>
-                  <div className="consensus-summary">
-                    <div className="consensus-meta">
-                      <span>Policy: <b>{data.policy || "v1-baseline"}</b></span>
-                      <span>Origin: <b>{data.inference_origin || "worker_onnx"}</b></span>
-                    </div>
-                    {data.machine.reasons && data.machine.reasons.length > 0 && (
-                      <div className="reasons-list">
-                        <span className="meta-label">Decision Reasons:</span>
-                        <div className="badge-group">
-                          {data.machine.reasons.map((r: string) => (
-                            <span key={r} className="reason-tag">{r}</span>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-                  </div>
-
-                  {data.machine.contributions && data.machine.contributions.length > 0 && (
-                    <div className="contributions-table-wrapper">
-                      <table className="data-table dense">
-                        <thead>
-                          <tr>
-                            <th>Candidate</th>
-                            <th>Conf</th>
-                            <th>Quality</th>
-                            <th>Bonus</th>
-                            <th>Weight</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {data.machine.contributions.map((c: RecordData, idx: number) => (
-                            <tr key={idx}>
-                              <td className="mono font-semibold">{c.candidate || c.plate || "—"}</td>
-                              <td className="mono">{typeof c.confidence === "number" ? c.confidence.toFixed(2) : "—"}</td>
-                              <td className="mono">{typeof c.quality === "number" ? c.quality.toFixed(2) : "—"}</td>
-                              <td className="mono">{c.bonus ? `+${c.bonus}` : "0"}</td>
-                              <td className="mono">{typeof c.weight === "number" ? c.weight.toFixed(2) : "—"}</td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
-                  )}
-                </section>
-              )}
-
-              {/* Append-Only Revision History */}
-              {data.revisions && data.revisions.length > 0 && (
-                <section className="drawer-section">
-                  <div className="section-title">Human Revision Audit Trail</div>
-                  <div className="revisions-list">
-                    {data.revisions.map((rev: RecordData) => (
-                      <div key={rev.id || rev.number} className="revision-item">
-                        <div className="revision-header">
-                          <span className="revision-num">Rev #{rev.number}</span>
-                          <span className="revision-actor">{rev.actor}</span>
-                          <span className="revision-time">
-                            <IconClock size={12} />
-                            {rev.created_at ? new Date(rev.created_at).toLocaleTimeString() : ""}
-                          </span>
-                        </div>
-                        <div className="revision-body">
-                          <div>Revised Status: <StatusBadge status={rev.status} size="sm" /></div>
-                          {rev.plate && <div>Corrected Plate: <span className="mono font-bold">{rev.plate}</span></div>}
-                          {rev.reason && <div className="revision-reason">"{rev.reason}"</div>}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </section>
-              )}
-
-              {/* Raw Record JSON Inspector */}
               <section className="drawer-section">
-                <details className="raw-details">
-                  <summary className="raw-summary">Technical Provenance & Event Data</summary>
-                  <pre className="code-block">{JSON.stringify(data, null, 2)}</pre>
-                </details>
+                <h3 className="section-title">OCR prediction / UNVERIFIED</h3>
+                {data.sample.plate_prediction ? (
+                  <>
+                    <strong className="mono evidence-plate">{data.sample.plate_prediction.predicted_plate_text}</strong>
+                    <p>Normalized prediction: <span className="mono">{data.sample.plate_prediction.normalized_plate_text}</span></p>
+                    <p>OCR model score: {data.sample.plate_prediction.ocr_score.toFixed(3)}. Uncalibrated, not a probability.</p>
+                    <p>Predicted plate text is not ground truth. OCR does not change the vehicle association.</p>
+                  </>
+                ) : <p>No usable plate prediction is linked to this exact sample.</p>}
               </section>
-
-              {onOpenReview && (
-                <div className="drawer-footer">
-                  <button
-                    className="btn btn-primary btn-block"
-                    onClick={() => {
-                      onOpenReview(data.id);
-                      onClose();
-                    }}
-                  >
-                    Open in Review Workbench
-                  </button>
-                </div>
-              )}
+              <section className="drawer-section">
+                <h3 className="section-title">Incoming association evidence</h3>
+                {incoming ? (
+                  <>
+                    <StatusBadge status="uncertain" label="Not scored in runtime" size="sm" />
+                    <dl className="drawer-evidence-metadata">
+                      <dt>From tracklet</dt><dd className="mono">{incoming.from_tracklet}</dd>
+                      <dt>To tracklet</dt><dd className="mono">{incoming.to_tracklet}</dd>
+                      <dt>Appearance similarity</dt><dd>{incoming.appearance_similarity.toFixed(3)}</dd>
+                      <dt>Second best / ambiguity margin</dt><dd>{incoming.second_best_similarity?.toFixed(3) ?? "Unavailable"} / {incoming.ambiguity_margin?.toFixed(3) ?? "Unavailable"}</dd>
+                      <dt>Boundary gap / approximate distance</dt><dd>{incoming.temporal_gap_s.toFixed(2)} s / {incoming.distance_m.toFixed(1)} m</dd>
+                      <dt>Temporal / topology reason</dt><dd>{incoming.temporal_topology_reason}</dd>
+                    </dl>
+                    <p className="text-xs text-muted">Association scores are not probabilities. Boundary gaps are not route travel times.</p>
+                  </>
+                ) : <p>No incoming association is recorded for this visit.</p>}
+              </section>
             </>
           )}
         </div>

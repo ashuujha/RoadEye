@@ -1636,6 +1636,45 @@ textarea:focus-visible {
   gap: 10px;
 }
 
+.drawer-evidence-image {
+  margin: 0;
+}
+
+.drawer-evidence-image img {
+  display: block;
+  width: 100%;
+  max-height: 320px;
+  object-fit: contain;
+  background: #0b0c0e;
+}
+
+.drawer-evidence-image a {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--accent-primary);
+  margin-top: 8px;
+}
+
+.drawer-evidence-metadata {
+  display: grid;
+  gap: 5px;
+  overflow-wrap: anywhere;
+}
+
+.drawer-evidence-metadata dt {
+  color: var(--text-muted);
+  font-size: 12px;
+}
+
+.drawer-evidence-metadata dd {
+  margin: 0 0 8px;
+}
+
+.map-visit-list button {
+  margin-left: 12px;
+}
+
 .trajectory-search-input {
   flex: 1;
 }

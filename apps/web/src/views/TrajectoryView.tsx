@@ -2,6 +2,7 @@ import { type FormEvent, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 
 import { api } from "../api";
+import { plateEvidenceSelection, type EvidenceSelection, type EvidenceSelectionHandler } from "../evidence";
 import type {
   PlateSearchResult,
   VehicleSummary,
@@ -24,6 +25,7 @@ interface SearchCandidate {
   readonly detail: string;
   readonly cropUrl: string;
   readonly annotation: string;
+  readonly evidence: EvidenceSelection;
 }
 
 
@@ -47,12 +49,14 @@ function vehicleCandidate(vehicle: VehicleSummary): SearchCandidate {
     detail: `${vehicle.camera_count} cameras / ${vehicle.visit_count} visits / ${formatSeconds(vehicle.first_observed_s)}-${formatSeconds(vehicle.last_observed_s)}`,
     cropUrl: vehicle.representative_crop_url,
     annotation: "Predicted identity; not runtime ground truth",
+    evidence: { globalId: vehicle.global_id, visitIndex: 0, sampleIndex: 0 },
   };
 }
 
 function plateCandidate(result: PlateSearchResult): SearchCandidate {
   return {
     key: `${result.global_id}:${result.visit_index}:${result.sample_index}`,
+    evidence: plateEvidenceSelection(result),
     globalId: result.global_id,
     title: result.predicted_plate_text,
     detail: `${result.match_kind} match / ${result.camera} at ${formatSeconds(result.observed_s)} / ${result.global_id}`,
@@ -61,7 +65,7 @@ function plateCandidate(result: PlateSearchResult): SearchCandidate {
   };
 }
 
-export function TrajectoryView() {
+export function TrajectoryView({ onSelectEvidence }: { onSelectEvidence?: EvidenceSelectionHandler } = {}) {
   const [mode, setMode] = useState<SearchMode>("plate");
   const [query, setQuery] = useState("");
   const [submitted, setSubmitted] = useState<SubmittedSearch | null>(null);
@@ -240,7 +244,10 @@ export function TrajectoryView() {
                     type="button"
                     key={candidate.key}
                     className={`trajectory-candidate ${activeGlobalId === candidate.globalId ? "active" : ""}`}
-                    onClick={() => setSelectedGlobalId(candidate.globalId)}
+                    onClick={() => {
+                      setSelectedGlobalId(candidate.globalId);
+                      onSelectEvidence?.(candidate.evidence);
+                    }}
                   >
                     <img src={candidate.cropUrl} alt="Predicted vehicle evidence crop" />
                     <span className="trajectory-candidate-copy">
@@ -281,6 +288,7 @@ export function TrajectoryView() {
                     <NetworkMap
                       journey={journey}
                       status={demoStatusQuery.data}
+                      onSelectEvidence={onSelectEvidence}
                       height={400}
                     />
                     <p className="trajectory-map-disclosure text-xs text-muted">
@@ -337,6 +345,12 @@ export function TrajectoryView() {
                                     >
                                       Open exact boxed source frame
                                     </a>
+                                    {onSelectEvidence && (
+                                      <button type="button" className="btn btn-secondary btn-sm" onClick={() => onSelectEvidence({
+                                        globalId: journey.global_id, visitIndex, sampleIndex: 0,
+                                        cropSha256: sample.crop_sha256,
+                                      })}>Inspect sample evidence</button>
+                                    )}
                                   </div>
                                 </div>
                               ) : (

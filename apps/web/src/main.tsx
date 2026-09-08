@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { createRoot } from "react-dom/client";
 
@@ -8,6 +8,7 @@ import { PredictionMapView } from "./components/NetworkMap";
 import { AnalyticsView } from "./views/AnalyticsView";
 import { CameraWorkspaceView } from "./views/CameraWorkspaceView";
 import { TrajectoryView } from "./views/TrajectoryView";
+import type { EvidenceSelection } from "./evidence";
 import "./style.css";
 
 const queryClient = new QueryClient({
@@ -21,7 +22,8 @@ const queryClient = new QueryClient({
 
 function App() {
   const [page, setPage] = useState<PageId>("Map");
-  const [selectedObservationId, setSelectedObservationId] = useState<string | null>(null);
+  const [selectedEvidence, setSelectedEvidence] = useState<EvidenceSelection | null>(null);
+  const closeEvidence = useCallback(() => setSelectedEvidence(null), []);
 
   return (
     <AppShell
@@ -29,19 +31,19 @@ function App() {
       onNavigate={setPage}
       sourceMode="AUDITED PREDICTIONS · READ-ONLY"
     >
-      {page === "Map" && <PredictionMapView />}
+      {page === "Map" && <PredictionMapView onSelectEvidence={setSelectedEvidence} />}
 
-      {page === "Trajectories" && <TrajectoryView />}
+      {page === "Trajectories" && <TrajectoryView onSelectEvidence={setSelectedEvidence} />}
 
       {page === "Analytics" && <AnalyticsView />}
 
       {page === "Evidence" && (
-        <CameraWorkspaceView />
+        <CameraWorkspaceView onSelectEvidence={setSelectedEvidence} />
       )}
 
       <EvidenceDrawer
-        observationId={selectedObservationId}
-        onClose={() => setSelectedObservationId(null)}
+        selection={selectedEvidence}
+        onClose={closeEvidence}
       />
     </AppShell>
   );

@@ -2,6 +2,7 @@ import { useId, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 
 import { api } from "../api";
+import type { EvidenceSelectionHandler } from "../evidence";
 import type { CameraDensityRow, CameraPosition, DemoStatus, Journey } from "../api.generated";
 import { IconLayers } from "./Icons";
 import { StatusBadge } from "./StatusBadge";
@@ -81,13 +82,14 @@ export function buildJourneyMapModel(
 }
 
 interface NetworkMapProps {
+  readonly onSelectEvidence?: EvidenceSelectionHandler;
   readonly journey?: Journey;
   readonly status?: Pick<DemoStatus, "camera_positions">;
   readonly cameraCounts?: readonly CameraDensityRow[];
   readonly height?: number;
 }
 
-export function NetworkMap({ journey, status, cameraCounts = [], height = 420 }: NetworkMapProps) {
+export function NetworkMap({ journey, status, cameraCounts = [], height = 420, onSelectEvidence }: NetworkMapProps) {
   const [showInferred, setShowInferred] = useState(true);
   const patternId = useId();
   const arrowId = useId();
@@ -174,7 +176,12 @@ export function NetworkMap({ journey, status, cameraCounts = [], height = 420 }:
             <li key={visit.tracklet_key + ":" + index}>
               <strong>{visit.camera}</strong>{" / "}{visit.first_observed_s.toFixed(2)} to {visit.last_observed_s.toFixed(2)} s
               {visit.evidence_samples.length > 0 && (
-                <a href={api.evidenceFrameUrl(journey.global_id, index, 0)} target="_blank" rel="noreferrer">Open boxed frame</a>
+                onSelectEvidence ? (
+                  <button type="button" className="btn btn-secondary btn-sm" onClick={() => onSelectEvidence({
+                    globalId: journey.global_id, visitIndex: index, sampleIndex: 0,
+                    cropSha256: visit.evidence_samples[0].crop_sha256,
+                  })}>Inspect visit evidence</button>
+                ) : <a href={api.evidenceFrameUrl(journey.global_id, index, 0)} target="_blank" rel="noreferrer">Open boxed frame</a>
               )}
             </li>
           ))}
@@ -184,7 +191,7 @@ export function NetworkMap({ journey, status, cameraCounts = [], height = 420 }:
   );
 }
 
-export function PredictionMapView() {
+export function PredictionMapView({ onSelectEvidence }: { onSelectEvidence?: EvidenceSelectionHandler } = {}) {
   const [query, setQuery] = useState("");
   const [selectedId, setSelectedId] = useState("");
   const status = useQuery({ queryKey: ["demo-status"], queryFn: ({ signal }) => api.status({ signal }), staleTime: 60_000 });
@@ -230,7 +237,7 @@ export function PredictionMapView() {
         ))}
         {catalog.isSuccess && !vehicles.length && <p>No multi-camera predictions match this filter.</p>}
         {journey.data?.disclosure && <p>{journey.data.disclosure}</p>}
-        <NetworkMap journey={journey.data} status={status.data} cameraCounts={analytics.data?.camera_density} height={480} />
+        <NetworkMap journey={journey.data} status={status.data} cameraCounts={analytics.data?.camera_density} height={480} onSelectEvidence={onSelectEvidence} />
       </div>
     </div>
   );

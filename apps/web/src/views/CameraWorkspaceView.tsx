@@ -2,6 +2,7 @@ import { type FormEvent, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 
 import { api } from "../api";
+import type { EvidenceSelectionHandler } from "../evidence";
 import type { EvidenceSample, JourneyVisit, VehicleSummary } from "../api.generated";
 import { IconCamera, IconSearch, IconShield } from "../components/Icons";
 import { StatusBadge } from "../components/StatusBadge";
@@ -25,11 +26,13 @@ function SampleCard({
   visitIndex,
   sampleIndex,
   sample,
+  onSelectEvidence,
 }: {
   globalId: string;
   visitIndex: number;
   sampleIndex: number;
   sample: EvidenceSample;
+  onSelectEvidence?: EvidenceSelectionHandler;
 }) {
   const cropUrl = api.evidenceCropUrl(globalId, visitIndex, sampleIndex);
   const frameUrl = api.evidenceFrameUrl(globalId, visitIndex, sampleIndex);
@@ -62,6 +65,12 @@ function SampleCard({
           <figcaption>Exact source frame with predicted box</figcaption>
         </figure>
       </div>
+
+      {onSelectEvidence && (
+        <button type="button" className="btn btn-secondary" onClick={() => onSelectEvidence({
+          globalId, visitIndex, sampleIndex, cropSha256: sample.crop_sha256,
+        })}>Inspect this sample in evidence drawer</button>
+      )}
 
       <dl className="evidence-metadata-grid">
         <div>
@@ -108,10 +117,12 @@ function VisitCard({
   globalId,
   visitIndex,
   visit,
+  onSelectEvidence,
 }: {
   globalId: string;
   visitIndex: number;
   visit: JourneyVisit;
+  onSelectEvidence?: EvidenceSelectionHandler;
 }) {
   return (
     <section className="evidence-visit-section">
@@ -198,6 +209,7 @@ function VisitCard({
             visitIndex={visitIndex}
             sampleIndex={sampleIndex}
             sample={sample}
+            onSelectEvidence={onSelectEvidence}
           />
         ))}
       </div>
@@ -205,7 +217,7 @@ function VisitCard({
   );
 }
 
-export function CameraWorkspaceView() {
+export function CameraWorkspaceView({ onSelectEvidence }: { onSelectEvidence?: EvidenceSelectionHandler } = {}) {
   const [draftQuery, setDraftQuery] = useState("");
   const [catalogQuery, setCatalogQuery] = useState("");
   const [selectedVehicleId, setSelectedVehicleId] = useState<string | null>(null);
@@ -373,6 +385,7 @@ export function CameraWorkspaceView() {
                     globalId={journeyQuery.data.global_id}
                     visitIndex={visitIndex}
                     visit={visit}
+                    onSelectEvidence={onSelectEvidence}
                   />
                 ))}
               </div>

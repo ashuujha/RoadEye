@@ -4,7 +4,7 @@ import { describe, expect, it } from "vitest";
 
 import type { DemoStatus, Journey, PlateSearchStatus } from "../api.generated";
 import { TrajectoryView } from "./TrajectoryView";
-import { buildJourneyMapModel } from "../components/NetworkMap";
+import { buildJourneyMapModel, NetworkMap } from "../components/NetworkMap";
 
 const plateSearchStatus = {
   status: "UNVERIFIED",
@@ -148,5 +148,15 @@ describe("TrajectoryView", () => {
     expect(model.omittedCameraIds).toEqual(["invalid"]);
     expect(model.cameras).toEqual([{ id: "valid", latitude: 0, longitude: 0, kind: "approximate", x: 300, y: 130 }]);
     expect(buildJourneyMapModel(null).cameras).toEqual([]);
+  });
+
+  it("renders map claim boundaries without review layers or a six-camera assertion", () => {
+    const html = renderToStaticMarkup(<NetworkMap journey={journey} status={demoStatus} />);
+    expect(html).toContain("UNVERIFIED journey");
+    expect(html).toContain("Approximate reference positions");
+    expect(html).toContain("not an observed route");
+    expect(html).not.toContain("Review Link");
+    expect(html).not.toContain("Rejected Link");
+    expect(html).not.toContain("Six-Camera");
   });
 });
