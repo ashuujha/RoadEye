@@ -164,6 +164,23 @@ rehearsed; the other two display failures are still pending at this checkpoint.
 The ignored existing harness now filters routes and asserts width/scroll checks.
 Its historical hash above describes the original rehearsal version.
 
+### Layout repair 2: Evidence (post-56h, 2026-09-09 IST)
+
+PASS: two CSS declarations on existing evidence-visit-metadata cells set
+min-width: 0 and overflow-wrap: anywhere. Full provenance text remains visible;
+no panel restructuring, JSX, API, or data changes. Desktop/mobile screenshots
+were inspected and show wrapped text inside its existing cell.
+
+Command: node artifacts/frontend-rehearsal/rehearse.cjs --route Evidence.
+Run: artifacts/frontend-rehearsal/2026-09-08T22-23-19-526Z/results.json.
+Result: 12 PASS / 0 FAIL. Both scenarios now measure 1440px at desktop and
+390px at mobile, replacing 1494/468. All 18 S02 and 30 S06 default-journey
+crop/frame images decoded, as did 35/100 displayed catalog thumbnails. Exact
+sample-2 workspace drawers, crop-byte hashes, claim labels, and keyboard closing
+passed. No HTTP errors, browser exceptions, or console errors in the route run.
+Only Evidence was rehearsed. Map label repair is still pending here.
+Previous layout checkpoint: 7451df1 (checkpoint/trajectory-layout-fixed).
+
 ### Original rehearsal handoff
 
 All rehearsal server/browser processes were stopped. Application source,
