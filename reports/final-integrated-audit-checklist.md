@@ -1,8 +1,8 @@
 # Hours 52-56 final integrated audit checklist
 
 - Prepared: 2026-09-09
-- Execution state: **UNVERIFIED** until every applicable item is rerun after OCR
-  scoring and runtime plate-index wiring
+- Execution state: **COMPLETE**; results are in `reports/final-integrated-audit.md`
+- Disposition: **60 PASS, 1 FAIL, 2 UNVERIFIED**
 - Scope rule: verify frozen Re-ID outputs; do not retrain, recalibrate, retune, or
   rescore S02/S04/S05 as fresh evidence
 - Result vocabulary: every audit finding is `PASS`, `FAIL`, or `UNVERIFIED`
@@ -31,7 +31,7 @@ artifact, skipped command, absent denominator, or unavailable evidence is
 | B02 | Indian benchmark provenance | Frozen split, duplicate-family grouping, source hashes, review CSV hash, and dataset/license/redaction rules are recorded and internally consistent. |
 | B03 | Model provenance | Vehicle Re-ID, detector, and OCR model manifests resolve to the exact local weight hashes and versions; startup performs no download. |
 | B04 | Prediction artifacts | Prepared/run/journey/link/tracklet/topology hashes validate before API repository construction for default S02 and optional S06. |
-| B05 | Runtime allowlist | Only explicitly required prediction artifacts plus the explicitly configured, SHA-256-pinned optional plate index can be opened by the demo adapter. |
+| B05 | Runtime allowlist | Only explicitly required prediction artifacts plus the explicitly configured, SHA-256-pinned optional plate index and manifest can be opened by the demo adapter. |
 | B06 | Final evidence package | Every numeric slide claim names a tracked report/artifact, exact denominator, scope, and relevant limitation. |
 
 ## C. Ground-truth and data-boundary isolation
