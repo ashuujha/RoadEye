@@ -11,6 +11,7 @@ import numpy as np
 import pytest
 
 from roadeye.demo import DemoRepository, _bearing_degrees, create_app
+from roadeye.s06_demo import S06_DISCLOSURE
 
 
 def write_json(path: Path, value: object) -> str:
@@ -183,6 +184,24 @@ def test_app_exposes_api_before_static_frontend(tmp_path, monkeypatch):
     assert "/api/status" in paths
     assert paths.index("/api/status") < paths.index("")
     assert not any("evaluation" in route.path or "ground" in route.path for route in app.routes)
+
+
+def test_s06_demo_requires_and_propagates_unverified_disclosure(tmp_path, monkeypatch):
+    config = fixture_config(tmp_path, monkeypatch)
+    value = json.loads(config.read_text())
+    value["scenario"] = "S06_fixture"
+    config.write_text(json.dumps(value), encoding="utf-8")
+    with pytest.raises(ValueError, match="missing its disclosure"):
+        DemoRepository(config)
+
+    value["claim_status"] = "UNVERIFIED"
+    value["disclosure"] = S06_DISCLOSURE
+    config.write_text(json.dumps(value), encoding="utf-8")
+    repository = DemoRepository(config)
+    assert repository.status()["status"] == "UNVERIFIED"
+    assert repository.status()["disclosure"] == S06_DISCLOSURE
+    assert repository.list_vehicles()[0]["disclosure"] == S06_DISCLOSURE
+    assert repository.journey("roadeye_fixture")["disclosure"] == S06_DISCLOSURE
 
 
 def test_bearing_is_explicitly_derived_from_points():

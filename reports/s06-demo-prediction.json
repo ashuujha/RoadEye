@@ -1,0 +1,979 @@
+{
+  "schema_version": 1,
+  "status": "UNVERIFIED",
+  "disclosure": "S06 \u2014 unverified prediction, no ground truth available",
+  "scope": "S06_complete_six_camera_prediction_with_frozen_S01_S03_policy",
+  "ground_truth": {
+    "available": false,
+    "opened_by_prediction_runner": false,
+    "used_at_runtime": false,
+    "scoring_performed": false
+  },
+  "accuracy_metrics": null,
+  "accuracy_metrics_reason": "No released S06 ground truth is locally available.",
+  "verified_six_camera_criterion": {
+    "status": "FAIL",
+    "affected_by_this_run": false,
+    "existing_max_fully_verified_consistent_camera_count": 2,
+    "reason": "An unscored S06 prediction cannot change a verified criterion."
+  },
+  "frozen_selection": {
+    "source": "reports/reid-six-camera-repair-selection.json",
+    "sha256": "c543dc6ec560894d5ba817b320e0f6456f18af4f7a51f2d9131ea3b706968d8c",
+    "development_scenarios": [
+      "S01",
+      "S03"
+    ],
+    "policy": {
+      "min_similarity": 0.675,
+      "margin": 0.0,
+      "max_gap_s": 45.0,
+      "max_camera_distance_m": 1500.0,
+      "overlap_distance_m": 150.0,
+      "max_speed_mps": 40.0,
+      "clock_tolerance_s": 2.0,
+      "position_tolerance_m": 100.0
+    },
+    "hsv_weight": 0.0,
+    "s06_retuning_performed": false
+  },
+  "window": {
+    "scenario": "S06",
+    "partition": "test",
+    "start_s": 0.0,
+    "end_s": 199.9,
+    "cameras": [
+      "c041",
+      "c042",
+      "c043",
+      "c044",
+      "c045",
+      "c046"
+    ],
+    "camera_count": 6,
+    "baseline_filename": "mtsc_tnt_mask_rcnn.txt",
+    "selection_rule": "complete_declared_S06_interval_all_six_cameras_selected_from_public_metadata_only"
+  },
+  "prediction_summary": {
+    "baseline_tracklets": 1674,
+    "embedded_tracklets": 826,
+    "predicted_links": 160,
+    "roadeye_global_vehicle_ids": 666,
+    "multi_camera_predicted_identities": 123,
+    "camera_span_distribution": {
+      "1": 543,
+      "2": 91,
+      "3": 29,
+      "4": 1,
+      "5": 2
+    },
+    "maximum_predicted_camera_span": 5,
+    "identities_at_maximum_span": 2,
+    "model": {
+      "model": "roadeye_cityflow_reid_r50_ibn",
+      "trained_for_vehicle_reid": true,
+      "description": "RoadEye-format FastReID SBS ResNet-50-IBN artifact; verify its adjacent training manifest before use",
+      "weights_sha256": "1a7bddc94b065da1cc76f27f3455d61dc9752e687a87101c2eeb566353185cac",
+      "weights_source": "private Colab result ZIP SHA-256 2d8b0992b30348ad4be99f35edebce38043365da5d7b2038307209a5765584d4",
+      "torch": "2.4.1+cpu",
+      "torchvision": "0.19.1+cpu",
+      "device": "cpu",
+      "dimensions": 2048,
+      "sampling": "first_K_quality_eligible_spaced_observations_within_bounded_prefix",
+      "quality_prefix": {
+        "max_wait_s": 3.0,
+        "min_interval_s": 0.5,
+        "min_side_px": 24,
+        "min_area_px": 2304,
+        "min_laplacian_variance": 20.0
+      },
+      "pooling": "mean_of_normalized_features_then_L2",
+      "transforms": "Compose(\n    Resize(size=(256, 256), interpolation=bicubic, max_size=None, antialias=True)\n    PILToTensor()\n)"
+    }
+  },
+  "maximum_span_predictions": [
+    {
+      "disclosure": "S06 \u2014 unverified prediction, no ground truth available",
+      "global_vehicle_id": "roadeye_c8392e4a29b15b95b2fb",
+      "prediction_status": "UNVERIFIED_NO_GROUND_TRUTH",
+      "camera_count": 5,
+      "cameras_in_time_order": [
+        "c044",
+        "c043",
+        "c045",
+        "c042",
+        "c041"
+      ],
+      "visit_count": 5,
+      "link_similarity_summary": {
+        "count": 4,
+        "minimum": 0.7071743011474609,
+        "mean": 0.7815739959478378,
+        "maximum": 0.8374882340431213,
+        "kind": "uncalibrated_cosine_similarity_not_probability"
+      },
+      "visits": [
+        {
+          "disclosure": "S06 \u2014 unverified prediction, no ground truth available",
+          "tracklet_key": "test/S06/c044/12",
+          "camera": "c044",
+          "first_observed_s": 2.0,
+          "identified_at_s": 3.9,
+          "last_observed_s": 5.2,
+          "reference_position": {
+            "latitude": 42.4903530596095,
+            "longitude": -90.7324579591997,
+            "kind": "inverse_homography_roi_median_road_reference_not_camera_GPS",
+            "calibration_sha256": "228801445b3059d6112109ac97377566eb84212646df3ee3b6da48ac6986aeb3",
+            "roi_sha256": "fc323090562a9f24d6d222b6c3a49cbdb8d0f64cce0a4ce52e79b49a48b41ad7"
+          },
+          "incoming_link": null,
+          "source_evidence": [
+            {
+              "disclosure": "S06 \u2014 unverified prediction, no ground truth available",
+              "camera": "c044",
+              "frame": 30,
+              "time_s": 2.9,
+              "bbox_xywh": [
+                172.0,
+                243.0,
+                54.0,
+                45.0
+              ],
+              "crop": "crops/test/S06/c044/12/000030.jpg",
+              "crop_sha256": "e9383adf86f73d6b271b8f311130584946bfa4e5fbc7f38c81fb5172706ec1d4",
+              "video": "AICity22_Track1_MTMC_Tracking/test/S06/c044/vdo.avi",
+              "baseline_score": 1.0,
+              "baseline_score_kind": "baseline_track_score_not_calibrated_detection_confidence",
+              "baseline_score_is_probability": false
+            },
+            {
+              "disclosure": "S06 \u2014 unverified prediction, no ground truth available",
+              "camera": "c044",
+              "frame": 35,
+              "time_s": 3.4,
+              "bbox_xywh": [
+                219.0,
+                265.0,
+                74.0,
+                63.0
+              ],
+              "crop": "crops/test/S06/c044/12/000035.jpg",
+              "crop_sha256": "b8db8ecf9b4760fd8ef901566d09a9761b65f9d3321194694b9c815e97eacfc5",
+              "video": "AICity22_Track1_MTMC_Tracking/test/S06/c044/vdo.avi",
+              "baseline_score": 1.0,
+              "baseline_score_kind": "baseline_track_score_not_calibrated_detection_confidence",
+              "baseline_score_is_probability": false
+            },
+            {
+              "disclosure": "S06 \u2014 unverified prediction, no ground truth available",
+              "camera": "c044",
+              "frame": 40,
+              "time_s": 3.9,
+              "bbox_xywh": [
+                303.0,
+                306.0,
+                115.0,
+                93.0
+              ],
+              "crop": "crops/test/S06/c044/12/000040.jpg",
+              "crop_sha256": "b743d3e91fdc1bfbce3365bac3bff3f44c2fc086a1559d351cd3aa28bdc66012",
+              "video": "AICity22_Track1_MTMC_Tracking/test/S06/c044/vdo.avi",
+              "baseline_score": 1.0,
+              "baseline_score_kind": "baseline_track_score_not_calibrated_detection_confidence",
+              "baseline_score_is_probability": false
+            }
+          ]
+        },
+        {
+          "disclosure": "S06 \u2014 unverified prediction, no ground truth available",
+          "tracklet_key": "test/S06/c043/67",
+          "camera": "c043",
+          "first_observed_s": 24.5,
+          "identified_at_s": 26.7,
+          "last_observed_s": 127.3,
+          "reference_position": {
+            "latitude": 42.49195848807656,
+            "longitude": -90.72055289863232,
+            "kind": "inverse_homography_roi_median_road_reference_not_camera_GPS",
+            "calibration_sha256": "33f17c2a0d96b3e668676d07b21139de62c414473eaae387488e0e7cb8de2b6c",
+            "roi_sha256": "005b34c240a180be56f365f6b9d7e6355ebc8a39abd418bd8e3693d80d0fdb3f"
+          },
+          "incoming_link": {
+            "disclosure": "S06 \u2014 unverified prediction, no ground truth available",
+            "from_tracklet": "test/S06/c044/12",
+            "to_tracklet": "test/S06/c043/67",
+            "appearance_similarity": 0.7922850847244263,
+            "second_best_similarity": 0.7074731588363647,
+            "ambiguity_margin": 0.08481192588806152,
+            "temporal_gap_s": 21.5,
+            "distance_m": 992.321992064812,
+            "temporal_topology_reason": "forward_time_and_distance_bound",
+            "decision_time_s": 26.7,
+            "score_kind": "uncalibrated_cosine_similarity_not_probability",
+            "is_probability": false,
+            "verification_status": "UNVERIFIED_NO_GROUND_TRUTH"
+          },
+          "source_evidence": [
+            {
+              "disclosure": "S06 \u2014 unverified prediction, no ground truth available",
+              "camera": "c043",
+              "frame": 258,
+              "time_s": 25.7,
+              "bbox_xywh": [
+                3.0,
+                72.0,
+                47.0,
+                51.0
+              ],
+              "crop": "crops/test/S06/c043/67/000258.jpg",
+              "crop_sha256": "129c30eae5f104d35f0993523498004ccf178d1c3d157c90e37868c4b68cfd17",
+              "video": "AICity22_Track1_MTMC_Tracking/test/S06/c043/vdo.avi",
+              "baseline_score": 1.0,
+              "baseline_score_kind": "baseline_track_score_not_calibrated_detection_confidence",
+              "baseline_score_is_probability": false
+            },
+            {
+              "disclosure": "S06 \u2014 unverified prediction, no ground truth available",
+              "camera": "c043",
+              "frame": 263,
+              "time_s": 26.2,
+              "bbox_xywh": [
+                13.0,
+                76.0,
+                50.0,
+                55.0
+              ],
+              "crop": "crops/test/S06/c043/67/000263.jpg",
+              "crop_sha256": "c4b30c4b3caa6bc4a1e7db75380aaa7ccabb92f1171861d46b1f9fe43ed18c0a",
+              "video": "AICity22_Track1_MTMC_Tracking/test/S06/c043/vdo.avi",
+              "baseline_score": 1.0,
+              "baseline_score_kind": "baseline_track_score_not_calibrated_detection_confidence",
+              "baseline_score_is_probability": false
+            },
+            {
+              "disclosure": "S06 \u2014 unverified prediction, no ground truth available",
+              "camera": "c043",
+              "frame": 268,
+              "time_s": 26.7,
+              "bbox_xywh": [
+                24.0,
+                86.0,
+                53.0,
+                54.0
+              ],
+              "crop": "crops/test/S06/c043/67/000268.jpg",
+              "crop_sha256": "bbf2f9d6b69960b94d714094f20e0462ff345d4a90dfaab264796c128e41dc33",
+              "video": "AICity22_Track1_MTMC_Tracking/test/S06/c043/vdo.avi",
+              "baseline_score": 1.0,
+              "baseline_score_kind": "baseline_track_score_not_calibrated_detection_confidence",
+              "baseline_score_is_probability": false
+            }
+          ]
+        },
+        {
+          "disclosure": "S06 \u2014 unverified prediction, no ground truth available",
+          "tracklet_key": "test/S06/c045/41",
+          "camera": "c045",
+          "first_observed_s": 30.7,
+          "identified_at_s": 32.8,
+          "last_observed_s": 34.1,
+          "reference_position": {
+            "latitude": 42.48853032280022,
+            "longitude": -90.73916521601704,
+            "kind": "inverse_homography_roi_median_road_reference_not_camera_GPS",
+            "calibration_sha256": "f7fab26bb9a8e4ba6a4ea62419ca46d9b578bb9557210a63876f3c1de5b67397",
+            "roi_sha256": "c92c648098aa8e88723b21e749f426cd7177a444d51fed4eaef06be843cd2447"
+          },
+          "incoming_link": {
+            "disclosure": "S06 \u2014 unverified prediction, no ground truth available",
+            "from_tracklet": "test/S06/c044/12",
+            "to_tracklet": "test/S06/c045/41",
+            "appearance_similarity": 0.8374882340431213,
+            "second_best_similarity": 0.5636053085327148,
+            "ambiguity_margin": 0.2738829255104065,
+            "temporal_gap_s": 27.599999999999998,
+            "distance_m": 586.12200609811,
+            "temporal_topology_reason": "forward_time_and_distance_bound",
+            "decision_time_s": 32.8,
+            "score_kind": "uncalibrated_cosine_similarity_not_probability",
+            "is_probability": false,
+            "verification_status": "UNVERIFIED_NO_GROUND_TRUTH"
+          },
+          "source_evidence": [
+            {
+              "disclosure": "S06 \u2014 unverified prediction, no ground truth available",
+              "camera": "c045",
+              "frame": 319,
+              "time_s": 31.8,
+              "bbox_xywh": [
+                316.0,
+                112.0,
+                55.0,
+                42.0
+              ],
+              "crop": "crops/test/S06/c045/41/000319.jpg",
+              "crop_sha256": "0f385bd69a2b4c7ba28f4c171839607a13139a672bfd666c9c7d1d0123372d25",
+              "video": "AICity22_Track1_MTMC_Tracking/test/S06/c045/vdo.avi",
+              "baseline_score": 1.0,
+              "baseline_score_kind": "baseline_track_score_not_calibrated_detection_confidence",
+              "baseline_score_is_probability": false
+            },
+            {
+              "disclosure": "S06 \u2014 unverified prediction, no ground truth available",
+              "camera": "c045",
+              "frame": 324,
+              "time_s": 32.3,
+              "bbox_xywh": [
+                355.0,
+                127.0,
+                70.0,
+                53.0
+              ],
+              "crop": "crops/test/S06/c045/41/000324.jpg",
+              "crop_sha256": "48c9b6faa48e6d75fea136fe7ab78f27f8e33dfd3291b9b12af93e1a2ec5d0c8",
+              "video": "AICity22_Track1_MTMC_Tracking/test/S06/c045/vdo.avi",
+              "baseline_score": 1.0,
+              "baseline_score_kind": "baseline_track_score_not_calibrated_detection_confidence",
+              "baseline_score_is_probability": false
+            },
+            {
+              "disclosure": "S06 \u2014 unverified prediction, no ground truth available",
+              "camera": "c045",
+              "frame": 329,
+              "time_s": 32.8,
+              "bbox_xywh": [
+                416.0,
+                154.0,
+                98.0,
+                73.0
+              ],
+              "crop": "crops/test/S06/c045/41/000329.jpg",
+              "crop_sha256": "57cdab75d85c7ec44ca8104b464db65a22d8a7e03b8e3c1ec9d1714e91f3277b",
+              "video": "AICity22_Track1_MTMC_Tracking/test/S06/c045/vdo.avi",
+              "baseline_score": 1.0,
+              "baseline_score_kind": "baseline_track_score_not_calibrated_detection_confidence",
+              "baseline_score_is_probability": false
+            }
+          ]
+        },
+        {
+          "disclosure": "S06 \u2014 unverified prediction, no ground truth available",
+          "tracklet_key": "test/S06/c042/231",
+          "camera": "c042",
+          "first_observed_s": 138.0,
+          "identified_at_s": 140.3,
+          "last_observed_s": 141.4,
+          "reference_position": {
+            "latitude": 42.49210690077021,
+            "longitude": -90.71475513552122,
+            "kind": "inverse_homography_roi_median_road_reference_not_camera_GPS",
+            "calibration_sha256": "e71c5cb27394bc73687bc999694fd1aa200d8dfb9faa402fb2a8901b13bd266f",
+            "roi_sha256": "6b3e0f1672ea33649eb6611c38e5f58d1c26c5eeaf6e30a89dc3aa510e097759"
+          },
+          "incoming_link": {
+            "disclosure": "S06 \u2014 unverified prediction, no ground truth available",
+            "from_tracklet": "test/S06/c043/67",
+            "to_tracklet": "test/S06/c042/231",
+            "appearance_similarity": 0.7893483638763428,
+            "second_best_similarity": 0.6661474108695984,
+            "ambiguity_margin": 0.12320095300674438,
+            "temporal_gap_s": 13.000000000000014,
+            "distance_m": 475.65623743578846,
+            "temporal_topology_reason": "forward_time_and_distance_bound",
+            "decision_time_s": 140.3,
+            "score_kind": "uncalibrated_cosine_similarity_not_probability",
+            "is_probability": false,
+            "verification_status": "UNVERIFIED_NO_GROUND_TRUTH"
+          },
+          "source_evidence": [
+            {
+              "disclosure": "S06 \u2014 unverified prediction, no ground truth available",
+              "camera": "c042",
+              "frame": 1394,
+              "time_s": 139.3,
+              "bbox_xywh": [
+                512.0,
+                122.0,
+                71.0,
+                34.0
+              ],
+              "crop": "crops/test/S06/c042/231/001394.jpg",
+              "crop_sha256": "36fdb13f7c40c233c3aa1a5a5a176b6686b88f47f293dc75d41e9eb177a206b5",
+              "video": "AICity22_Track1_MTMC_Tracking/test/S06/c042/vdo.avi",
+              "baseline_score": 1.0,
+              "baseline_score_kind": "baseline_track_score_not_calibrated_detection_confidence",
+              "baseline_score_is_probability": false
+            },
+            {
+              "disclosure": "S06 \u2014 unverified prediction, no ground truth available",
+              "camera": "c042",
+              "frame": 1399,
+              "time_s": 139.8,
+              "bbox_xywh": [
+                401.0,
+                145.0,
+                91.0,
+                40.0
+              ],
+              "crop": "crops/test/S06/c042/231/001399.jpg",
+              "crop_sha256": "caed9335d18674244c9fa3107214f788f3da9b42887863508e4eaf1155818a0d",
+              "video": "AICity22_Track1_MTMC_Tracking/test/S06/c042/vdo.avi",
+              "baseline_score": 1.0,
+              "baseline_score_kind": "baseline_track_score_not_calibrated_detection_confidence",
+              "baseline_score_is_probability": false
+            },
+            {
+              "disclosure": "S06 \u2014 unverified prediction, no ground truth available",
+              "camera": "c042",
+              "frame": 1404,
+              "time_s": 140.3,
+              "bbox_xywh": [
+                279.0,
+                177.0,
+                101.0,
+                52.0
+              ],
+              "crop": "crops/test/S06/c042/231/001404.jpg",
+              "crop_sha256": "3420d1b9d163672eec63cb7a8edcd196dc2b1a16df4511da0cb45346743b1b08",
+              "video": "AICity22_Track1_MTMC_Tracking/test/S06/c042/vdo.avi",
+              "baseline_score": 1.0,
+              "baseline_score_kind": "baseline_track_score_not_calibrated_detection_confidence",
+              "baseline_score_is_probability": false
+            }
+          ]
+        },
+        {
+          "disclosure": "S06 \u2014 unverified prediction, no ground truth available",
+          "tracklet_key": "test/S06/c041/305",
+          "camera": "c041",
+          "first_observed_s": 165.1,
+          "identified_at_s": 166.6,
+          "last_observed_s": 169.1,
+          "reference_position": {
+            "latitude": 42.49131009241283,
+            "longitude": -90.70145465396406,
+            "kind": "inverse_homography_roi_median_road_reference_not_camera_GPS",
+            "calibration_sha256": "689f0e8187050e804bac63ce174e9512348e1545609114eb98928517a7f9d3ce",
+            "roi_sha256": "b876746bf01c50ea403408610141e6e7d2114de73fcca78e999f0aea18ac28d0"
+          },
+          "incoming_link": {
+            "disclosure": "S06 \u2014 unverified prediction, no ground truth available",
+            "from_tracklet": "test/S06/c042/231",
+            "to_tracklet": "test/S06/c041/305",
+            "appearance_similarity": 0.7071743011474609,
+            "second_best_similarity": 0.16922903060913086,
+            "ambiguity_margin": 0.5379452705383301,
+            "temporal_gap_s": 25.19999999999999,
+            "distance_m": 1094.1312884976962,
+            "temporal_topology_reason": "forward_time_and_distance_bound",
+            "decision_time_s": 166.6,
+            "score_kind": "uncalibrated_cosine_similarity_not_probability",
+            "is_probability": false,
+            "verification_status": "UNVERIFIED_NO_GROUND_TRUTH"
+          },
+          "source_evidence": [
+            {
+              "disclosure": "S06 \u2014 unverified prediction, no ground truth available",
+              "camera": "c041",
+              "frame": 1653,
+              "time_s": 165.2,
+              "bbox_xywh": [
+                831.0,
+                105.0,
+                76.0,
+                31.0
+              ],
+              "crop": "crops/test/S06/c041/305/001653.jpg",
+              "crop_sha256": "9fd18d24b6b68451cc3dca99d43f89031d3d5f0f1fba2eef9ee7c30a6da6ea57",
+              "video": "AICity22_Track1_MTMC_Tracking/test/S06/c041/vdo.avi",
+              "baseline_score": 1.0,
+              "baseline_score_kind": "baseline_track_score_not_calibrated_detection_confidence",
+              "baseline_score_is_probability": false
+            },
+            {
+              "disclosure": "S06 \u2014 unverified prediction, no ground truth available",
+              "camera": "c041",
+              "frame": 1662,
+              "time_s": 166.1,
+              "bbox_xywh": [
+                754.0,
+                104.0,
+                71.0,
+                34.0
+              ],
+              "crop": "crops/test/S06/c041/305/001662.jpg",
+              "crop_sha256": "69a3a0a267dbee547f5b2faf4be105ba1fc1e73810e6cbd4cbf8c94ee63286cf",
+              "video": "AICity22_Track1_MTMC_Tracking/test/S06/c041/vdo.avi",
+              "baseline_score": 1.0,
+              "baseline_score_kind": "baseline_track_score_not_calibrated_detection_confidence",
+              "baseline_score_is_probability": false
+            },
+            {
+              "disclosure": "S06 \u2014 unverified prediction, no ground truth available",
+              "camera": "c041",
+              "frame": 1667,
+              "time_s": 166.6,
+              "bbox_xywh": [
+                692.0,
+                105.0,
+                75.0,
+                35.0
+              ],
+              "crop": "crops/test/S06/c041/305/001667.jpg",
+              "crop_sha256": "debc67fb8ffb06aa9a02accb2bd3a4a82d9572f19610142496328c3f95607e24",
+              "video": "AICity22_Track1_MTMC_Tracking/test/S06/c041/vdo.avi",
+              "baseline_score": 1.0,
+              "baseline_score_kind": "baseline_track_score_not_calibrated_detection_confidence",
+              "baseline_score_is_probability": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "disclosure": "S06 \u2014 unverified prediction, no ground truth available",
+      "global_vehicle_id": "roadeye_ecd240ade37c5bf0984d",
+      "prediction_status": "UNVERIFIED_NO_GROUND_TRUTH",
+      "camera_count": 5,
+      "cameras_in_time_order": [
+        "c046",
+        "c045",
+        "c044",
+        "c043",
+        "c042"
+      ],
+      "visit_count": 5,
+      "link_similarity_summary": {
+        "count": 4,
+        "minimum": 0.6944466233253479,
+        "mean": 0.7144129276275635,
+        "maximum": 0.7720450758934021,
+        "kind": "uncalibrated_cosine_similarity_not_probability"
+      },
+      "visits": [
+        {
+          "disclosure": "S06 \u2014 unverified prediction, no ground truth available",
+          "tracklet_key": "test/S06/c046/26",
+          "camera": "c046",
+          "first_observed_s": 30.0,
+          "identified_at_s": 31.0,
+          "last_observed_s": 34.2,
+          "reference_position": {
+            "latitude": 42.48658112065959,
+            "longitude": -90.74696729696285,
+            "kind": "inverse_homography_roi_median_road_reference_not_camera_GPS",
+            "calibration_sha256": "aab167f15e105adadff5aa66da82eb0e78bb06c2687014a90133584d59a5b16b",
+            "roi_sha256": "045808c25d2a2320195d014f00ab490288afd282a98ed34a3f46a4babff5da41"
+          },
+          "incoming_link": null,
+          "source_evidence": [
+            {
+              "disclosure": "S06 \u2014 unverified prediction, no ground truth available",
+              "camera": "c046",
+              "frame": 301,
+              "time_s": 30.0,
+              "bbox_xywh": [
+                0.0,
+                406.0,
+                128.0,
+                101.0
+              ],
+              "crop": "crops/test/S06/c046/26/000301.jpg",
+              "crop_sha256": "99624c52b19e95cd6ba0d3e176446f77a8fa6327b616ccf9479ebfbd0bb8bc51",
+              "video": "AICity22_Track1_MTMC_Tracking/test/S06/c046/vdo.avi",
+              "baseline_score": 1.0,
+              "baseline_score_kind": "baseline_track_score_not_calibrated_detection_confidence",
+              "baseline_score_is_probability": false
+            },
+            {
+              "disclosure": "S06 \u2014 unverified prediction, no ground truth available",
+              "camera": "c046",
+              "frame": 306,
+              "time_s": 30.5,
+              "bbox_xywh": [
+                102.0,
+                338.0,
+                219.0,
+                124.0
+              ],
+              "crop": "crops/test/S06/c046/26/000306.jpg",
+              "crop_sha256": "ee9b502b43dbc129e288680e96ab8d4e458ad7422fb1caa769ec4e76a6c93ff5",
+              "video": "AICity22_Track1_MTMC_Tracking/test/S06/c046/vdo.avi",
+              "baseline_score": 1.0,
+              "baseline_score_kind": "baseline_track_score_not_calibrated_detection_confidence",
+              "baseline_score_is_probability": false
+            },
+            {
+              "disclosure": "S06 \u2014 unverified prediction, no ground truth available",
+              "camera": "c046",
+              "frame": 311,
+              "time_s": 31.0,
+              "bbox_xywh": [
+                338.0,
+                270.0,
+                213.0,
+                102.0
+              ],
+              "crop": "crops/test/S06/c046/26/000311.jpg",
+              "crop_sha256": "95ff38a6878a0f5cba2b459170834a604aa3319f4a3d723ff28025ec7295c315",
+              "video": "AICity22_Track1_MTMC_Tracking/test/S06/c046/vdo.avi",
+              "baseline_score": 1.0,
+              "baseline_score_kind": "baseline_track_score_not_calibrated_detection_confidence",
+              "baseline_score_is_probability": false
+            }
+          ]
+        },
+        {
+          "disclosure": "S06 \u2014 unverified prediction, no ground truth available",
+          "tracklet_key": "test/S06/c045/83",
+          "camera": "c045",
+          "first_observed_s": 75.3,
+          "identified_at_s": 76.3,
+          "last_observed_s": 85.9,
+          "reference_position": {
+            "latitude": 42.48853032280022,
+            "longitude": -90.73916521601704,
+            "kind": "inverse_homography_roi_median_road_reference_not_camera_GPS",
+            "calibration_sha256": "f7fab26bb9a8e4ba6a4ea62419ca46d9b578bb9557210a63876f3c1de5b67397",
+            "roi_sha256": "c92c648098aa8e88723b21e749f426cd7177a444d51fed4eaef06be843cd2447"
+          },
+          "incoming_link": {
+            "disclosure": "S06 \u2014 unverified prediction, no ground truth available",
+            "from_tracklet": "test/S06/c046/26",
+            "to_tracklet": "test/S06/c045/83",
+            "appearance_similarity": 0.7720450758934021,
+            "second_best_similarity": 0.6667054295539856,
+            "ambiguity_margin": 0.1053396463394165,
+            "temporal_gap_s": 42.099999999999994,
+            "distance_m": 675.47129501398,
+            "temporal_topology_reason": "forward_time_and_distance_bound",
+            "decision_time_s": 76.3,
+            "score_kind": "uncalibrated_cosine_similarity_not_probability",
+            "is_probability": false,
+            "verification_status": "UNVERIFIED_NO_GROUND_TRUTH"
+          },
+          "source_evidence": [
+            {
+              "disclosure": "S06 \u2014 unverified prediction, no ground truth available",
+              "camera": "c045",
+              "frame": 754,
+              "time_s": 75.3,
+              "bbox_xywh": [
+                0.0,
+                416.0,
+                70.0,
+                93.0
+              ],
+              "crop": "crops/test/S06/c045/83/000754.jpg",
+              "crop_sha256": "371d9c401ab0ec489ebf2d3bf960717af0197855cf3a9ed399ac67b8f86c89f1",
+              "video": "AICity22_Track1_MTMC_Tracking/test/S06/c045/vdo.avi",
+              "baseline_score": 1.0,
+              "baseline_score_kind": "baseline_track_score_not_calibrated_detection_confidence",
+              "baseline_score_is_probability": false
+            },
+            {
+              "disclosure": "S06 \u2014 unverified prediction, no ground truth available",
+              "camera": "c045",
+              "frame": 759,
+              "time_s": 75.8,
+              "bbox_xywh": [
+                8.0,
+                370.0,
+                222.0,
+                132.0
+              ],
+              "crop": "crops/test/S06/c045/83/000759.jpg",
+              "crop_sha256": "ea778ab01c89929d10f5c29bd29271c44f28159c96907caf4d437314ac9c5004",
+              "video": "AICity22_Track1_MTMC_Tracking/test/S06/c045/vdo.avi",
+              "baseline_score": 1.0,
+              "baseline_score_kind": "baseline_track_score_not_calibrated_detection_confidence",
+              "baseline_score_is_probability": false
+            },
+            {
+              "disclosure": "S06 \u2014 unverified prediction, no ground truth available",
+              "camera": "c045",
+              "frame": 764,
+              "time_s": 76.3,
+              "bbox_xywh": [
+                150.0,
+                316.0,
+                263.0,
+                139.0
+              ],
+              "crop": "crops/test/S06/c045/83/000764.jpg",
+              "crop_sha256": "118b942297991a7adb412d226bdc3f7d06802a4b18ffe24a750ecd9c1140db74",
+              "video": "AICity22_Track1_MTMC_Tracking/test/S06/c045/vdo.avi",
+              "baseline_score": 1.0,
+              "baseline_score_kind": "baseline_track_score_not_calibrated_detection_confidence",
+              "baseline_score_is_probability": false
+            }
+          ]
+        },
+        {
+          "disclosure": "S06 \u2014 unverified prediction, no ground truth available",
+          "tracklet_key": "test/S06/c044/118",
+          "camera": "c044",
+          "first_observed_s": 105.1,
+          "identified_at_s": 106.1,
+          "last_observed_s": 110.4,
+          "reference_position": {
+            "latitude": 42.4903530596095,
+            "longitude": -90.7324579591997,
+            "kind": "inverse_homography_roi_median_road_reference_not_camera_GPS",
+            "calibration_sha256": "228801445b3059d6112109ac97377566eb84212646df3ee3b6da48ac6986aeb3",
+            "roi_sha256": "fc323090562a9f24d6d222b6c3a49cbdb8d0f64cce0a4ce52e79b49a48b41ad7"
+          },
+          "incoming_link": {
+            "disclosure": "S06 \u2014 unverified prediction, no ground truth available",
+            "from_tracklet": "test/S06/c045/83",
+            "to_tracklet": "test/S06/c044/118",
+            "appearance_similarity": 0.694916844367981,
+            "second_best_similarity": 0.6073929071426392,
+            "ambiguity_margin": 0.0875239372253418,
+            "temporal_gap_s": 20.19999999999999,
+            "distance_m": 586.12200609811,
+            "temporal_topology_reason": "forward_time_and_distance_bound",
+            "decision_time_s": 106.1,
+            "score_kind": "uncalibrated_cosine_similarity_not_probability",
+            "is_probability": false,
+            "verification_status": "UNVERIFIED_NO_GROUND_TRUTH"
+          },
+          "source_evidence": [
+            {
+              "disclosure": "S06 \u2014 unverified prediction, no ground truth available",
+              "camera": "c044",
+              "frame": 1052,
+              "time_s": 105.1,
+              "bbox_xywh": [
+                1038.0,
+                344.0,
+                135.0,
+                83.0
+              ],
+              "crop": "crops/test/S06/c044/118/001052.jpg",
+              "crop_sha256": "e1f36f2750c6ec6e30720b8b94ad14d77160ff8ec4b179c91c12e629ecccb0cd",
+              "video": "AICity22_Track1_MTMC_Tracking/test/S06/c044/vdo.avi",
+              "baseline_score": 1.0,
+              "baseline_score_kind": "baseline_track_score_not_calibrated_detection_confidence",
+              "baseline_score_is_probability": false
+            },
+            {
+              "disclosure": "S06 \u2014 unverified prediction, no ground truth available",
+              "camera": "c044",
+              "frame": 1057,
+              "time_s": 105.6,
+              "bbox_xywh": [
+                986.0,
+                321.0,
+                143.0,
+                83.0
+              ],
+              "crop": "crops/test/S06/c044/118/001057.jpg",
+              "crop_sha256": "8e111f0601742963feeca041babed7e8b793b091b9dac71cd240cd904d6db3a7",
+              "video": "AICity22_Track1_MTMC_Tracking/test/S06/c044/vdo.avi",
+              "baseline_score": 1.0,
+              "baseline_score_kind": "baseline_track_score_not_calibrated_detection_confidence",
+              "baseline_score_is_probability": false
+            },
+            {
+              "disclosure": "S06 \u2014 unverified prediction, no ground truth available",
+              "camera": "c044",
+              "frame": 1062,
+              "time_s": 106.1,
+              "bbox_xywh": [
+                909.0,
+                292.0,
+                146.0,
+                78.0
+              ],
+              "crop": "crops/test/S06/c044/118/001062.jpg",
+              "crop_sha256": "8b8018fc935d82f4969f02581066e3a1c87856a45cb6bc33739dc8ef3f74c34f",
+              "video": "AICity22_Track1_MTMC_Tracking/test/S06/c044/vdo.avi",
+              "baseline_score": 1.0,
+              "baseline_score_kind": "baseline_track_score_not_calibrated_detection_confidence",
+              "baseline_score_is_probability": false
+            }
+          ]
+        },
+        {
+          "disclosure": "S06 \u2014 unverified prediction, no ground truth available",
+          "tracklet_key": "test/S06/c043/255",
+          "camera": "c043",
+          "first_observed_s": 132.9,
+          "identified_at_s": 133.9,
+          "last_observed_s": 137.9,
+          "reference_position": {
+            "latitude": 42.49195848807656,
+            "longitude": -90.72055289863232,
+            "kind": "inverse_homography_roi_median_road_reference_not_camera_GPS",
+            "calibration_sha256": "33f17c2a0d96b3e668676d07b21139de62c414473eaae387488e0e7cb8de2b6c",
+            "roi_sha256": "005b34c240a180be56f365f6b9d7e6355ebc8a39abd418bd8e3693d80d0fdb3f"
+          },
+          "incoming_link": {
+            "disclosure": "S06 \u2014 unverified prediction, no ground truth available",
+            "from_tracklet": "test/S06/c044/118",
+            "to_tracklet": "test/S06/c043/255",
+            "appearance_similarity": 0.6944466233253479,
+            "second_best_similarity": 0.6798771023750305,
+            "ambiguity_margin": 0.014569520950317383,
+            "temporal_gap_s": 23.5,
+            "distance_m": 992.321992064812,
+            "temporal_topology_reason": "forward_time_and_distance_bound",
+            "decision_time_s": 133.9,
+            "score_kind": "uncalibrated_cosine_similarity_not_probability",
+            "is_probability": false,
+            "verification_status": "UNVERIFIED_NO_GROUND_TRUTH"
+          },
+          "source_evidence": [
+            {
+              "disclosure": "S06 \u2014 unverified prediction, no ground truth available",
+              "camera": "c043",
+              "frame": 1330,
+              "time_s": 132.9,
+              "bbox_xywh": [
+                1102.0,
+                416.0,
+                176.0,
+                126.0
+              ],
+              "crop": "crops/test/S06/c043/255/001330.jpg",
+              "crop_sha256": "aef439e031a253d050ef8e03553e3b799e3a9f5276719409a155ec2a92484772",
+              "video": "AICity22_Track1_MTMC_Tracking/test/S06/c043/vdo.avi",
+              "baseline_score": 1.0,
+              "baseline_score_kind": "baseline_track_score_not_calibrated_detection_confidence",
+              "baseline_score_is_probability": false
+            },
+            {
+              "disclosure": "S06 \u2014 unverified prediction, no ground truth available",
+              "camera": "c043",
+              "frame": 1335,
+              "time_s": 133.4,
+              "bbox_xywh": [
+                945.0,
+                358.0,
+                244.0,
+                119.0
+              ],
+              "crop": "crops/test/S06/c043/255/001335.jpg",
+              "crop_sha256": "2fd6c2cb8dbb19873eeddace94f21400b34720e0dce8af6bba5672f92e190e38",
+              "video": "AICity22_Track1_MTMC_Tracking/test/S06/c043/vdo.avi",
+              "baseline_score": 1.0,
+              "baseline_score_kind": "baseline_track_score_not_calibrated_detection_confidence",
+              "baseline_score_is_probability": false
+            },
+            {
+              "disclosure": "S06 \u2014 unverified prediction, no ground truth available",
+              "camera": "c043",
+              "frame": 1340,
+              "time_s": 133.9,
+              "bbox_xywh": [
+                839.0,
+                299.0,
+                200.0,
+                100.0
+              ],
+              "crop": "crops/test/S06/c043/255/001340.jpg",
+              "crop_sha256": "389ae9f4baddb1cd5f723fb1e9715ff2c5cbf024697f9859604ac7fd1e282a5a",
+              "video": "AICity22_Track1_MTMC_Tracking/test/S06/c043/vdo.avi",
+              "baseline_score": 1.0,
+              "baseline_score_kind": "baseline_track_score_not_calibrated_detection_confidence",
+              "baseline_score_is_probability": false
+            }
+          ]
+        },
+        {
+          "disclosure": "S06 \u2014 unverified prediction, no ground truth available",
+          "tracklet_key": "test/S06/c042/271",
+          "camera": "c042",
+          "first_observed_s": 158.9,
+          "identified_at_s": 159.9,
+          "last_observed_s": 163.0,
+          "reference_position": {
+            "latitude": 42.49210690077021,
+            "longitude": -90.71475513552122,
+            "kind": "inverse_homography_roi_median_road_reference_not_camera_GPS",
+            "calibration_sha256": "e71c5cb27394bc73687bc999694fd1aa200d8dfb9faa402fb2a8901b13bd266f",
+            "roi_sha256": "6b3e0f1672ea33649eb6611c38e5f58d1c26c5eeaf6e30a89dc3aa510e097759"
+          },
+          "incoming_link": {
+            "disclosure": "S06 \u2014 unverified prediction, no ground truth available",
+            "from_tracklet": "test/S06/c043/255",
+            "to_tracklet": "test/S06/c042/271",
+            "appearance_similarity": 0.696243166923523,
+            "second_best_similarity": 0.687808096408844,
+            "ambiguity_margin": 0.008435070514678955,
+            "temporal_gap_s": 22.0,
+            "distance_m": 475.65623743578846,
+            "temporal_topology_reason": "forward_time_and_distance_bound",
+            "decision_time_s": 159.9,
+            "score_kind": "uncalibrated_cosine_similarity_not_probability",
+            "is_probability": false,
+            "verification_status": "UNVERIFIED_NO_GROUND_TRUTH"
+          },
+          "source_evidence": [
+            {
+              "disclosure": "S06 \u2014 unverified prediction, no ground truth available",
+              "camera": "c042",
+              "frame": 1590,
+              "time_s": 158.9,
+              "bbox_xywh": [
+                545.0,
+                311.0,
+                253.0,
+                135.0
+              ],
+              "crop": "crops/test/S06/c042/271/001590.jpg",
+              "crop_sha256": "0973820b355b4a1df0f4849847eedc27d3dbc4a47e259488335eb9e3f05037a0",
+              "video": "AICity22_Track1_MTMC_Tracking/test/S06/c042/vdo.avi",
+              "baseline_score": 1.0,
+              "baseline_score_kind": "baseline_track_score_not_calibrated_detection_confidence",
+              "baseline_score_is_probability": false
+            },
+            {
+              "disclosure": "S06 \u2014 unverified prediction, no ground truth available",
+              "camera": "c042",
+              "frame": 1595,
+              "time_s": 159.4,
+              "bbox_xywh": [
+                481.0,
+                298.0,
+                239.0,
+                125.0
+              ],
+              "crop": "crops/test/S06/c042/271/001595.jpg",
+              "crop_sha256": "f5fc70a681d7b05af74088f8a855987c826efbc2181deabda0d9d99d119ba6b3",
+              "video": "AICity22_Track1_MTMC_Tracking/test/S06/c042/vdo.avi",
+              "baseline_score": 1.0,
+              "baseline_score_kind": "baseline_track_score_not_calibrated_detection_confidence",
+              "baseline_score_is_probability": false
+            },
+            {
+              "disclosure": "S06 \u2014 unverified prediction, no ground truth available",
+              "camera": "c042",
+              "frame": 1600,
+              "time_s": 159.9,
+              "bbox_xywh": [
+                400.0,
+                289.0,
+                224.0,
+                108.0
+              ],
+              "crop": "crops/test/S06/c042/271/001600.jpg",
+              "crop_sha256": "6f1cdb8b486630ff9ef98d87393d2b9e4f7fa7e1e4b1af9f305b8bbb5e8b174e",
+              "video": "AICity22_Track1_MTMC_Tracking/test/S06/c042/vdo.avi",
+              "baseline_score": 1.0,
+              "baseline_score_kind": "baseline_track_score_not_calibrated_detection_confidence",
+              "baseline_score_is_probability": false
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "demo": {
+    "config": "configs/demo-s06.json",
+    "launch": ".venv\\Scripts\\python.exe -m roadeye serve --config configs/demo-s06.json --host 127.0.0.1 --port 8000",
+    "presentation_rule": "S06 \u2014 unverified prediction, no ground truth available"
+  }
+}

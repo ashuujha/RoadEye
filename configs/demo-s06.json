@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "scope": "S06_complete_six_camera_unverified_prediction_only",
+  "scenario": "S06_complete_0.0_to_199.9_seconds",
+  "runtime_artifacts": "artifacts/s06-demo-unverified-runtime",
+  "dataset_root": "data/cityflow",
+  "frontend_root": "test_frontend",
+  "claim_status": "UNVERIFIED",
+  "disclosure": "S06 — unverified prediction, no ground truth available",
+  "evaluation_notice": "S06 has no released ground truth. These predictions are excluded from accuracy metrics and do not change the verified six-camera criterion, which remains FAIL."
+}

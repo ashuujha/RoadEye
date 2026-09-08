@@ -33,6 +33,8 @@ h2 { font-size: 1.05rem; }
 .status-chip { padding: 8px 11px; border-radius: 999px; border: 1px solid var(--line); color: var(--muted); font-size: .8rem; }
 .status-chip.pass { color: var(--accent); border-color: #22735f; background: var(--accent-soft); }
 .status-chip.fail { color: #ff9b9b; border-color: #733b45; }
+.status-chip.unverified { color: var(--warning); border-color: #8a6c24; background: #3a3017; }
+.demo-disclosure { padding: 10px 22px; color: #171205; background: var(--warning); font-weight: 850; text-align: center; }
 main { display: grid; grid-template-columns: 320px minmax(0, 1fr); min-height: calc(100vh - 74px); }
 .search-panel { padding: 18px; border-right: 1px solid var(--line); background: #091622; }
 label { display: block; font-weight: 700; font-size: .82rem; margin-bottom: 7px; }

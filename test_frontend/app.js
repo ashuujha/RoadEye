@@ -13,6 +13,7 @@ const state = {
 
 const elements = {
   status: document.querySelector("#system-status"),
+  disclosure: document.querySelector("#disclosure-banner"),
   form: document.querySelector("#search-form"),
   search: document.querySelector("#search"),
   multiOnly: document.querySelector("#multi-only"),
@@ -263,8 +264,14 @@ function replay() {
 async function start() {
   try {
     state.status = await getJson("/api/status");
-    elements.status.textContent = `${state.status.runtime_artifact_integrity} · ${state.status.predicted_link_count} predicted links`;
-    elements.status.className = "status-chip pass";
+    elements.status.textContent = `${state.status.status} | ${state.status.runtime_artifact_integrity} integrity | ${state.status.predicted_link_count} predicted links`;
+    elements.status.className = state.status.status === "UNVERIFIED"
+      ? "status-chip unverified"
+      : "status-chip pass";
+    if (state.status.disclosure) {
+      elements.disclosure.textContent = state.status.disclosure;
+      elements.disclosure.hidden = false;
+    }
     drawCameras();
     await loadVehicles();
     if (state.vehicles.length) await selectJourney(state.vehicles[0].global_id);

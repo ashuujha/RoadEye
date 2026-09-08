@@ -1,0 +1,87 @@
+{
+  "schema_version": 1,
+  "dataset": "CityFlow-V2_AIC22_Track1",
+  "partition": "test",
+  "scenario": "S06",
+  "start_s": 0.0,
+  "end_s": 199.9,
+  "baseline_filename": "mtsc_tnt_mask_rcnn.txt",
+  "selection_rule": "complete_declared_S06_interval_all_six_cameras_selected_from_public_metadata_only",
+  "disclosure": "S06 \u2014 unverified prediction, no ground truth available",
+  "interval": "closed",
+  "time_basis": "scenario_relative_seconds",
+  "frame_time_rule": "offset_s + (one_based_frame - 1) / fps",
+  "cameras": [
+    {
+      "camera_id": "c041",
+      "video": "AICity22_Track1_MTMC_Tracking/test/S06/c041/vdo.avi",
+      "video_bytes": 179800362,
+      "offset_s": 0.0,
+      "fps_from_readme": 10,
+      "declared_frames": 2000,
+      "calibration": "AICity22_Track1_MTMC_Tracking/test/S06/c041/calibration.txt",
+      "baseline_tracks": "AICity22_Track1_MTMC_Tracking/test/S06/c041/mtsc/mtsc_tnt_mask_rcnn.txt",
+      "baseline_sha256": "c0f78f3d7c6932b722c106ef3ee03e7ffbafef24f3ec912d332d1c25c082106d"
+    },
+    {
+      "camera_id": "c042",
+      "video": "AICity22_Track1_MTMC_Tracking/test/S06/c042/vdo.avi",
+      "video_bytes": 89901610,
+      "offset_s": 0.0,
+      "fps_from_readme": 10,
+      "declared_frames": 2000,
+      "calibration": "AICity22_Track1_MTMC_Tracking/test/S06/c042/calibration.txt",
+      "baseline_tracks": "AICity22_Track1_MTMC_Tracking/test/S06/c042/mtsc/mtsc_tnt_mask_rcnn.txt",
+      "baseline_sha256": "8652d01052929011897945a833c6ca24f81dc1f69bc668bdac9edb43227159c0"
+    },
+    {
+      "camera_id": "c043",
+      "video": "AICity22_Track1_MTMC_Tracking/test/S06/c043/vdo.avi",
+      "video_bytes": 104018470,
+      "offset_s": 0.0,
+      "fps_from_readme": 10,
+      "declared_frames": 2000,
+      "calibration": "AICity22_Track1_MTMC_Tracking/test/S06/c043/calibration.txt",
+      "baseline_tracks": "AICity22_Track1_MTMC_Tracking/test/S06/c043/mtsc/mtsc_tnt_mask_rcnn.txt",
+      "baseline_sha256": "5b52255165656257853e887a236b82524347fce16234c993c787f39135cfcb3d"
+    },
+    {
+      "camera_id": "c044",
+      "video": "AICity22_Track1_MTMC_Tracking/test/S06/c044/vdo.avi",
+      "video_bytes": 108777632,
+      "offset_s": 0.0,
+      "fps_from_readme": 10,
+      "declared_frames": 2000,
+      "calibration": "AICity22_Track1_MTMC_Tracking/test/S06/c044/calibration.txt",
+      "baseline_tracks": "AICity22_Track1_MTMC_Tracking/test/S06/c044/mtsc/mtsc_tnt_mask_rcnn.txt",
+      "baseline_sha256": "6c0be181dedb8a67e1836c6c867dedef8f6c5e4ebe9c4daaed905e28e03a580e"
+    },
+    {
+      "camera_id": "c045",
+      "video": "AICity22_Track1_MTMC_Tracking/test/S06/c045/vdo.avi",
+      "video_bytes": 108961272,
+      "offset_s": 0.0,
+      "fps_from_readme": 10,
+      "declared_frames": 2000,
+      "calibration": "AICity22_Track1_MTMC_Tracking/test/S06/c045/calibration.txt",
+      "baseline_tracks": "AICity22_Track1_MTMC_Tracking/test/S06/c045/mtsc/mtsc_tnt_mask_rcnn.txt",
+      "baseline_sha256": "23483c09838fce3c6265a0f9d8374d1334ee77b3e6f0b77d58f8ea9be173b39f"
+    },
+    {
+      "camera_id": "c046",
+      "video": "AICity22_Track1_MTMC_Tracking/test/S06/c046/vdo.avi",
+      "video_bytes": 65341960,
+      "offset_s": 0.0,
+      "fps_from_readme": 10,
+      "declared_frames": 2000,
+      "calibration": "AICity22_Track1_MTMC_Tracking/test/S06/c046/calibration.txt",
+      "baseline_tracks": "AICity22_Track1_MTMC_Tracking/test/S06/c046/mtsc/mtsc_tnt_mask_rcnn.txt",
+      "baseline_sha256": "b5147afe7cacee703fe7cf8438971798e2cb0ab3206dd9f8d5d51da2c58e330a"
+    }
+  ],
+  "metadata_sha256": {
+    "timestamps": "9703d26201e852f63e30025aed3bf6009d066e2ca0689bff8d9e2f1ee4feb847",
+    "frame_counts": "f32e8128f1708ba1ffa869c4eb3797335d58fcc4e40db010393bc55f4872690d",
+    "readme": "c44487ec521ae0fd92561053204c47c2db30ee98a4d8f6143091592b9f3b89ff"
+  }
+}

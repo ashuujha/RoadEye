@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "purpose": "Freeze the complete released S06 test-video interval without identity labels for an unverified demo-only prediction",
+  "evaluation": {
+    "partition": "test",
+    "scenario": "S06",
+    "start_s": 0.0,
+    "end_s": 199.9,
+    "baseline_filename": "mtsc_tnt_mask_rcnn.txt",
+    "selection_rule": "complete_declared_S06_interval_all_six_cameras_selected_from_public_metadata_only",
+    "disclosure": "S06 — unverified prediction, no ground truth available"
+  },
+  "window_outputs": {
+    "evaluation": "configs/s06-demo-window.json"
+  }
+}

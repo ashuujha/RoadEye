@@ -14,6 +14,8 @@ from fastapi import FastAPI, HTTPException, Query, Response
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 
+from .s06_demo import S06_DISCLOSURE
+
 ROOT = Path(__file__).resolve().parents[2]
 
 
@@ -71,6 +73,10 @@ class DemoRepository:
         config = _json(self.config_path)
         if config.get("schema_version") != 1:
             raise ValueError("Unsupported demo configuration schema")
+        if config.get("scenario", "").startswith("S06") and config.get(
+            "disclosure"
+        ) != S06_DISCLOSURE:
+            raise ValueError("S06 demo configuration is missing its disclosure")
         self.config = config
         self.paths = DemoPaths(
             artifacts=_within(
@@ -124,7 +130,8 @@ class DemoRepository:
             key = str(journey["camera_count"])
             camera_counts[key] = camera_counts.get(key, 0) + 1
         return {
-            "status": "PASS",
+            "status": self.config.get("claim_status", "PASS"),
+            "disclosure": self.config.get("disclosure"),
             "scope": self.config["scope"],
             "runtime_artifact_integrity": "PASS",
             "scenario": self.config["scenario"],
@@ -147,9 +154,10 @@ class DemoRepository:
                 "Lines between approximate camera reference points are "
                 "interpolated and are not measured road routes."
             ),
-            "evaluation_notice": (
+            "evaluation_notice": self.config.get(
+                "evaluation_notice",
                 "Runtime data contains predictions and evidence only; "
-                "ground-truth identities are excluded."
+                "ground-truth identities are excluded.",
             ),
         }
 
@@ -183,6 +191,7 @@ class DemoRepository:
                     ),
                     "representative_tracklet": first_sample["key"],
                     "prediction_status": "predicted_not_runtime_ground_truth",
+                    "disclosure": self.config.get("disclosure"),
                 }
             )
         rows.sort(
@@ -255,6 +264,7 @@ class DemoRepository:
             "camera_count": source["camera_count"],
             "visit_count": len(visits),
             "prediction_status": "predicted_not_runtime_ground_truth",
+            "disclosure": self.config.get("disclosure"),
             "geometry_status": source["geometry_status"],
             "visits": visits,
         }

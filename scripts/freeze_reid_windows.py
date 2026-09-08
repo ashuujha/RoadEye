@@ -21,7 +21,9 @@ def freeze_window(dataset: Path, spec: dict, output: Path) -> None:
         if not camera.is_dir() or camera.name not in offsets:
             continue
         video = camera / "vdo.avi"
-        baseline = camera / "mtsc/mtsc_deepsort_mask_rcnn.txt"
+        baseline = camera / "mtsc" / spec.get(
+            "baseline_filename", "mtsc_deepsort_mask_rcnn.txt"
+        )
         cameras.append(
             {
                 "camera_id": camera.name,
