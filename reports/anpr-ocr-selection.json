@@ -1,0 +1,83 @@
+{
+  "status": "PASS",
+  "scope": "development_only_OCR_preprocessing_selection_before_test_scoring",
+  "development_images": 50,
+  "development_readable_images": 48,
+  "development_unreadable_images": 2,
+  "selected_variant": "color_upscale",
+  "selected_metrics": {
+    "images": 48,
+    "exact_matches": 10,
+    "full_string_accuracy": 0.20833333333333334,
+    "full_string_accuracy_wilson95": [
+      0.11730272957905595,
+      0.34258901272617925
+    ],
+    "character_edits": 106,
+    "ground_truth_characters": 459,
+    "character_error_rate": 0.23093681917211328,
+    "nonempty_predictions": 48,
+    "coverage": 1.0,
+    "mean_latency_ms": 54.209918746588905,
+    "p95_latency_ms": 74.96057496173307
+  },
+  "all_development_metrics": {
+    "clahe": {
+      "images": 48,
+      "exact_matches": 10,
+      "full_string_accuracy": 0.20833333333333334,
+      "full_string_accuracy_wilson95": [
+        0.11730272957905595,
+        0.34258901272617925
+      ],
+      "character_edits": 116,
+      "ground_truth_characters": 459,
+      "character_error_rate": 0.25272331154684097,
+      "nonempty_predictions": 48,
+      "coverage": 1.0,
+      "mean_latency_ms": 56.456512492635134,
+      "p95_latency_ms": 100.50256499089298
+    },
+    "color_upscale": {
+      "images": 48,
+      "exact_matches": 10,
+      "full_string_accuracy": 0.20833333333333334,
+      "full_string_accuracy_wilson95": [
+        0.11730272957905595,
+        0.34258901272617925
+      ],
+      "character_edits": 106,
+      "ground_truth_characters": 459,
+      "character_error_rate": 0.23093681917211328,
+      "nonempty_predictions": 48,
+      "coverage": 1.0,
+      "mean_latency_ms": 54.209918746588905,
+      "p95_latency_ms": 74.96057496173307
+    },
+    "otsu": {
+      "images": 48,
+      "exact_matches": 9,
+      "full_string_accuracy": 0.1875,
+      "full_string_accuracy_wilson95": [
+        0.10191390954847647,
+        0.31939867149284695
+      ],
+      "character_edits": 144,
+      "ground_truth_characters": 459,
+      "character_error_rate": 0.3137254901960784,
+      "nonempty_predictions": 48,
+      "coverage": 1.0,
+      "mean_latency_ms": 57.0234624974546,
+      "p95_latency_ms": 92.08547497401014
+    }
+  },
+  "frozen_sha256": {
+    "configs/anpr-split.json": "7542a92a9b21d9597978bb7e0c0d091b2c956602924ef885173efa01fec52b75",
+    "artifacts/anpr/ocr-development-predictions.jsonl": "5b1975525a9d6ee73f3524c2c9457a61cdd797544ebdb78a5b818e9b0947c3ed",
+    "artifacts/models/easyocr/english_g2.pth": "e2272681d9d67a04e2dff396b6e95077bc19001f8f6d3593c307b9852e1c29e8",
+    "configs/anpr.json": "70286bfd2b2f82ea26b11c32e76c26084b30eec561d08058f39aa3c693f47079",
+    "src/roadeye/anpr.py": "35bbba4c7987904aee0d4336da5f753bf036b1b388ee24df68b27292f2874e0c",
+    "scripts/run_anpr.py": "062ac931060370e2307df929aeb5b897db5c7133216a4ea64af326bd3cd53a94"
+  },
+  "test_predictions_scored_before_freeze": false
+}

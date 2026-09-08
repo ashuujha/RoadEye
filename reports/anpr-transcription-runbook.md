@@ -2,6 +2,10 @@
 
 The Kaggle archive supplies plate boxes but no plate strings. Human review is therefore required before RoadEye can make any OCR accuracy claim. OCR suggestions are convenience text only and never become ground truth until a reviewer inspects every visible character and explicitly marks the row `reviewed`.
 
+**Current state:** development review is complete and `color_upscale` is frozen.
+The page now contains the 200 sealed test families. Continue at Step 2; do not
+rerun development selection or change tracked ANPR source/configuration.
+
 ## Step 1: review development plates only
 
 Open `artifacts/anpr/transcription-review.html` in Chrome or Edge. The page currently contains exactly 50 development families and no test images. For each plate:

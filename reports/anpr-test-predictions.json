@@ -1,0 +1,11 @@
+{
+  "status": "PASS",
+  "scope": "post_freeze_unscored_test_ocr_predictions",
+  "split": "test",
+  "images": 200,
+  "predictions": 200,
+  "selected_variant": "color_upscale",
+  "prediction_sha256": "cc1dbb2eca83b2a4b01f3be8effe2786ba9876f0414d58882e08bba53704dc2f",
+  "ground_truth_opened": false,
+  "accuracy_status": "UNVERIFIED_pending_human_review"
+}

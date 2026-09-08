@@ -323,10 +323,12 @@ def build_review(config: dict) -> None:
     manifest = read_json(ROOT / config["split_manifest"])
     selection_path = ROOT / "reports/anpr-ocr-selection.json"
     if selection_path.exists():
-        _validate_ocr_selection(selection_path)
+        selection = _validate_ocr_selection(selection_path)
         active_split = "test"
+        review_variants = {selection["selected_variant"]}
     else:
         active_split = "development"
+        review_variants = set(config["ocr"]["variants"])
     records = {
         record["image_id"]: record
         for record in manifest["records"]
@@ -360,7 +362,11 @@ def build_review(config: dict) -> None:
     items = []
     for image_id, record in sorted(records.items(), key=lambda row: (row[1]["split"], row[0])):
         candidates = grouped[image_id]
-        if len(candidates) != len(config["ocr"]["variants"]):
+        candidate_variants = {row["variant"] for row in candidates}
+        if (
+            len(candidates) != len(review_variants)
+            or candidate_variants != review_variants
+        ):
             raise ValueError(f"Missing OCR suggestions: {image_id}")
         vote_counts = Counter(row["text"] for row in candidates)
         suggestion = max(

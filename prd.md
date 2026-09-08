@@ -102,3 +102,9 @@ at confidence 0.50 and IoU 0.50. This is a plate-box result only. Full-string
 accuracy, character error rate, end-to-end ANPR, and the 90% target remain
 **UNVERIFIED** until manual development review, preprocessing freeze, and one
 sealed test evaluation are complete.
+
+Development review is now complete on 48 readable families. The selected
+`color_upscale` recognizer measured 10/48 exact strings (20.83%, Wilson 95%
+11.73-34.26%) and 23.09% character error rate. This is development evidence and
+does not replace the still-unverified sealed test result. The measured shortfall
+must remain visible; the stated 90% target has not been achieved.

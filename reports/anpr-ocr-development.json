@@ -1,14 +1,64 @@
 {
-  "status": "UNVERIFIED",
+  "status": "MEASURED",
   "scope": "recognition_on_ground_truth_plate_crops",
-  "reviewed_transcriptions": 0,
+  "reviewed_transcriptions": 48,
   "development": {
-    "status": "UNVERIFIED",
-    "reason": "no_reviewed_transcriptions"
+    "status": "MEASURED",
+    "split": "development",
+    "variants": {
+      "clahe": {
+        "images": 48,
+        "exact_matches": 10,
+        "full_string_accuracy": 0.20833333333333334,
+        "full_string_accuracy_wilson95": [
+          0.11730272957905595,
+          0.34258901272617925
+        ],
+        "character_edits": 116,
+        "ground_truth_characters": 459,
+        "character_error_rate": 0.25272331154684097,
+        "nonempty_predictions": 48,
+        "coverage": 1.0,
+        "mean_latency_ms": 56.456512492635134,
+        "p95_latency_ms": 100.50256499089298
+      },
+      "color_upscale": {
+        "images": 48,
+        "exact_matches": 10,
+        "full_string_accuracy": 0.20833333333333334,
+        "full_string_accuracy_wilson95": [
+          0.11730272957905595,
+          0.34258901272617925
+        ],
+        "character_edits": 106,
+        "ground_truth_characters": 459,
+        "character_error_rate": 0.23093681917211328,
+        "nonempty_predictions": 48,
+        "coverage": 1.0,
+        "mean_latency_ms": 54.209918746588905,
+        "p95_latency_ms": 74.96057496173307
+      },
+      "otsu": {
+        "images": 48,
+        "exact_matches": 9,
+        "full_string_accuracy": 0.1875,
+        "full_string_accuracy_wilson95": [
+          0.10191390954847647,
+          0.31939867149284695
+        ],
+        "character_edits": 144,
+        "ground_truth_characters": 459,
+        "character_error_rate": 0.3137254901960784,
+        "nonempty_predictions": 48,
+        "coverage": 1.0,
+        "mean_latency_ms": 57.0234624974546,
+        "p95_latency_ms": 92.08547497401014
+      }
+    }
   },
   "test": {
     "status": "UNVERIFIED",
-    "reason": "test_preprocessing_must_be_frozen_after_development_review"
+    "reason": "awaiting_human_review_of_frozen_test_split"
   },
   "limitations": [
     "This phase evaluates recognition on supplied plate boxes, not end-to-end scene ANPR",

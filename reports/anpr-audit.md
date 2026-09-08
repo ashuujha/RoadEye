@@ -12,12 +12,30 @@
 
 ## UNVERIFIED
 
-- **Full-string OCR accuracy:** zero rows have human-reviewed ground truth. No full-string accuracy, character error rate, or 90% claim exists yet.
+- **Sealed-test full-string OCR accuracy:** development has measured truth, but
+  all 200 test rows still await human review. No test accuracy or 90% claim exists.
 - **End-to-end scene ANPR:** the detector and recognition-on-supplied-crop tracks are evaluated separately. Detector output has not been fed into OCR for an end-to-end metric.
 - **Near-duplicate visual review:** exact duplicates and conservative scene pHash families are grouped, but a human near-duplicate audit is unfinished.
 - **Supplementary transcribed datasets:** the prior capped Roboflow and IEEE DataPort checks found no accessible plate-string corpus. No supplementary files were added.
 - **Plate search and traffic analytics:** these remain in hours 43-47 and were not started in this checkpoint.
 - **Astra 6/xhigh host setting:** repository instructions request this setting, but the host exposes no session control or model identity evidence. It remains unverified.
+
+## Development OCR selection completed
+
+The user reviewed all 50 development families: 48 were readable and two were
+marked unreadable. The frozen `color_upscale` variant measured 10/48 exact full
+strings, or **0.2083 accuracy** (Wilson 95% 0.1173-0.3426), with 106 character
+edits over 459 ground-truth characters (**0.2309 CER**) and 48/48 nonempty
+predictions. CLAHE also had 10/48 exact strings but a worse 0.2527 CER; Otsu had
+9/48 exact strings and 0.3137 CER. These are development-selection measurements,
+not test accuracy. They show that the current recognizer is far below the 90%
+target on this development sample.
+
+The selection report freezes the development prediction, model, split, config,
+and runtime source hashes before test truth. A separate selected-variant inference
+now covers 200 test families. The test-only review page passed headless Chrome and
+JavaScript checks, embeds zero development images, and preserves all 250 CSV rows.
+Test accuracy remains **UNVERIFIED** pending human review.
 
 ## FAIL
 
@@ -30,10 +48,19 @@
 - Ultralytics downloaded a 755 KB Arial font during the explicit training command even though plots were disabled. This was not demo startup. Runtime was later replayed with networking blocked.
 - The detector test was replayed after adding interval fields, without changing weights or threshold. Counts and accuracy metrics were identical; timing changed from 156.5 ms/image to 98.5 ms/image, demonstrating that this small batch timing is machine-load-sensitive. The report retains the latest measured run.
 - The original review page and mixed prediction artifact included both development and test images. No rows were human reviewed, no test ground truth was scored, and no parameter was selected from test output. The mixed artifact was deleted and regenerated as development-only before handoff. The final workflow uses separate development/test prediction files, a development-only page, and an enforced test-sealing gate.
+- The first post-freeze test-page build rejected every row because it still expected
+  all three development variants. The unscored test prediction file and selection
+  report were deleted, the review-only variant check was corrected, and the same
+  development result was re-frozen under the new source hash. Test inference then
+  ran again with only `color_upscale`; no test truth had been opened or scored.
 
 ## Checkpoint decision
 
-Detector work is complete for this scope. OCR implementation and unscored inference are complete, but Phase 33-43 cannot be called complete until a human creates ground truth. Follow `reports/anpr-transcription-runbook.md`; freeze on 50 development families before opening the 200-family test review. Plate search and analytics must wait for the next approved phase.
+Detector work is complete for this scope. Development OCR selection and sealed
+test inference are complete, but Phase 33-43 cannot be called complete until a
+human reviews the 200 test families and the one test scoring command runs. Follow
+`reports/anpr-transcription-runbook.md`. Plate search and analytics remain in the
+next phase.
 
 ## Verification commands
 
@@ -43,3 +70,6 @@ Detector work is complete for this scope. OCR implementation and unscored infere
 - `scripts/run_anpr.py verify-offline`: PASS with cached CPU weights and network guards.
 - Headless Chrome review-page render and `node --check`: PASS; 50 development images, 250 preserved CSV rows, and zero embedded test images.
 - `scripts/run_anpr.py freeze-ocr` before manual review: correctly rejected with `All development plate families require terminal review`.
+- Post-freeze test page: PASS in headless Chrome; 200 test images, 250 preserved
+  CSV rows, and zero embedded development images. Premature test scoring was
+  correctly rejected with `All 200 test plate families require terminal review`.

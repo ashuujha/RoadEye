@@ -78,4 +78,8 @@ The complete archive re-audit corrected the feasibility count from 181 JPEGs to 
 
 The CPU-trained detector completed its single test evaluation: 52 TP, 3 FP, and 9 FN over 61 boxes, for 0.9455 precision, 0.8525 recall, and 0.8966 F1 at confidence/IoU 0.50. These are box metrics only. Full-string OCR remains **UNVERIFIED** because the source has no text labels and zero human-reviewed strings exist.
 
-The manual work is deliberately two-stage. Review 50 development plates, freeze one of three preprocessing variants, then generate and review the sealed 200-plate test page. The next hours 43-47 phase cannot start until that checkpoint is completed or the user explicitly changes scope. The six-camera journey remains a separate failed criterion; no ANPR result changes it.
+The 50-family development review is complete with 48 readable plates. The frozen
+`color_upscale` variant measured 10/48 exact strings and 0.2309 CER. The sealed
+200-family test review page is ready; test scoring and the hours 43-47 phase remain
+blocked on that manual review. The six-camera journey remains a separate failed
+criterion; no ANPR result changes it.

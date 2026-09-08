@@ -1,0 +1,19 @@
+{
+  "status": "PASS",
+  "scope": "sealed_test_transcription_review_page_after_development_freeze",
+  "browser": "local_google_chrome_headless",
+  "chrome_exit_code": 0,
+  "javascript_syntax": "PASS_node_check",
+  "selected_variant": "color_upscale",
+  "active_split": "test",
+  "rendered_items": 200,
+  "embedded_development_images": 0,
+  "exported_manifest_rows": 250,
+  "test_scoring_before_review": "PASS_rejected_with_terminal_review_error",
+  "screenshot_artifact": "artifacts/anpr/transcription-test-review-smoke.png",
+  "screenshot_committed": false,
+  "limitations": [
+    "Browser rendering and JavaScript parsing were checked; a human must transcribe every test plate",
+    "No test accuracy is available until all 200 rows are terminal and at least 150 are readable"
+  ]
+}
