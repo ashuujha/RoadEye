@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self'; script-src 'self'; connect-src 'self'">
+    <title>RoadEye test console</title>
+    <link rel="stylesheet" href="vendor/leaflet/leaflet.css">
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <header>
+      <div>
+        <p class="eyebrow">Local evidence console</p>
+        <h1>RoadEye</h1>
+      </div>
+      <div id="system-status" class="status-chip">Loading frozen run…</div>
+    </header>
+
+    <main>
+      <aside class="search-panel" aria-label="Vehicle selection">
+        <form id="search-form">
+          <label for="search">RoadEye ID, tracklet, or camera</label>
+          <div class="search-row">
+            <input id="search" name="search" autocomplete="off" placeholder="e.g. c008/104">
+            <button type="submit">Find</button>
+          </div>
+          <label class="check-row">
+            <input id="multi-only" type="checkbox" checked>
+            Multi-camera predictions only
+          </label>
+        </form>
+        <p id="result-summary" class="muted" aria-live="polite"></p>
+        <div id="vehicle-list" class="vehicle-list"></div>
+      </aside>
+
+      <section class="workspace">
+        <div class="notice-grid">
+          <p><strong>Observed</strong> Camera visit with source-frame evidence.</p>
+          <p><strong>Interpolated</strong> Straight line between approximate reference points.</p>
+          <p><strong>Confidence</strong> Uncalibrated similarity, never a probability.</p>
+        </div>
+
+        <div class="map-card">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Predicted movement</p>
+              <h2 id="journey-title">Select a vehicle</h2>
+            </div>
+            <button id="replay" type="button" disabled>Replay journey</button>
+          </div>
+          <div id="map" aria-label="Approximate camera map"></div>
+          <p class="map-caption">Approximate calibration-derived reference positions. Dashed segments are inferred geometry, not observed road routes.</p>
+        </div>
+
+        <section class="timeline-card">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Chronological evidence</p>
+              <h2>Journey timeline</h2>
+            </div>
+            <p id="journey-meta" class="muted"></p>
+          </div>
+          <div id="timeline" class="timeline empty-state">Choose a predicted vehicle to inspect its visits.</div>
+        </section>
+
+        <section class="evidence-card">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Source evidence</p>
+              <h2 id="evidence-title">No visit selected</h2>
+            </div>
+            <div id="sample-tabs" class="sample-tabs"></div>
+          </div>
+          <div id="evidence-content" class="evidence-content empty-state">Select a timeline visit to view its crop and source frame.</div>
+        </section>
+      </section>
+    </main>
+
+    <template id="vehicle-template">
+      <button type="button" class="vehicle-row">
+        <img alt="Predicted vehicle crop">
+        <span class="vehicle-copy">
+          <strong class="vehicle-id"></strong>
+          <span class="vehicle-cameras"></span>
+          <span class="vehicle-time"></span>
+        </span>
+      </button>
+    </template>
+
+    <script src="vendor/leaflet/leaflet.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>

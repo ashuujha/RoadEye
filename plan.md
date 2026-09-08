@@ -8,7 +8,7 @@
 | 18–21 | Bounded pretrained vehicle Re-ID comparison and frozen evaluation | Critical repair; completed |
 | 21–24 | Private S01/S03 training bundle, portable Colab job, and CPU artifact contract | Critical repair; approved checkpoint |
 | 24–27 | Returned-model acceptance and one frozen S02 evaluation | Critical repair; completed |
-| 27–33 | Crop selection, evidence timeline, map, and replay | Critical |
+| 27–33 | Crop selection, evidence timeline, map, and replay | Critical; completed |
 | 33–43 | Indian transcription/review, detector/OCR, preprocessing, and evaluation | Critical |
 | 43–47 | Plate search, hybrid evidence, OD, density heat map, and bottleneck proxies | Required |
 | 47–52 | Remaining frozen evaluation, leakage checks, error analysis, and CPU timing | Critical |
@@ -39,3 +39,18 @@ The private ignored bundle contains 2,900 real S01/S03 crops across 11 cameras a
 The returned epoch-7 encoder improved identity-disjoint S01/S03 development retrieval from 67/99 to 87/99 rank-1 and from 0.5732 to 0.8829 mAP. The exact weight hash loaded on Python 3.11 CPU. The result manifest nevertheless has two recorded limitations: Colab used Python 3.13/torch 2.11 rather than the documented training versions, and it did not cryptographically link the job code archive.
 
 Model, unchanged association thresholds, S02 metadata window, provenance, weights, and runtime source hashes were frozen before identity scoring. The one S02 run measured 3/3 correct evaluable links, 3/23 pairwise recall, 10/20 causal retrieval rank-1, and 0.6170 retrieval mAP. Only 3/37 links were evaluable, 34 remain unknown, and the longest fully scored journey spans two cameras. S02 has four cameras and cannot establish a six-camera result. S02 is now consumed; future variants there are post-hoc only.
+
+## Completed local evidence interface, hours 27–33
+
+The prediction-only FastAPI service and `test_frontend/` now load the frozen S02
+runtime artifacts after exact hash checks. They expose 1,503 RoadEye vehicle IDs,
+35 multi-camera predictions and 37 predicted links without opening evaluator
+identity mappings. The interface supports RoadEye-ID/tracklet/camera search, crop
+selection, a chronological evidence timeline, locally decoded boxed source frames,
+an offline Leaflet camera view, explicitly dashed straight-line interpolation, and
+timed replay. Scores are labelled as uncalibrated values rather than probabilities.
+
+The interface does not change the model result: the predicted maximum is three
+cameras and the previously measured fully scored consistent maximum remains two.
+Plate search and aggregate analytics remain in their later phases. See
+`reports/frontend-audit.md`.

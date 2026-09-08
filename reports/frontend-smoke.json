@@ -1,0 +1,62 @@
+{
+  "schema_version": 1,
+  "phase": "hours_27_33_local_evidence_interface",
+  "status": "PASS",
+  "runtime": {
+    "python": "3.11.9",
+    "host": "127.0.0.1",
+    "browser": "Microsoft Edge headless",
+    "network_dependencies_requested_by_frontend": 0
+  },
+  "frozen_s02_catalog": {
+    "roadeye_vehicle_ids": 1503,
+    "predicted_links": 37,
+    "multi_camera_predictions": 35,
+    "max_predicted_camera_count": 3,
+    "fully_scored_consistent_max_camera_count_from_prior_evaluation": 2
+  },
+  "http_checks": [
+    {"path": "/", "status": 200, "content_type": "text/html"},
+    {"path": "/api/status", "status": 200, "integrity": "PASS"},
+    {"path": "/api/vehicles?multi_camera_only=true&limit=50", "status": 200, "returned": 35},
+    {"path": "/api/vehicles?multi_camera_only=true&q=c008%2F104", "status": 200, "returned": 1},
+    {"path": "/api/vehicles/roadeye_5d01be7368ca57e9a2db", "status": 200, "visits": 3},
+    {"path": "/api/vehicles/roadeye_5d01be7368ca57e9a2db/visits/0/samples/0/crop", "status": 200, "content_type": "image/jpeg", "bytes": 19342},
+    {"path": "/api/vehicles/roadeye_5d01be7368ca57e9a2db/visits/0/samples/0/frame", "status": 200, "content_type": "image/jpeg", "bytes": 463083},
+    {"path": "/api/vehicles/roadeye_missing", "status": 404}
+  ],
+  "three_camera_smoke_journey": {
+    "global_id": "roadeye_5d01be7368ca57e9a2db",
+    "cameras": ["c008", "c007", "c009"],
+    "appearance_similarities": [0.9202885627746582, 0.8504939079284668],
+    "score_kind": "uncalibrated_cosine_similarity_not_probability",
+    "runtime_ground_truth_status": "excluded"
+  },
+  "single_request_observations_seconds": {
+    "catalog_35_rows": 0.030363500001840293,
+    "three_visit_journey": 0.011871600057929754,
+    "crop": 0.020218900055624545,
+    "decoded_boxed_source_frame": 0.1326098000863567
+  },
+  "browser_checks": {
+    "local_assets_loaded": "PASS",
+    "catalog_rendered": "PASS",
+    "journey_map_rendered": "PASS",
+    "timeline_rendered": "PASS",
+    "crop_and_boxed_source_frame_rendered": "PASS",
+    "timed_replay_interaction": "PASS",
+    "replay_observed_sequence": [
+      {"step": 1, "camera": "c008", "time_s": 6.62},
+      {"step": 2, "camera": "c006", "time_s": 8.20},
+      {"step": 3, "camera": "c009", "time_s": 10.66}
+    ],
+    "replay_control_returned_to_ready_state": "PASS"
+  },
+  "limitations": [
+    "S02 has only four cameras and the strongest prediction has three visits",
+    "The strongest fully scored consistent result from the prior evaluation remains two cameras",
+    "Camera points are calibration-derived references, not surveyed camera GPS",
+    "Map segments are straight interpolation, not road-network routes",
+    "Plate search and analytics are not part of this phase"
+  ]
+}

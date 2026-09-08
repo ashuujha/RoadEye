@@ -135,3 +135,21 @@ positive after pair-level gates, while only three have a positive above the
 0.85 similarity threshold. Development-only score calibration is therefore the
 highest-impact association repair. Since S02 is now consumed, any later S02
 comparison is post-hoc; training/tuning must remain on S01/S03.
+
+## Local evidence API and test frontend
+
+`roadeye.demo` is a read-only adapter over the frozen S02 prediction directory.
+At startup it verifies the prepared-manifest hash and the exact journey, link,
+tracklet, and topology hashes. Its file allowlist excludes the evaluation directory,
+and its routes expose no CityFlow identities. Evidence endpoints accept only a
+RoadEye vehicle ID plus validated visit/sample indexes; crop and video paths are
+resolved inside their configured roots. A source frame is decoded on demand and
+annotated with the already-predicted baseline box.
+
+The plain `test_frontend/` consumes this API. Leaflet 1.9.4 is bundled locally and
+uses no tile service, so startup has no network dependency. The map displays
+calibration-derived reference points and dashed straight-line segments. The
+timeline distinguishes observed visits from interpolation and reports link cosine
+similarity, ambiguity margin, temporal gap, and constraint reason as model evidence,
+never as calibrated probability or runtime ground-truth verification. The service
+does not load an ML model, rerun association, or alter frozen predictions.

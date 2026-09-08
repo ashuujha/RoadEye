@@ -68,3 +68,10 @@ S02 contains four cameras, so it cannot verify the six-camera demo criterion.
 These are exact local-slice measurements with small/partial denominators, not
 city-wide or official benchmark accuracy. S02 is now consumed for model
 comparison and cannot be reused as a fresh evaluation after tuning.
+
+The hours 27–33 local interface now renders all 35 frozen S02 multi-camera
+predictions, with crop selection, boxed source frames, approximate camera points,
+chronological replay, and 37 link-evidence records. This is a delivery result, not
+an accuracy improvement. Its strongest displayed prediction spans three cameras;
+the verified maximum remains two cameras. Plate-string search and analytics remain
+unimplemented until their independent phases.

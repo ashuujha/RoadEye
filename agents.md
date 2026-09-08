@@ -23,7 +23,7 @@ Use Python 3.11, typed module boundaries, pathlib, small functions, structured l
 
 Layout: `src/roadeye/` future modules; `scripts/` inspection and later portable jobs; `configs/`; `tests/`; ignored `data/` and `artifacts/`; `reports/`; `test_frontend/`.
 
-Environment: `py -3.11 -m venv .venv`; use `.venv\\Scripts\\python.exe`; install `requirements-cpu.txt` then editable package. Future commands (`audit`, `prepare`, `evaluate`, `serve`) are not claims that those modules exist. No module is done without provenance, meaningful tests, failure handling, and CPU/offline rehearsal.
+Environment: `py -3.11 -m venv .venv`; use `.venv\\Scripts\\python.exe`; install `requirements-cpu.txt` then editable package. `python -m roadeye serve --config configs/demo.json` now runs the prediction-only local test interface; the planned `audit`, `prepare`, and `evaluate` top-level commands are still future contracts. No module is done without provenance, meaningful tests, failure handling, and CPU/offline rehearsal.
 
 The approved training-only Re-ID job is built with
 `.venv\\Scripts\\python.exe scripts/build_reid_training_bundle.py` and
@@ -40,3 +40,8 @@ The accepted trained artifact and frozen S02 result are documented in
 now consumed. Never tune on S02 or present a later S02 variant as fresh held-out
 evidence. The current verified maximum remains two cameras; the three-camera
 predicted maximum includes unscored evidence and is not a verified journey.
+
+The hours 27–33 interface is documented in `reports/frontend-audit.md`. Keep its
+runtime artifact allowlist free of evaluator mappings and CityFlow identities.
+Preserve the local Leaflet bundle and the observed/interpolated, approximate-position,
+and uncalibrated-score labels. Plate search and analytics are not implemented yet.
