@@ -214,3 +214,10 @@ missing and unrecognized states; either invalid category aborts scoring, and at
 least 150 readable rows are required. Blank or model-suggested rows never enter
 an accuracy denominator. This produces a recognition-on-crops metric and does
 not conflate detector performance with full-string OCR.
+
+The sealed-test review queue is a separate, ground-truth-blind helper. It checks
+the frozen OCR-selection hashes and complete prediction grid, reads only
+transcription provenance/status fields, and ranks unfinished rows by the frozen
+model's uncalibrated score. Detailed suggestions and identifiers stay under
+ignored `artifacts/anpr/`; only aggregate counts and claim boundaries may enter
+tracked audit material. Triage never supplies truth or changes which rows count.

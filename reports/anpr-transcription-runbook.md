@@ -42,8 +42,16 @@ families. Review them with the same rules, export the CSV, and replace
 predeclared benchmark floor. Validate and inspect the exact status counts first:
 
 ```powershell
+.venv\Scripts\python.exe scripts\build_plate_review_triage.py
 .venv\Scripts\python.exe scripts\run_anpr.py validate-ocr-test
 ```
+
+The triage command verifies the frozen OCR selection and exact 200-row prediction
+grid, then writes private ignored JSON/CSV queues under `artifacts/anpr/`. It puts
+invalid statuses first and otherwise orders pending rows by the uncalibrated OCR
+score, lowest first. This is a review-order convenience only: suggestions are not
+truth, every test family still requires a terminal human decision, and the order
+does not change the scoring denominator.
 
 The command reports `reviewed`, `corrected`, `unreadable`, `missing_status`, and
 `unrecognized_status`. It aborts unless every test row has an allowed terminal

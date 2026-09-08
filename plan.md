@@ -90,3 +90,10 @@ The 50-family development review is complete with 48 readable plates. The frozen
 200-family test review page is ready; test scoring and the hours 43-47 phase remain
 blocked on that manual review. The six-camera journey remains a separate failed
 criterion; no ANPR result changes it.
+
+The sealed-test review now has a deterministic, ground-truth-blind triage helper.
+It verifies the frozen OCR sources and all 200 test predictions, then orders
+unfinished work by model score for reviewer convenience. It does not mark any
+row reviewed, inspect plate truth, or relax the 150-readable/every-row-terminal
+gate. Plate search and hybrid evidence remain blocked until the human review and
+single sealed test score are complete.
