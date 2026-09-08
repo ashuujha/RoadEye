@@ -10,7 +10,7 @@
 | 24–27 | Returned-model acceptance and one frozen S02 evaluation | Critical repair; completed |
 | 27–33 | Crop selection, evidence timeline, map, and replay | Critical; completed |
 | 33-43 | Indian transcription/review, detector/OCR, preprocessing, and evaluation; detector measured, manual OCR truth pending | **Critical, in progress** |
-| 43–47 | Plate search, hybrid evidence, OD, density heat map, and bottleneck proxies | Required |
+| 43–47 | Plate search, hybrid evidence, OD, density heat map, and bottleneck proxies; analytics complete, plate-search scaffold complete, OCR wiring pending | Required |
 | 47–52 | Remaining frozen evaluation, leakage checks, error analysis, and CPU timing | Critical |
 | 52–56 | Integration repair, offline rehearsal, claims, and evidence packaging | Critical |
 
@@ -106,4 +106,7 @@ runtime predictions, exposed through the read-only API, and rendered in the test
 frontend with `UNVERIFIED` labels. Visit counts are not called traffic density and
 transition gaps are not called congestion/travel time. Plate search and hybrid
 evidence stay blocked until all 200 test plates receive terminal human review and
-the one sealed OCR evaluation completes.
+the one sealed OCR evaluation completes. The plate-search API, strict hash-bound
+index contract, prediction-evidence validation, and disabled frontend state are
+now scaffolded. Current calls return zero results with an explicit blocked reason;
+runtime OCR generation and configuration are the remaining integration work.

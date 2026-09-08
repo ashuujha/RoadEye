@@ -21,6 +21,27 @@
 
     <main>
       <aside class="search-panel" aria-label="Vehicle selection">
+        <section class="plate-search-card" aria-labelledby="plate-search-heading">
+          <div class="sidebar-heading">
+            <div>
+              <p class="eyebrow">Optional OCR evidence</p>
+              <h2 id="plate-search-heading">Plate search</h2>
+            </div>
+            <span id="plate-search-chip" class="mini-status">Checking</span>
+          </div>
+          <form id="plate-search-form">
+            <label for="plate-search-input">Predicted plate text</label>
+            <div class="search-row">
+              <input id="plate-search-input" name="plate" autocomplete="off" placeholder="e.g. KA01AB1234" disabled>
+              <button id="plate-search-button" type="submit" disabled>Search</button>
+            </div>
+          </form>
+          <p id="plate-search-status" class="muted" aria-live="polite">Checking OCR readiness…</p>
+          <div id="plate-search-results" class="plate-results"></div>
+        </section>
+
+        <div class="sidebar-divider"></div>
+
         <form id="search-form">
           <label for="search">RoadEye ID, tracklet, or camera</label>
           <div class="search-row">
@@ -51,7 +72,7 @@
             </div>
             <span class="analytics-status">UNVERIFIED</span>
           </div>
-          <p id="analytics-notice" class="map-caption">Loading prediction aggregatesâ€¦</p>
+          <p id="analytics-notice" class="map-caption">Loading prediction aggregates…</p>
           <div id="analytics-summary" class="analytics-summary"></div>
           <div class="analytics-tables">
             <div>

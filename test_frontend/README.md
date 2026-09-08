@@ -13,8 +13,10 @@ From the repository root:
 Open `http://127.0.0.1:8000`. Search by RoadEye ID, predicted tracklet, or camera;
 select a crop; replay the predicted visits; and inspect every crop and boxed source
 frame. The local aggregate panel shows prediction-only camera visits, OD endpoints,
-and transition support with `UNVERIFIED` labels. Plate-string search is
-intentionally absent until the independent Indian ANPR sealed review completes.
+and transition support with `UNVERIFIED` labels. Plate-search API and frontend
+controls are present but remain visibly blocked and return no matches until the
+independent Indian ANPR sealed review completes and a hash-bound runtime OCR
+prediction index is configured. Benchmark transcriptions never enter the demo.
 
 The included Leaflet 1.9.4 files are locally bundled under its BSD-2-Clause
 license. No basemap tiles are loaded. Camera points are approximate references

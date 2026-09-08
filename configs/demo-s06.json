@@ -7,5 +7,10 @@
   "frontend_root": "test_frontend",
   "claim_status": "UNVERIFIED",
   "disclosure": "S06 — unverified prediction, no ground truth available",
-  "evaluation_notice": "S06 has no released ground truth. These predictions are excluded from accuracy metrics and do not change the verified six-camera criterion, which remains FAIL."
+  "evaluation_notice": "S06 has no released ground truth. These predictions are excluded from accuracy metrics and do not change the verified six-camera criterion, which remains FAIL.",
+  "plate_search": {
+    "enabled": false,
+    "availability": "BLOCKED_PENDING_SEALED_OCR",
+    "reason": "Awaiting the sealed OCR evaluation and a hash-bound runtime OCR prediction index; no plate matches are available yet."
+  }
 }

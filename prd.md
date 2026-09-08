@@ -75,8 +75,10 @@ chronological replay, and 37 link-evidence records. This is a delivery result, n
 an accuracy improvement. Its strongest displayed prediction spans three cameras;
 the verified maximum remains two cameras. Prediction-only camera visit, OD
 endpoint, and transition-support analytics are now implemented and always labelled
-`UNVERIFIED`; they are not traffic or congestion measurements. Plate-string search
-and hybrid evidence remain blocked on sealed human OCR review.
+`UNVERIFIED`; they are not traffic or congestion measurements. Plate-search API,
+artifact validation, and frontend controls are scaffolded but remain visibly
+blocked with zero results until sealed human OCR review and runtime OCR indexing.
+No benchmark transcription is exposed to the demo.
 
 The S01 development-only association calibration tested 30 predeclared settings;
 two passed its small evidence gate. The selected policy measured 5/6 correct

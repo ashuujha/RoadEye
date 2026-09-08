@@ -183,6 +183,8 @@ def test_app_exposes_api_before_static_frontend(tmp_path, monkeypatch):
     paths = [route.path for route in app.routes]
     assert "/api/status" in paths
     assert "/api/analytics" in paths
+    assert "/api/plate-search/status" in paths
+    assert "/api/plate-search" in paths
     assert paths.index("/api/status") < paths.index("")
     assert not any("evaluation" in route.path or "ground" in route.path for route in app.routes)
 
@@ -220,3 +222,72 @@ def test_demo_analytics_are_prediction_only(tmp_path, monkeypatch):
     assert report["summary"]["observed_runtime_visits"] == 2
     assert report["origin_destination_pairs"][0]["predicted_vehicle_count"] == 1
     assert report["claim_boundaries"]["uses_runtime_ground_truth"] is False
+
+
+def test_demo_plate_search_is_explicitly_blocked_without_ocr_index(tmp_path, monkeypatch):
+    repository = DemoRepository(fixture_config(tmp_path, monkeypatch))
+    status = repository.plate_search_status()
+    assert status["status"] == "UNVERIFIED"
+    assert status["availability"] == "BLOCKED_PENDING_SEALED_OCR"
+    assert repository.status()["plate_search"] == status
+    assert repository.search_plates("KA01")["results"] == []
+
+
+def test_demo_loads_only_prediction_linked_plate_entries(tmp_path, monkeypatch):
+    config = fixture_config(tmp_path, monkeypatch)
+    artifacts = tmp_path / "artifacts" / "run"
+    runtime = json.loads((artifacts / "run.json").read_text(encoding="utf-8"))
+    journeys = json.loads((artifacts / "journeys.json").read_text(encoding="utf-8"))
+    sample = journeys[0]["visits"][0]["evidence_samples"][0]
+    plate_index = {
+        "schema_version": 1,
+        "source": {
+            "scenario": "S02_fixture",
+            "journeys_sha256": runtime["prediction_sha256"]["journeys"],
+        },
+        "ocr_provenance": {
+            "ocr_selection_report_sha256": "a" * 64,
+            "sealed_ocr_test_report_sha256": "b" * 64,
+            "runtime_ocr_manifest_sha256": "c" * 64,
+        },
+        "entries": [
+            {
+                "global_id": "roadeye_fixture",
+                "visit_index": 0,
+                "sample_index": 0,
+                "tracklet_key": "validation/S02/c1/1",
+                "camera": "c1",
+                "observed_s": 0.0,
+                "crop_sha256": sample["crop_sha256"],
+                "predicted_plate_text": "KA01AB1234",
+                "ocr_score": 0.82,
+            }
+        ],
+    }
+    index_hash = write_json(artifacts / "plate-index.json", plate_index)
+    value = json.loads(config.read_text(encoding="utf-8"))
+    value["plate_search"] = {
+        "enabled": True,
+        "availability": "READY",
+        "index": "plate-index.json",
+        "index_sha256": index_hash,
+    }
+    config.write_text(json.dumps(value), encoding="utf-8")
+
+    repository = DemoRepository(config)
+    result = repository.search_plates("ka-01-ab")
+    assert result["availability"] == "READY"
+    assert result["results"][0]["global_id"] == "roadeye_fixture"
+    assert result["results"][0]["prediction_status"] == (
+        "predicted_plate_text_not_ground_truth"
+    )
+
+
+def test_frontend_contains_disabled_plate_search_contract():
+    root = Path(__file__).resolve().parents[1]
+    html = (root / "test_frontend" / "index.html").read_text(encoding="utf-8")
+    javascript = (root / "test_frontend" / "app.js").read_text(encoding="utf-8")
+    assert 'id="plate-search-input"' in html
+    assert 'id="plate-search-button"' in html
+    assert "/api/plate-search/status" in javascript
+    assert "predicted plate observation" in javascript

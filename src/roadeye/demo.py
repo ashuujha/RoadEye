@@ -15,6 +15,7 @@ from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 
 from .analytics import build_prediction_analytics
+from .plate_search import PlateSearchIndex
 from .s06_demo import S06_DISCLOSURE
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -117,6 +118,13 @@ class DemoRepository:
             disclosure=self.config.get("disclosure"),
             source_prediction_sha256=self.run["prediction_sha256"]["journeys"],
         )
+        self._plate_search = PlateSearchIndex.from_config(
+            self.config.get("plate_search"),
+            artifact_root=self.paths.artifacts,
+            journeys=self.journeys,
+            scenario=self.config["scenario"],
+            source_prediction_sha256=self.run["prediction_sha256"]["journeys"],
+        )
 
     def _verify_hashes(self) -> None:
         if _sha256(self.paths.artifacts / "prepared.json") != self.run.get(
@@ -172,12 +180,23 @@ class DemoRepository:
                 "Aggregate counts are derived from runtime predictions. They are "
                 "not verified traffic flow, density, congestion, or route timing."
             ),
+            "plate_search": self._plate_search.status(),
         }
 
     def analytics(self) -> dict[str, Any]:
         """Return aggregates computed only from hash-verified runtime predictions."""
 
         return self._analytics
+
+    def plate_search_status(self) -> dict[str, Any]:
+        """Return the explicit availability and claim boundary for plate search."""
+
+        return self._plate_search.status()
+
+    def search_plates(self, query: str, *, limit: int = 25) -> dict[str, Any]:
+        """Search only hash-bound OCR predictions linked to journey evidence."""
+
+        return self._plate_search.search(query, limit=limit)
 
     def list_vehicles(
         self, query: str = "", *, multi_camera_only: bool = True, limit: int = 50
@@ -390,6 +409,20 @@ def create_app(config_path: Path = ROOT / "configs/demo.json") -> FastAPI:
     @app.get("/api/analytics")
     def analytics() -> dict[str, Any]:
         return repository.analytics()
+
+    @app.get("/api/plate-search/status")
+    def plate_search_status() -> dict[str, Any]:
+        return repository.plate_search_status()
+
+    @app.get("/api/plate-search")
+    def plate_search(
+        q: str = Query(default="", max_length=32),
+        limit: int = Query(default=25, ge=1, le=100),
+    ) -> dict[str, Any]:
+        try:
+            return repository.search_plates(q, limit=limit)
+        except ValueError as error:
+            raise HTTPException(status_code=422, detail=str(error)) from error
 
     @app.get("/api/vehicles/{global_id}")
     def journey(global_id: str) -> dict[str, Any]:

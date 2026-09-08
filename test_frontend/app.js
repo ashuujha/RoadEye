@@ -3,6 +3,8 @@
 const state = {
   status: null,
   analytics: null,
+  plateSearch: null,
+  plateResults: [],
   vehicles: [],
   selectedId: null,
   journey: null,
@@ -33,6 +35,12 @@ const elements = {
   densityTable: document.querySelector("#density-table"),
   odTable: document.querySelector("#od-table"),
   bottleneckTable: document.querySelector("#bottleneck-table"),
+  plateForm: document.querySelector("#plate-search-form"),
+  plateInput: document.querySelector("#plate-search-input"),
+  plateButton: document.querySelector("#plate-search-button"),
+  plateChip: document.querySelector("#plate-search-chip"),
+  plateStatus: document.querySelector("#plate-search-status"),
+  plateResults: document.querySelector("#plate-search-results"),
 };
 
 const map = L.map("map", { attributionControl: false, zoomControl: true });
@@ -84,7 +92,7 @@ function drawCameras() {
       weight: 2,
       fillColor: "#21c997",
       fillOpacity: .25 + .65 * (observedVisits / maximumDensity),
-    }).bindTooltip(`${camera} Â· ${observedVisits} observed predicted visits`).addTo(cameraLayer);
+    }).bindTooltip(`${camera} · ${observedVisits} observed predicted visits`).addTo(cameraLayer);
   });
   if (points.length) map.fitBounds(points, { padding: [70, 70], maxZoom: 19 });
 }
@@ -135,13 +143,65 @@ function renderAnalytics() {
     `${row.observed_runtime_visit_count} visits`,
   ]);
   tableRows(elements.odTable, analytics.origin_destination_pairs.slice(0, 8), (row) => [
-    `${row.origin_camera} â†’ ${row.destination_camera}`,
+    `${row.origin_camera} → ${row.destination_camera}`,
     `${row.predicted_vehicle_count} IDs`,
   ]);
   tableRows(elements.bottleneckTable, analytics.bottleneck_proxies.slice(0, 8), (row) => [
-    `${row.from_camera} â†’ ${row.to_camera}`,
+    `${row.from_camera} → ${row.to_camera}`,
     `${row.predicted_transition_count} links`,
   ]);
+}
+
+function renderPlateSearchStatus() {
+  const plateSearch = state.plateSearch;
+  const ready = plateSearch.availability === "READY";
+  elements.plateInput.disabled = !ready;
+  elements.plateButton.disabled = !ready;
+  elements.plateChip.textContent = ready ? "UNVERIFIED" : "BLOCKED";
+  elements.plateChip.className = `mini-status ${ready ? "unverified" : "blocked"}`;
+  elements.plateStatus.textContent = ready
+    ? `${plateSearch.index_entry_count} predicted plate observations indexed. ${plateSearch.score_notice}`
+    : plateSearch.reason;
+  if (!ready) {
+    elements.plateResults.replaceChildren();
+  }
+}
+
+async function searchPlates() {
+  const query = new URLSearchParams({
+    q: elements.plateInput.value.trim(),
+    limit: "25",
+  });
+  const response = await getJson(`/api/plate-search?${query}`);
+  state.plateResults = response.results;
+  renderPlateResults(response);
+}
+
+function renderPlateResults(response) {
+  elements.plateResults.replaceChildren();
+  if (!response.results.length) {
+    const empty = document.createElement("p");
+    empty.className = "muted";
+    empty.textContent = response.enabled
+      ? "No matching predicted plate observation."
+      : response.reason;
+    elements.plateResults.append(empty);
+    return;
+  }
+  response.results.forEach((result) => {
+    const row = document.createElement("button");
+    row.type = "button";
+    row.className = "plate-result";
+    const plate = document.createElement("strong");
+    plate.textContent = result.predicted_plate_text;
+    const evidence = document.createElement("span");
+    evidence.textContent = `${result.match_kind} match · ${result.camera} · ${seconds(result.observed_s)}`;
+    const notice = document.createElement("span");
+    notice.textContent = `OCR ${result.ocr_score.toFixed(3)} · uncalibrated prediction`;
+    row.append(plate, evidence, notice);
+    row.addEventListener("click", () => selectJourney(result.global_id));
+    elements.plateResults.append(row);
+  });
 }
 
 async function loadVehicles() {
@@ -331,6 +391,7 @@ async function start() {
   try {
     state.status = await getJson("/api/status");
     state.analytics = await getJson("/api/analytics");
+    state.plateSearch = await getJson("/api/plate-search/status");
     elements.status.textContent = `${state.status.status} | ${state.status.runtime_artifact_integrity} integrity | ${state.status.predicted_link_count} predicted links`;
     elements.status.className = state.status.status === "UNVERIFIED"
       ? "status-chip unverified"
@@ -340,6 +401,7 @@ async function start() {
       elements.disclosure.hidden = false;
     }
     renderAnalytics();
+    renderPlateSearchStatus();
     drawCameras();
     await loadVehicles();
     if (state.vehicles.length) await selectJourney(state.vehicles[0].global_id);
@@ -351,6 +413,10 @@ async function start() {
 elements.form.addEventListener("submit", async (event) => {
   event.preventDefault();
   try { await loadVehicles(); } catch (error) { setError(String(error)); }
+});
+elements.plateForm.addEventListener("submit", async (event) => {
+  event.preventDefault();
+  try { await searchPlates(); } catch (error) { setError(String(error)); }
 });
 elements.multiOnly.addEventListener("change", async () => {
   try { await loadVehicles(); } catch (error) { setError(String(error)); }

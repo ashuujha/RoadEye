@@ -161,6 +161,30 @@ contain no evaluator mapping or plate data and are always `UNVERIFIED`: visit
 counts are not traffic density, endpoint pairs are not verified OD flow, and
 transition frequency/boundary gaps are not congestion or route travel time.
 
+## Plate-search integration boundary
+
+The local service now exposes a disabled-by-default plate-search contract and
+frontend state. While sealed OCR scoring is pending, `/api/plate-search/status`
+reports `BLOCKED_PENDING_SEALED_OCR` and `/api/plate-search` returns zero results.
+It does not read test transcriptions, create synthetic plates, or silently fall
+back to model suggestions.
+
+Future runtime OCR wiring must produce a separate JSON index inside the selected
+prediction directory. Configuration enables it only by relative path and exact
+SHA-256. The index is bound to the scenario and current `journeys.json` hash, plus
+the OCR selection report, sealed test report, and runtime OCR manifest hashes.
+Every predicted plate entry must resolve to an existing RoadEye ID, visit, sample,
+tracklet, camera, observation time, and crop hash. Exact-key validation excludes
+owner fields and evaluator identities. Search normalizes uppercase alphanumerics,
+ranks exact before prefix before contains matches, and labels both OCR score and
+plate text as uncalibrated runtime predictions rather than probabilities or truth.
+
+Indian benchmark strings remain isolated evaluation truth. They measure the
+frozen recognizer but are never copied onto CityFlow journeys. Runtime plate
+detection/OCR over CityFlow evidence is the remaining integration step after the
+sealed score is recorded; its generated manifest and output index must satisfy
+the boundary above before the UI can leave its blocked state.
+
 ## Development-calibrated association diagnostic
 
 The trained encoder's association score was calibrated only on the 19 S01
