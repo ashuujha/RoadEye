@@ -1,6 +1,6 @@
 # Indian plate transcription and OCR evaluation runbook
 
-The Kaggle archive supplies plate boxes but no plate strings. Human review is therefore required before RoadEye can make any OCR accuracy claim. OCR suggestions are convenience text only and never become ground truth until a reviewer inspects every visible character and explicitly marks the row `reviewed`.
+The Kaggle archive supplies plate boxes but no plate strings. Human review is therefore required before RoadEye can make any OCR accuracy claim. OCR suggestions are convenience text only. The only terminal status values are `reviewed`, `corrected`, and `unreadable`; only the first two become ground truth after a reviewer inspects every visible character. Blank or unrecognized values are never truth.
 
 **Current state:** development review is complete and `color_upscale` is frozen.
 The page now contains the 200 sealed test families. Continue at Step 2; do not
@@ -11,11 +11,11 @@ rerun development selection or change tracked ANPR source/configuration.
 Open `artifacts/anpr/transcription-review.html` in Chrome or Edge. The page currently contains exactly 50 development families and no test images. For each plate:
 
 1. Compare every character in the image with the text field. Correct the suggestion as needed.
-2. Choose `reviewed` only when the complete string is legible. Choose `unreadable` when it is not possible to establish the full string.
-3. Use **Mark reviewed + next** or `Ctrl+Enter` for a readable plate.
+2. Choose `reviewed` when the suggestion was already exact, `corrected` when you changed it, or `unreadable` when it is not possible to establish the full string.
+3. Use **Mark reviewed + next**, **Mark corrected + next**, or `Ctrl+Enter` for an unchanged reviewed plate.
 4. Export the CSV and replace `data/anpr/transcriptions.csv` with the exported file.
 
-At least 40 of the 50 development families must have readable reviewed strings. Test rows must remain `suggested` or `pending` at this stage. The freeze command rejects premature test review.
+At least 40 of the 50 development families must have readable `reviewed` or `corrected` strings. Test rows must have blank status at this stage. The freeze command rejects premature test review.
 
 Run:
 
@@ -39,7 +39,15 @@ The first command runs only the frozen preprocessing variant and writes a separa
 test prediction file. The page will then contain exactly 200 independent test
 families. Review them with the same rules, export the CSV, and replace
 `data/anpr/transcriptions.csv`. At least 150 must be fully readable to meet the
-predeclared benchmark floor. Then run the one test scoring command:
+predeclared benchmark floor. Validate and inspect the exact status counts first:
+
+```powershell
+.venv\Scripts\python.exe scripts\run_anpr.py validate-ocr-test
+```
+
+The command reports `reviewed`, `corrected`, `unreadable`, `missing_status`, and
+`unrecognized_status`. It aborts unless every test row has an allowed terminal
+status and `reviewed + corrected >= 150`. Then run the one test scoring command:
 
 ```powershell
 .venv\Scripts\python.exe scripts\run_anpr.py evaluate-ocr-test

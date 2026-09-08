@@ -60,6 +60,10 @@ The current manual action is in `reports/anpr-transcription-runbook.md`: review
 the 50 development families, export to the ignored
 `data/anpr/transcriptions.csv`, and freeze OCR before reviewing any of the 200
 test families. Never mark EasyOCR suggestions as reviewed on the user's behalf.
-`evaluate-ocr-test` is a one-time sealed scoring command after at least 150 test
-strings are human verified. Detector weights, OCR weights, predictions, review
-HTML, screenshots, and transcription CSVs stay ignored.
+`validate-ocr-test` prints and persists reviewed/corrected/unreadable/missing
+counts. `evaluate-ocr-test` is a one-time sealed scoring command only after every
+test row has one of the exact terminal states `reviewed`, `corrected`, or
+`unreadable` and at least 150 are `reviewed` or `corrected`. Never infer or
+default a status; blank and unrecognized rows abort before truth is loaded.
+Detector weights, OCR weights, predictions, review HTML, screenshots, and
+transcription CSVs stay ignored.

@@ -1,0 +1,17 @@
+{
+  "status": "FAIL",
+  "scope": "test_human_ground_truth_status_readiness",
+  "target_images": 200,
+  "reviewed": 0,
+  "corrected": 0,
+  "unreadable": 0,
+  "missing_status": 200,
+  "unrecognized_status": 0,
+  "unrecognized_values": {},
+  "readable": 0,
+  "minimum_readable": 150,
+  "ground_truth_eligible_statuses": [
+    "corrected",
+    "reviewed"
+  ]
+}

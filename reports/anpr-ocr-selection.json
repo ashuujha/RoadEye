@@ -76,8 +76,8 @@
     "artifacts/anpr/ocr-development-predictions.jsonl": "5b1975525a9d6ee73f3524c2c9457a61cdd797544ebdb78a5b818e9b0947c3ed",
     "artifacts/models/easyocr/english_g2.pth": "e2272681d9d67a04e2dff396b6e95077bc19001f8f6d3593c307b9852e1c29e8",
     "configs/anpr.json": "70286bfd2b2f82ea26b11c32e76c26084b30eec561d08058f39aa3c693f47079",
-    "src/roadeye/anpr.py": "35bbba4c7987904aee0d4336da5f753bf036b1b388ee24df68b27292f2874e0c",
-    "scripts/run_anpr.py": "062ac931060370e2307df929aeb5b897db5c7133216a4ea64af326bd3cd53a94"
+    "src/roadeye/anpr.py": "569d303064dbe9cae2d83851c48eac8a9188408c70f6a6b0aa34ccc56fc40e7e",
+    "scripts/run_anpr.py": "628356a717af12fa46eed2a1daf3d4aff13772c84262534005c16be61268e54d"
   },
   "test_predictions_scored_before_freeze": false
 }

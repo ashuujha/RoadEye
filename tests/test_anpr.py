@@ -16,6 +16,8 @@ from roadeye.anpr import (
     load_reviewed_transcriptions,
     normalize_plate_text,
     parse_yolo_label,
+    require_ready_transcription_statuses,
+    transcription_status_report,
     validate_ocr_freeze_reviews,
     validate_ocr_prediction_grid,
     wilson_interval,
@@ -51,7 +53,7 @@ def test_normalization_and_character_error_primitives() -> None:
 
 def test_ocr_freeze_requires_development_truth_and_sealed_test() -> None:
     counts = validate_ocr_freeze_reviews(
-        {"dev-a": "reviewed", "dev-b": "unreadable", "test-a": "suggested"},
+        {"dev-a": "corrected", "dev-b": "unreadable", "test-a": ""},
         {"dev-a", "dev-b"},
         {"test-a"},
         {"dev-a"},
@@ -64,7 +66,7 @@ def test_ocr_freeze_requires_development_truth_and_sealed_test() -> None:
     }
     with pytest.raises(ValueError, match="Test transcriptions"):
         validate_ocr_freeze_reviews(
-            {"dev-a": "reviewed", "test-a": "unreadable"},
+            {"dev-a": "corrected", "test-a": "unreadable"},
             {"dev-a"},
             {"test-a"},
             {"dev-a"},
@@ -123,11 +125,12 @@ def test_yolo_parser_rejects_invalid_rows(tmp_path: Path) -> None:
         parse_yolo_label(valid, 100, 40)
 
 
-def test_only_reviewed_hash_bound_transcriptions_become_truth(tmp_path: Path) -> None:
+def test_only_human_readable_hash_bound_transcriptions_become_truth(tmp_path: Path) -> None:
     manifest = {
         "records": [
             {"image_id": "a", "image_sha256": "hash-a", "split": "test"},
             {"image_id": "b", "image_sha256": "hash-b", "split": "test"},
+            {"image_id": "c", "image_sha256": "hash-c", "split": "test"},
         ]
     }
     path = tmp_path / "truth.csv"
@@ -160,11 +163,119 @@ def test_only_reviewed_hash_bound_transcriptions_become_truth(tmp_path: Path) ->
                 "image_sha256": "hash-b",
                 "split": "test",
                 "plate_text": "MODEL GUESS",
-                "review_status": "suggested",
+                "review_status": "corrected",
                 "notes": "",
             }
         )
-    assert load_reviewed_transcriptions(path, manifest) == {"a": "DL8CAA2242"}
+        writer.writerow(
+            {
+                "image_id": "c",
+                "image_sha256": "hash-c",
+                "split": "test",
+                "plate_text": "MODEL GUESS",
+                "review_status": "unreadable",
+                "notes": "",
+            }
+        )
+    assert load_reviewed_transcriptions(path, manifest) == {
+        "a": "DL8CAA2242",
+        "b": "MODELGUESS",
+    }
+
+
+def test_status_report_excludes_missing_and_unknown_truth(tmp_path: Path) -> None:
+    manifest = {
+        "records": [
+            {
+                "image_id": image_id,
+                "image_sha256": f"hash-{image_id}",
+                "split": "test",
+            }
+            for image_id in ("a", "b", "c", "d", "e")
+        ]
+    }
+    path = tmp_path / "truth.csv"
+    with path.open("w", newline="", encoding="utf-8") as stream:
+        writer = csv.DictWriter(
+            stream,
+            fieldnames=(
+                "image_id",
+                "image_sha256",
+                "split",
+                "plate_text",
+                "review_status",
+                "notes",
+            ),
+        )
+        writer.writeheader()
+        for image_id, status in (
+            ("a", "reviewed"),
+            ("b", "corrected"),
+            ("c", "unreadable"),
+            ("d", ""),
+            ("e", "suggested"),
+        ):
+            writer.writerow(
+                {
+                    "image_id": image_id,
+                    "image_sha256": f"hash-{image_id}",
+                    "split": "test",
+                    "plate_text": "TEST",
+                    "review_status": status,
+                    "notes": "",
+                }
+            )
+    report = transcription_status_report(
+        path, manifest, set("abcde"), "test", minimum_readable=2
+    )
+    assert report == {
+        "status": "FAIL",
+        "scope": "test_human_ground_truth_status_readiness",
+        "target_images": 5,
+        "reviewed": 1,
+        "corrected": 1,
+        "unreadable": 1,
+        "missing_status": 1,
+        "unrecognized_status": 1,
+        "unrecognized_values": {"suggested": 1},
+        "readable": 2,
+        "minimum_readable": 2,
+        "ground_truth_eligible_statuses": ["corrected", "reviewed"],
+    }
+    with pytest.raises(ValueError, match="missing review_status"):
+        require_ready_transcription_statuses(report)
+
+
+def test_status_report_enforces_readable_threshold_after_valid_statuses(
+    tmp_path: Path,
+) -> None:
+    manifest = {
+        "records": [
+            {"image_id": "a", "image_sha256": "hash-a", "split": "test"},
+            {"image_id": "b", "image_sha256": "hash-b", "split": "test"},
+        ]
+    }
+    path = tmp_path / "truth.csv"
+    with path.open("w", newline="", encoding="utf-8") as stream:
+        writer = csv.DictWriter(stream, fieldnames=(
+            "image_id", "image_sha256", "split", "plate_text", "review_status", "notes"
+        ))
+        writer.writeheader()
+        writer.writerow({
+            "image_id": "a", "image_sha256": "hash-a", "split": "test",
+            "plate_text": "A", "review_status": "reviewed", "notes": "",
+        })
+        writer.writerow({
+            "image_id": "b", "image_sha256": "hash-b", "split": "test",
+            "plate_text": "", "review_status": "unreadable", "notes": "",
+        })
+    report = transcription_status_report(
+        path, manifest, {"a", "b"}, "test", minimum_readable=2
+    )
+    assert report["missing_status"] == 0
+    assert report["unrecognized_status"] == 0
+    with pytest.raises(ValueError, match="1 readable human-reviewed strings"):
+        require_ready_transcription_statuses(report)
 
 
 def test_decoded_pixels_are_stable_for_split_fixture(tmp_path: Path) -> None:

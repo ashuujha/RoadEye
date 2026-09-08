@@ -108,3 +108,9 @@ Development review is now complete on 48 readable families. The selected
 11.73-34.26%) and 23.09% character error rate. This is development evidence and
 does not replace the still-unverified sealed test result. The measured shortfall
 must remain visible; the stated 90% target has not been achieved.
+
+Sealed test scoring accepts only personally reviewed hash-bound rows with an
+exact `review_status` of `reviewed` or `corrected`; `unreadable` is terminal but
+excluded from the denominator. Missing and unrecognized states are counted and
+abort the run before truth is loaded. Current test readiness is 0 reviewed,
+0 corrected, 0 unreadable, and 200 missing, so no test accuracy exists.

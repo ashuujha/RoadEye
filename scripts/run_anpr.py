@@ -19,6 +19,8 @@ import numpy as np
 from ultralytics import YOLO
 
 from roadeye.anpr import (
+    GROUND_TRUTH_STATUSES,
+    READABLE_GROUND_TRUTH_STATUSES,
     evaluate_ocr,
     build_detection_dataset,
     detection_metrics,
@@ -26,9 +28,11 @@ from roadeye.anpr import (
     load_reviewed_transcriptions,
     read_json,
     run_ocr,
+    require_ready_transcription_statuses,
     save_audit,
     validate_ocr_freeze_reviews,
     validate_ocr_prediction_grid,
+    transcription_status_report,
     write_predictions,
 )
 from roadeye.phase2 import ROOT
@@ -348,7 +352,7 @@ def build_review(config: dict) -> None:
             row
             for row in transcription_rows.values()
             if row["split"] == "test"
-            and row["review_status"] in {"reviewed", "unreadable"}
+            and row["review_status"] in GROUND_TRUTH_STATUSES
         ]
         if premature_test_rows:
             raise ValueError(
@@ -357,7 +361,7 @@ def build_review(config: dict) -> None:
         for row in transcription_rows.values():
             if row["split"] == "test":
                 row["plate_text"] = ""
-                row["review_status"] = "pending"
+                row["review_status"] = ""
                 row["notes"] = ""
     items = []
     for image_id, record in sorted(records.items(), key=lambda row: (row[1]["split"], row[0])):
@@ -374,9 +378,9 @@ def build_review(config: dict) -> None:
             key=lambda row: (vote_counts[row["text"]], row["score"], row["text"]),
         )["text"]
         existing = transcription_rows[image_id]
-        if existing["review_status"] == "pending":
+        if existing["review_status"] not in GROUND_TRUTH_STATUSES:
             existing["plate_text"] = suggestion
-            existing["review_status"] = "suggested"
+            existing["review_status"] = ""
         image_path = ROOT / config["dataset_root"] / record["image"]
         mime = "image/png" if image_path.suffix.lower() == ".png" else "image/jpeg"
         items.append(
@@ -428,9 +432,9 @@ def build_review(config: dict) -> None:
     ]
     template = """<!doctype html><meta charset="utf-8"><title>RoadEye transcription review</title>
 <style>body{font:16px system-ui;max-width:1000px;margin:20px auto;background:#f5f5f5;color:#111}main{background:white;padding:20px;border-radius:8px}img{display:block;max-width:100%;max-height:300px;margin:20px auto;image-rendering:auto}input{font:700 28px monospace;width:100%;box-sizing:border-box;padding:10px}button,select{font:inherit;padding:8px;margin:6px}.warn{background:#fff3cd;padding:12px}.suggestions{font-family:monospace;white-space:pre-wrap}</style>
-<main><h1>RoadEye __PHASE__ transcription review</h1><p class="warn">Model suggestions are not ground truth. Inspect every character in the image before marking reviewed. Use unreadable when the full string cannot be established.</p><p id="progress"></p><img id="plate"><p id="meta"></p><input id="text" autocomplete="off" spellcheck="false"><p class="suggestions" id="suggestions"></p><select id="status"><option>suggested</option><option>reviewed</option><option>unreadable</option><option>pending</option></select><input id="notes" placeholder="notes"><div><button id="previous">Previous</button><button id="save">Save current</button><button id="review">Mark reviewed + next</button><button id="next">Next</button><button id="export">Export CSV</button></div></main>
-<script>const original=__DATA__; const allRows=__ROWS__; const key='roadeye-anpr-review-'+__MANIFEST__+'-'+__PHASE_JSON__; const saved=JSON.parse(localStorage.getItem(key)||'{}'); const items=original.map(x=>Object.assign(x,saved[x.image_id]||{})); let index=0;
-const el=id=>document.getElementById(id); function clean(x){return x.toUpperCase().replace(/[^A-Z0-9]/g,'')}; function persist(){const x=items[index]; x.plate_text=clean(el('text').value); x.review_status=el('status').value; x.notes=el('notes').value; saved[x.image_id]={plate_text:x.plate_text,review_status:x.review_status,notes:x.notes}; localStorage.setItem(key,JSON.stringify(saved))}; function render(){const x=items[index]; el('plate').src=x.image; el('text').value=x.plate_text; el('status').value=x.review_status; el('notes').value=x.notes; el('meta').textContent=`${x.image_id} | ${x.split} | ${x.image_sha256.slice(0,12)}`; el('suggestions').textContent=x.suggestions.map(s=>`${s.variant}: ${s.text} (${s.score})`).join('\\n'); el('progress').textContent=`${index+1}/${items.length}; reviewed ${items.filter(x=>x.review_status==='reviewed').length}; unreadable ${items.filter(x=>x.review_status==='unreadable').length}`; el('text').focus(); el('text').select()}; function move(n){persist(); index=Math.max(0,Math.min(items.length-1,index+n)); render()}; el('previous').onclick=()=>move(-1); el('next').onclick=()=>move(1); el('save').onclick=()=>{persist();render()}; el('review').onclick=()=>{el('status').value='reviewed';move(1)}; document.addEventListener('keydown',e=>{if(e.ctrlKey&&e.key==='Enter'){el('review').click()}}); function csvCell(x){return '"'+String(x).replaceAll('"','""')+'"'}; el('export').onclick=()=>{persist(); const columns=['image_id','image_sha256','split','plate_text','review_status','notes']; const byId=Object.fromEntries(items.map(x=>[x.image_id,x])); const rows=allRows.map(x=>Object.assign(x,byId[x.image_id]||{})); const lines=[columns.join(','),...rows.map(x=>columns.map(c=>csvCell(x[c]||'')).join(','))]; const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([lines.join('\\r\\n')+'\\r\\n'],{type:'text/csv'})); a.download='transcriptions.csv';a.click()}; render();</script>"""
+<main><h1>RoadEye __PHASE__ transcription review</h1><p class="warn">Model suggestions are not ground truth. Inspect every character in the image. Choose reviewed when the suggestion was already exact, corrected when you changed it, or unreadable when the full string cannot be established. An unreviewed row has a blank status and cannot be scored.</p><p id="progress"></p><img id="plate"><p id="meta"></p><input id="text" autocomplete="off" spellcheck="false"><p class="suggestions" id="suggestions"></p><select id="status"><option value="">unreviewed</option><option value="reviewed">reviewed</option><option value="corrected">corrected</option><option value="unreadable">unreadable</option></select><input id="notes" placeholder="notes"><div><button id="previous">Previous</button><button id="save">Save current</button><button id="review">Mark reviewed + next</button><button id="correct">Mark corrected + next</button><button id="next">Next</button><button id="export">Export CSV</button></div></main>
+<script>const original=__DATA__; const allRows=__ROWS__; const key='roadeye-anpr-review-v2-'+__MANIFEST__+'-'+__PHASE_JSON__; const saved=JSON.parse(localStorage.getItem(key)||'{}'); const items=original.map(x=>Object.assign(x,saved[x.image_id]||{})); let index=0;
+const el=id=>document.getElementById(id); function clean(x){return x.toUpperCase().replace(/[^A-Z0-9]/g,'')}; function persist(){const x=items[index]; x.plate_text=clean(el('text').value); x.review_status=el('status').value; x.notes=el('notes').value; saved[x.image_id]={plate_text:x.plate_text,review_status:x.review_status,notes:x.notes}; localStorage.setItem(key,JSON.stringify(saved))}; function render(){const x=items[index]; el('plate').src=x.image; el('text').value=x.plate_text; el('status').value=x.review_status; el('notes').value=x.notes; el('meta').textContent=`${x.image_id} | ${x.split} | ${x.image_sha256.slice(0,12)}`; el('suggestions').textContent=x.suggestions.map(s=>`${s.variant}: ${s.text} (${s.score})`).join('\\n'); el('progress').textContent=`${index+1}/${items.length}; reviewed ${items.filter(x=>x.review_status==='reviewed').length}; corrected ${items.filter(x=>x.review_status==='corrected').length}; unreadable ${items.filter(x=>x.review_status==='unreadable').length}; missing ${items.filter(x=>!x.review_status).length}`; el('text').focus(); el('text').select()}; function move(n){persist(); index=Math.max(0,Math.min(items.length-1,index+n)); render()}; el('previous').onclick=()=>move(-1); el('next').onclick=()=>move(1); el('save').onclick=()=>{persist();render()}; el('review').onclick=()=>{el('status').value='reviewed';move(1)}; el('correct').onclick=()=>{el('status').value='corrected';move(1)}; document.addEventListener('keydown',e=>{if(e.ctrlKey&&e.key==='Enter'){el('review').click()}}); function csvCell(x){return '"'+String(x).replaceAll('"','""')+'"'}; el('export').onclick=()=>{persist(); const columns=['image_id','image_sha256','split','plate_text','review_status','notes']; const byId=Object.fromEntries(items.map(x=>[x.image_id,x])); const rows=allRows.map(x=>Object.assign(x,byId[x.image_id]||{})); const lines=[columns.join(','),...rows.map(x=>columns.map(c=>csvCell(x[c]||'')).join(','))]; const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([lines.join('\\r\\n')+'\\r\\n'],{type:'text/csv'})); a.download='transcriptions.csv';a.click()}; render();</script>"""
     page = template.replace("__DATA__", json.dumps(items).replace("</", "<\\/"))
     page = page.replace("__ROWS__", json.dumps(export_rows).replace("</", "<\\/"))
     page = page.replace("__MANIFEST__", json.dumps(manifest["archive_sha256"][:16]))
@@ -465,7 +469,7 @@ def evaluate(config: dict) -> None:
         and row["family_representative"]
     }
     if any(
-        statuses.get(image_id) in {"reviewed", "unreadable"}
+        statuses.get(image_id) in GROUND_TRUTH_STATUSES
         for image_id in test_ids
     ):
         raise ValueError(
@@ -498,7 +502,7 @@ def evaluate(config: dict) -> None:
         },
         "limitations": [
             "This phase evaluates recognition on supplied plate boxes, not end-to-end scene ANPR",
-            "Ground truth must have review_status=reviewed; suggestions are never labels",
+            "Ground truth requires review_status=reviewed or corrected; blank and model output are never labels",
             "Scores are EasyOCR confidences and are not calibrated probabilities",
         ],
     }
@@ -535,7 +539,7 @@ def freeze_ocr(config: dict) -> None:
         {
             image_id
             for image_id, status in statuses.items()
-            if status == "reviewed"
+            if status in READABLE_GROUND_TRUTH_STATUSES
         },
         minimum_readable=40,
     )
@@ -581,11 +585,8 @@ def freeze_ocr(config: dict) -> None:
     print(json.dumps(selection, indent=2))
 
 
-def evaluate_ocr_test(config: dict) -> None:
-    selection = _validate_ocr_selection(ROOT / "reports/anpr-ocr-selection.json")
+def validate_ocr_test(config: dict) -> dict:
     manifest = read_json(ROOT / config["split_manifest"])
-    truth = load_reviewed_transcriptions(ROOT / config["transcriptions"], manifest)
-    statuses = _review_statuses(ROOT / config["transcriptions"])
     test_ids = {
         row["image_id"]
         for row in manifest["records"]
@@ -593,16 +594,34 @@ def evaluate_ocr_test(config: dict) -> None:
         and row["split"] == "test"
         and row["family_representative"]
     }
-    unfinished = {
-        image_id
-        for image_id in test_ids
-        if statuses.get(image_id) not in {"reviewed", "unreadable"}
+    report = transcription_status_report(
+        ROOT / config["transcriptions"],
+        manifest,
+        test_ids,
+        "test",
+        minimum_readable=150,
+    )
+    write_json(ROOT / "reports/anpr-ocr-test-readiness.json", report)
+    print(json.dumps(report, indent=2))
+    return report
+
+
+def evaluate_ocr_test(config: dict) -> None:
+    selection = _validate_ocr_selection(ROOT / "reports/anpr-ocr-selection.json")
+    manifest = read_json(ROOT / config["split_manifest"])
+    readiness = validate_ocr_test(config)
+    require_ready_transcription_statuses(readiness)
+    truth = load_reviewed_transcriptions(ROOT / config["transcriptions"], manifest)
+    test_ids = {
+        row["image_id"]
+        for row in manifest["records"]
+        if row["series"] == "plate_crop"
+        and row["split"] == "test"
+        and row["family_representative"]
     }
-    if unfinished:
-        raise ValueError("All 200 test plate families require terminal review")
     test_truth = test_ids & truth.keys()
-    if len(test_truth) < 150:
-        raise ValueError("At least 150 readable independent test strings are required")
+    if len(test_truth) != readiness["readable"]:
+        raise ValueError("Validated readable count differs from loaded ground truth")
     predictions = [
         row
         for row in _read_predictions(config, "test")
@@ -745,6 +764,7 @@ def main() -> None:
             "build-review",
             "evaluate",
             "freeze-ocr",
+            "validate-ocr-test",
             "evaluate-ocr-test",
             "verify-offline",
         ],
@@ -768,6 +788,8 @@ def main() -> None:
         build_review(config)
     elif args.action == "freeze-ocr":
         freeze_ocr(config)
+    elif args.action == "validate-ocr-test":
+        require_ready_transcription_statuses(validate_ocr_test(config))
     elif args.action == "evaluate-ocr-test":
         evaluate_ocr_test(config)
     elif args.action == "verify-offline":

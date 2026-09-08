@@ -30,6 +30,8 @@ TRANSCRIPTION_COLUMNS = (
     "review_status",
     "notes",
 )
+GROUND_TRUTH_STATUSES = frozenset({"reviewed", "corrected", "unreadable"})
+READABLE_GROUND_TRUTH_STATUSES = frozenset({"reviewed", "corrected"})
 LOGGER = logging.getLogger(__name__)
 
 
@@ -349,7 +351,7 @@ def initialize_transcriptions(manifest: dict, destination: Path) -> int:
                     "image_sha256": record["image_sha256"],
                     "split": record["split"],
                     "plate_text": previous.get("plate_text", ""),
-                    "review_status": previous.get("review_status", "pending"),
+                    "review_status": previous.get("review_status", ""),
                     "notes": previous.get("notes", ""),
                 }
             )
@@ -370,7 +372,7 @@ def load_reviewed_transcriptions(path: Path, manifest: dict) -> dict[str, str]:
                 raise ValueError(f"Transcription image hash mismatch: {image_id}")
             if row["split"] != expected[image_id]["split"]:
                 raise ValueError(f"Transcription split mismatch: {image_id}")
-            if row["review_status"] != "reviewed":
+            if row.get("review_status", "") not in READABLE_GROUND_TRUTH_STATUSES:
                 continue
             text = normalize_plate_text(row["plate_text"])
             if not text or not PLATE_TEXT.fullmatch(text):
@@ -518,7 +520,7 @@ def validate_ocr_freeze_reviews(
     prematurely_opened_test = {
         image_id
         for image_id in test_ids
-        if statuses.get(image_id) in {"reviewed", "unreadable"}
+        if statuses.get(image_id) in GROUND_TRUTH_STATUSES
     }
     if prematurely_opened_test:
         raise ValueError(
@@ -527,7 +529,7 @@ def validate_ocr_freeze_reviews(
     unfinished_development = {
         image_id
         for image_id in development_ids
-        if statuses.get(image_id) not in {"reviewed", "unreadable"}
+        if statuses.get(image_id) not in GROUND_TRUTH_STATUSES
     }
     if unfinished_development:
         raise ValueError("All development plate families require terminal review")
@@ -541,6 +543,95 @@ def validate_ocr_freeze_reviews(
         "development_readable_images": len(readable_development),
         "development_unreadable_images": len(development_ids - reviewed_ids),
     }
+
+
+def transcription_status_report(
+    path: Path,
+    manifest: dict,
+    target_ids: set[str],
+    split: str,
+    minimum_readable: int,
+) -> dict:
+    """Audit exact human-review statuses before any OCR truth is loaded.
+
+    Blank or absent statuses are missing. Every nonblank value outside the three
+    declared states is unrecognized. Neither category can enter a denominator.
+    """
+
+    expected = {record["image_id"]: record for record in manifest["records"]}
+    status_counts = Counter({status: 0 for status in GROUND_TRUTH_STATUSES})
+    missing_status = 0
+    unrecognized_status = 0
+    unrecognized_values: Counter[str] = Counter()
+    seen: set[str] = set()
+    seen_targets: set[str] = set()
+    with path.open(newline="", encoding="utf-8") as stream:
+        reader = csv.DictReader(stream)
+        if not reader.fieldnames or "review_status" not in reader.fieldnames:
+            raise ValueError("Transcription CSV is missing the review_status column")
+        for row in reader:
+            image_id = row.get("image_id", "")
+            if image_id in seen or image_id not in expected:
+                raise ValueError(f"Unknown or duplicate transcription row: {image_id}")
+            seen.add(image_id)
+            if image_id not in target_ids:
+                continue
+            seen_targets.add(image_id)
+            record = expected[image_id]
+            if row.get("image_sha256") != record["image_sha256"]:
+                raise ValueError(f"Transcription image hash mismatch: {image_id}")
+            if row.get("split") != split or record["split"] != split:
+                raise ValueError(f"Transcription split mismatch: {image_id}")
+            status = row.get("review_status", "")
+            if not status.strip():
+                missing_status += 1
+            elif status in GROUND_TRUTH_STATUSES:
+                status_counts[status] += 1
+            else:
+                unrecognized_status += 1
+                unrecognized_values[status] += 1
+    missing_status += len(target_ids - seen_targets)
+    readable = status_counts["reviewed"] + status_counts["corrected"]
+    valid = (
+        len(seen_targets) == len(target_ids)
+        and missing_status == 0
+        and unrecognized_status == 0
+        and readable >= minimum_readable
+    )
+    return {
+        "status": "PASS" if valid else "FAIL",
+        "scope": f"{split}_human_ground_truth_status_readiness",
+        "target_images": len(target_ids),
+        "reviewed": status_counts["reviewed"],
+        "corrected": status_counts["corrected"],
+        "unreadable": status_counts["unreadable"],
+        "missing_status": missing_status,
+        "unrecognized_status": unrecognized_status,
+        "unrecognized_values": dict(sorted(unrecognized_values.items())),
+        "readable": readable,
+        "minimum_readable": minimum_readable,
+        "ground_truth_eligible_statuses": sorted(READABLE_GROUND_TRUTH_STATUSES),
+    }
+
+
+def require_ready_transcription_statuses(report: dict) -> None:
+    """Abort sealed scoring after its status report has been persisted."""
+
+    if report["missing_status"]:
+        raise ValueError(
+            f"OCR scoring aborted: {report['missing_status']} rows have missing review_status"
+        )
+    if report["unrecognized_status"]:
+        raise ValueError(
+            "OCR scoring aborted: "
+            f"{report['unrecognized_status']} rows have unrecognized review_status values"
+        )
+    if report["readable"] < report["minimum_readable"]:
+        raise ValueError(
+            "OCR scoring aborted: "
+            f"{report['readable']} readable human-reviewed strings; "
+            f"at least {report['minimum_readable']} are required"
+        )
 
 
 def validate_ocr_prediction_grid(

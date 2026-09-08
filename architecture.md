@@ -195,7 +195,11 @@ hashed; demo/runtime construction sets downloads off.
 The transcription boundary is sequential. A self-contained page first exposes
 only 50 development families. Test rows must remain unreviewed while one
 preprocessing variant is selected and all source/model/input hashes are frozen.
-Only then can the page expose 200 test families for one scoring run. Hash-bound
-CSV rows marked `reviewed` are truth; `suggested`, `pending`, and `unreadable`
-rows never enter an accuracy denominator. This produces a recognition-on-crops
-metric and does not conflate detector performance with full-string OCR.
+Only then can the page expose 200 test families for one scoring run. The only
+terminal `review_status` values are `reviewed`, `corrected`, and `unreadable`.
+Only hash-bound `reviewed` and `corrected` rows are ground truth. Before sealed
+scoring, RoadEye persists and prints exact counts for all three states plus
+missing and unrecognized states; either invalid category aborts scoring, and at
+least 150 readable rows are required. Blank or model-suggested rows never enter
+an accuracy denominator. This produces a recognition-on-crops metric and does
+not conflate detector performance with full-string OCR.

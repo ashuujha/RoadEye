@@ -13,7 +13,9 @@
 ## UNVERIFIED
 
 - **Sealed-test full-string OCR accuracy:** development has measured truth, but
-  all 200 test rows still await human review. No test accuracy or 90% claim exists.
+  all 200 test rows still await human review. The pre-score audit measured
+  `reviewed=0`, `corrected=0`, `unreadable=0`, `missing_status=200`, and
+  `unrecognized_status=0`, then aborted. No test accuracy or 90% claim exists.
 - **End-to-end scene ANPR:** the detector and recognition-on-supplied-crop tracks are evaluated separately. Detector output has not been fed into OCR for an end-to-end metric.
 - **Near-duplicate visual review:** exact duplicates and conservative scene pHash families are grouped, but a human near-duplicate audit is unfinished.
 - **Supplementary transcribed datasets:** the prior capped Roboflow and IEEE DataPort checks found no accessible plate-string corpus. No supplementary files were added.
@@ -36,6 +38,13 @@ and runtime source hashes before test truth. A separate selected-variant inferen
 now covers 200 test families. The test-only review page passed headless Chrome and
 JavaScript checks, embeds zero development images, and preserves all 250 CSV rows.
 Test accuracy remains **UNVERIFIED** pending human review.
+
+The review contract now has exactly three terminal values: `reviewed`,
+`corrected`, and `unreadable`. Only the first two enter ground truth. The sealed
+command writes `reports/anpr-ocr-test-readiness.json` and prints all status counts
+before it can load truth. Missing or unrecognized values abort scoring; they are
+never defaulted to reviewed. The current 200 model suggestions were migrated to
+blank status while retaining suggestion text only as a review aid.
 
 ## FAIL
 
