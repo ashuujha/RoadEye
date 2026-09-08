@@ -6,13 +6,13 @@ Re-ID framing remains two cameras verified and the five-camera S06 demo unverifi
 
 | Step | Built change | Verification |
 | --- | --- | --- |
-| 6.1 | Typed read-only client (fe58f7c) | Included in passing combined typecheck/build; browser UNVERIFIED |
-| 6.2 | Reduced navigation (837934b) | Included in passing combined typecheck/build; browser UNVERIFIED |
-| 6.3 | Evidence workspace (d6074b0) | Component test PASS; browser UNVERIFIED |
-| 6.4a | Trajectory and plate search (50ec830) | Component/geometry tests PASS; browser UNVERIFIED |
-| 6.4b | Analytics maps camera counts, OD endpoints, and transition-support proxies (f5d589d) | Static checks and claim-boundary tests PASS; browser UNVERIFIED |
-| 6.4c | Typed camera map and prediction catalog; explicit interpolation only (e7eefd8) | Static checks, geometry and claim-boundary tests PASS; browser UNVERIFIED |
-| 6.4d | Exact evidence drawer selection and /api proxy routing (70cbc7e) | Selection/validation/render tests PASS; browser UNVERIFIED |
+| 6.1 | Typed read-only client (fe58f7c) | Typecheck/build and exercised live API requests PASS |
+| 6.2 | Reduced navigation (837934b) | Typecheck/build and four-view browser navigation PASS |
+| 6.3 | Evidence workspace (d6074b0) | Component test and exercised image loading PASS; metadata layout FAIL |
+| 6.4a | Trajectory and plate search (50ec830) | Tests and 3/3 browser plate searches PASS; mobile table layout FAIL |
+| 6.4b | Analytics maps camera counts, OD endpoints, and transition-support proxies (f5d589d) | Tests and exercised desktop/mobile rendering PASS |
+| 6.4c | Typed camera map and prediction catalog; explicit interpolation only (e7eefd8) | Tests and browser data/toggle/drawer flow PASS; S06 gap-label layout FAIL |
+| 6.4d | Exact evidence drawer selection and /api proxy routing (70cbc7e) | Tests and exercised desktop drawer images/hash/keyboard checks PASS |
 
 Analytics removes unsupported recognition coverage, privacy suppression, congestion,
 travel-time and run-selection claims. Every aggregate is labelled UNVERIFIED and
@@ -22,7 +22,7 @@ bounds show unavailable. API failures never become zero-valued measurements.
 No new zero-reference source files were identified at 6.4b. Tests were
 intentionally deferred until 6.4d, per user instruction. Graphify outputs remain
 unstaged. Local checkpoint branches and verified all-ref bundles are created at
-each sub-step; no push, browser rehearsal, or backend execution is authorized here.
+each sub-step. The subsequently approved browser rehearsal is recorded below.
 
 6.4c removes the obsolete trajectory-to-map record adapter and consolidates map
 geometry in NetworkMap. Camera projection preserves local aspect ratio, rejects
@@ -37,7 +37,7 @@ missing sample nor a hash mismatch falls back to another crop. Map, trajectory,
 and workspace selection open the same drawer. Source frames, complete crop hashes,
 bounding boxes, timestamps, OCR and association score semantics remain visible.
 Drawer Escape/Tab focus handling and image failure notices are implemented;
-browser behavior remains UNVERIFIED until an authorized rehearsal.
+browser behavior was subsequently checked in the approved rehearsal below.
 
 Vite's development proxy changes from /v1 to /api as necessary client routing.
 The frontend ignores installed dependencies and generated build/test output.
@@ -83,15 +83,20 @@ Each verified as a complete-history all-ref Git bundle.
 | 6.4c | checkpoint/audited-network-map | RoadEye-after-network-map.bundle | 17C5A2380842B9DD873CE9F82DC01AF4E7A07F53E9B21F7793AA03632EDF9BD0 |
 | 6.4d | checkpoint/audited-evidence-drawer | RoadEye-after-evidence-drawer.bundle | 0FD62874B177E98387AA100E5FF45CC026F3AB9FC58272AAE0B395D1FF5F713F |
 
-## Remaining verification and scope
+## Browser rehearsal and remaining scope
 
-- UNVERIFIED: browser interactions, responsive appearance, keyboard focus behavior,
-  live API proxy requests and image loading. No browser rehearsal was run.
+- PASS: approved Chromium rehearsal exercised all four routes in S02 and S06;
+  3/3 known plate searches returned exact matched evidence through the /api proxy.
+  Desktop drawer keyboard controls and exercised image loading passed.
+- FAIL: S06 map gap labels overlap; Trajectories exceeds mobile width; Evidence
+  metadata exceeds desktop and mobile width. No fixes were applied.
+- Details and screenshots: [frontend-browser-rehearsal.md](frontend-browser-rehearsal.md).
+- UNVERIFIED: other browser engines, physical mobile devices and production hosting.
 - Backend/Re-ID/OCR metrics were not re-evaluated or changed. The backend source,
   configs, scripts, tests and original test_frontend have no diff against ff3a618.
 - PASS: master, backend-audited and backup-before-cleanup still point to ff3a618.
   No remote was configured or changed, and nothing was pushed.
 - PASS: final import scan found zero unreferenced non-entry source files.
   Legacy unused generation tooling is flagged above; it was not invoked.
-- Next phase: user review, then an explicitly authorized browser/API rehearsal.
-  Production hosting/serving of the built React assets remains outside this pass.
+- Next phase: user review of the rehearsal, then an approved frontend display
+  repair for the three findings. Publishing/merging branches has not begun.
