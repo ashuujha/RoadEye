@@ -1,243 +1,361 @@
-import { useId, useState } from "react";
-import { useQuery } from "@tanstack/react-query";
-
-import { api } from "../api";
-import type { EvidenceSelectionHandler } from "../evidence";
-import type { CameraDensityRow, CameraPosition, DemoStatus, Journey } from "../api.generated";
+import React, { useState } from "react";
 import { IconLayers } from "./Icons";
-import { StatusBadge } from "./StatusBadge";
 
-interface MapCamera extends CameraPosition {
-  readonly id: string;
-  readonly x: number;
-  readonly y: number;
-}
-
-interface MapLink {
-  readonly source: string;
-  readonly target: string;
-  readonly elapsed_seconds: number | null;
-}
-
-interface MapVisit {
-  readonly id: string;
-  readonly camera_id: string;
-  readonly visitIndex: number;
-  readonly sequence: number;
-}
-
-export function buildJourneyMapModel(
-  journey: Journey | null,
-  status?: Pick<DemoStatus, "camera_positions">,
-) {
-  const positions = new Map<string, CameraPosition>(Object.entries(status?.camera_positions ?? {}));
-  for (const visit of journey?.visits ?? []) {
-    if (!positions.has(visit.camera)) positions.set(visit.camera, visit.position);
-  }
-  const valid = [...positions].filter(([, point]) =>
-    Number.isFinite(point.latitude) && Number.isFinite(point.longitude) &&
-    Math.abs(point.latitude) <= 90 && Math.abs(point.longitude) <= 180,
-  );
-  const omittedCameraIds = [...positions.keys()].filter((id) => !valid.some(([key]) => key === id));
-  const latitudeCenter = valid.length ? valid.reduce((sum, [, p]) => sum + p.latitude, 0) / valid.length : 0;
-  const longitudeScale = Math.max(0.001, Math.cos(latitudeCenter * Math.PI / 180));
-  const coordinates = valid.map(([id, position]) => ({
-    id, position, east: position.longitude * longitudeScale, north: position.latitude,
-  }));
-  const east = coordinates.map((p) => p.east);
-  const north = coordinates.map((p) => p.north);
-  const minEast = east.length ? Math.min(...east) : 0;
-  const maxEast = east.length ? Math.max(...east) : 0;
-  const minNorth = north.length ? Math.min(...north) : 0;
-  const maxNorth = north.length ? Math.max(...north) : 0;
-  const width = maxEast - minEast;
-  const height = maxNorth - minNorth;
-  const scale = width === 0 && height === 0 ? 1 : Math.min(
-    width === 0 ? Infinity : 490 / width,
-    height === 0 ? Infinity : 190 / height,
-  );
-  const cameras: MapCamera[] = coordinates.map(({ id, position, east, north }) => ({
-    id, ...position,
-    x: 300 + (east - (minEast + maxEast) / 2) * scale,
-    y: 130 - (north - (minNorth + maxNorth) / 2) * scale,
-  }));
-  const links: MapLink[] = [];
-  (journey?.visits ?? []).forEach((visit, index) => {
-    const interpolation = visit.interpolation_from_previous;
-    const previous = journey?.visits[index - 1];
-    if (interpolation && previous &&
-        interpolation.from_camera === previous.camera &&
-        interpolation.to_camera === visit.camera) {
-      links.push({
-        source: interpolation.from_camera, target: interpolation.to_camera,
-        elapsed_seconds: visit.incoming_link?.temporal_gap_s ?? null,
-      });
-    }
-  });
-  const nodes: MapVisit[] = (journey?.visits ?? []).map((visit, visitIndex) => ({
-    id: (journey?.global_id ?? "") + ":" + visitIndex,
-    camera_id: visit.camera, visitIndex, sequence: visit.sequence,
-  }));
-  return { cameras, links, nodes, omittedCameraIds };
-}
+type RecordData = Record<string, any>;
 
 interface NetworkMapProps {
-  readonly onSelectEvidence?: EvidenceSelectionHandler;
-  readonly journey?: Journey;
-  readonly status?: Pick<DemoStatus, "camera_positions">;
-  readonly cameraCounts?: readonly CameraDensityRow[];
-  readonly height?: number;
+  cameras: RecordData[];
+  edges: RecordData[];
+  links?: RecordData[];
+  nodes?: RecordData[];
+  rejectedLinks?: RecordData[];
+  reviewCandidates?: RecordData[];
+  selectedCameraId?: string;
+  onSelectCamera?: (cameraId: string) => void;
+  onSelectNode?: (observationId: string) => void;
+  height?: number;
 }
 
-export function NetworkMap({ journey, status, cameraCounts = [], height = 420, onSelectEvidence }: NetworkMapProps) {
+export function NetworkMap({
+  cameras,
+  edges,
+  links = [],
+  nodes = [],
+  rejectedLinks = [],
+  reviewCandidates = [],
+  selectedCameraId,
+  onSelectCamera,
+  onSelectNode,
+  height = 420,
+}: NetworkMapProps) {
   const [showInferred, setShowInferred] = useState(true);
-  const patternId = useId();
-  const arrowId = useId();
-  const model = buildJourneyMapModel(journey ?? null, status);
-  const byCamera = new Map(model.cameras.map((camera) => [camera.id, camera]));
-  const counts = new Map(cameraCounts.map((row) => [row.camera, row.observed_runtime_visit_count]));
-  const maximumCount = Math.max(1, ...counts.values());
+  const [showReview, setShowReview] = useState(true);
+  const [showRejected, setShowRejected] = useState(false);
+
+  // Default coordinate space: 600 x 260
+  const viewBoxWidth = 600;
+  const viewBoxHeight = 260;
 
   return (
-    <div className="network-map-container" style={{ minHeight: height }}>
+    <div className="network-map-container" style={{ minHeight: `${height}px` }}>
+      {/* Map Layer Controls & Discoverable Legend */}
       <div className="map-toolbar">
         <div className="map-title-group">
           <IconLayers size={16} />
-          <span className="map-title">Approximate camera positions</span>
-          <StatusBadge status="uncertain" label="UNVERIFIED journey" size="sm" />
+          <span className="map-title">Network Topology & Journey Tracking</span>
+          <span className="map-badge">Schematic Geometry</span>
         </div>
+
         <div className="map-legend">
-          <span className="legend-item"><span className="legend-indicator dot-observed" />Observed camera visit</span>
           <label className="legend-item">
-            <input type="checkbox" checked={showInferred} onChange={(event) => setShowInferred(event.target.checked)} />
-            <span className="legend-indicator line-inferred" />Inferred straight connectors
+            <span className="legend-indicator dot-observed" />
+            <span>Observed Sightings</span>
+          </label>
+
+          <label className="legend-item">
+            <input
+              type="checkbox"
+              checked={showInferred}
+              onChange={(e) => setShowInferred(e.target.checked)}
+            />
+            <span className="legend-indicator line-inferred" />
+            <span>Inferred Link</span>
+          </label>
+
+          <label className="legend-item">
+            <input
+              type="checkbox"
+              checked={showReview}
+              onChange={(e) => setShowReview(e.target.checked)}
+            />
+            <span className="legend-indicator line-review" />
+            <span>Review Link</span>
+          </label>
+
+          <label className="legend-item">
+            <input
+              type="checkbox"
+              checked={showRejected}
+              onChange={(e) => setShowRejected(e.target.checked)}
+            />
+            <span className="legend-indicator line-rejected" />
+            <span>Rejected Link</span>
           </label>
         </div>
       </div>
-      {model.omittedCameraIds.length > 0 && (
-        <p className="status-banner banner-danger" role="alert">
-          Unavailable camera positions: {model.omittedCameraIds.join(", ")}. Their geometry is omitted.
-        </p>
-      )}
-      {model.cameras.length === 0 ? <p className="empty-text">No usable camera positions are available.</p> : (
-        <div className="map-canvas-wrapper">
-          <svg viewBox="0 0 600 260" className="network-svg" role="img" aria-label="Approximate camera positions with observed visits and inferred straight connectors">
-            <defs>
-              <pattern id={patternId} width="30" height="30" patternUnits="userSpaceOnUse">
-                <path d="M 30 0 L 0 0 0 30" fill="none" stroke="#1f2127" strokeWidth="1" />
-              </pattern>
-              <marker id={arrowId} viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
-                <path d="M 0 1 L 9 5 L 0 9 z" fill="#8BAFC8" />
-              </marker>
-            </defs>
-            <rect width="100%" height="100%" fill={"url(#" + patternId + ")"} />
-            {showInferred && model.links.map((link, index) => {
-              const from = byCamera.get(link.source);
-              const to = byCamera.get(link.target);
-              if (!from || !to) return null;
+
+      <div className="map-canvas-wrapper">
+        <svg
+          viewBox={`0 0 ${viewBoxWidth} ${viewBoxHeight}`}
+          className="network-svg"
+          role="img"
+          aria-label="RoadEye network camera topology, observed nodes, and inferred connections"
+        >
+          <defs>
+            {/* Grid background pattern */}
+            <pattern id="grid" width="30" height="30" patternUnits="userSpaceOnUse">
+              <path d="M 30 0 L 0 0 0 30" fill="none" stroke="#1f2127" strokeWidth="1" />
+            </pattern>
+
+            {/* Standard edge arrow */}
+            <marker
+              id="edge-arrow"
+              viewBox="0 0 10 10"
+              refX="9"
+              refY="5"
+              markerWidth="6"
+              markerHeight="6"
+              orient="auto-start-reverse"
+            >
+              <path d="M 0 1 L 9 5 L 0 9 z" fill="#3b3d47" />
+            </marker>
+
+            {/* Inferred link arrow (blue) */}
+            <marker
+              id="inferred-arrow"
+              viewBox="0 0 10 10"
+              refX="9"
+              refY="5"
+              markerWidth="7"
+              markerHeight="7"
+              orient="auto-start-reverse"
+            >
+              <path d="M 0 1 L 9 5 L 0 9 z" fill="#8BAFC8" />
+            </marker>
+
+            {/* Review link arrow (amber) */}
+            <marker
+              id="review-arrow"
+              viewBox="0 0 10 10"
+              refX="9"
+              refY="5"
+              markerWidth="7"
+              markerHeight="7"
+              orient="auto-start-reverse"
+            >
+              <path d="M 0 1 L 9 5 L 0 9 z" fill="#D2B477" />
+            </marker>
+
+            {/* Rejected link arrow (red) */}
+            <marker
+              id="rejected-arrow"
+              viewBox="0 0 10 10"
+              refX="9"
+              refY="5"
+              markerWidth="7"
+              markerHeight="7"
+              orient="auto-start-reverse"
+            >
+              <path d="M 0 1 L 9 5 L 0 9 z" fill="#D98689" />
+            </marker>
+          </defs>
+
+          {/* Grid background */}
+          <rect width="100%" height="100%" fill="url(#grid)" />
+
+          {/* 1. Base Graph Edges (Directed Network Geometry) */}
+          {edges.map((e) => {
+            const a = cameras.find((c) => c.id === e.source);
+            const b = cameras.find((c) => c.id === e.target);
+            if (!a || !b) return null;
+
+            return (
+              <g key={`base-${e.source}-${e.target}`}>
+                <line
+                  x1={a.x}
+                  y1={a.y}
+                  x2={b.x}
+                  y2={b.y}
+                  stroke="#2b2d37"
+                  strokeWidth="2"
+                  markerEnd="url(#edge-arrow)"
+                />
+              </g>
+            );
+          })}
+
+          {/* 2. Inferred Links (Blue dashed) */}
+          {showInferred &&
+            links.map((l, idx) => {
+              const a = cameras.find((c) => c.id === l.source);
+              const b = cameras.find((c) => c.id === l.target);
+              if (!a || !b) return null;
+
               return (
-                <g key={index}>
-                  <title>{link.source + " to " + link.target + ": inferred geometry; identity not scored in runtime"}</title>
-                  <line x1={from.x} y1={from.y} x2={to.x} y2={to.y} stroke="#8BAFC8" strokeWidth="2.5" strokeDasharray="6 4" markerEnd={"url(#" + arrowId + ")"} />
-                  {link.elapsed_seconds !== null && (
-                    <text x={(from.x + to.x) / 2} y={(from.y + to.y) / 2 - 10 - (model.links.length > 2 ? (index % 3) * 32 : 0)} fill="#8BAFC8" fontSize="10" textAnchor="middle">
-                      {"gap " + link.elapsed_seconds.toFixed(2) + " s"}
+                <g key={`inferred-${idx}`} className="inferred-link-group">
+                  <line
+                    x1={a.x}
+                    y1={a.y}
+                    x2={b.x}
+                    y2={b.y}
+                    stroke="#8BAFC8"
+                    strokeWidth="3.5"
+                    strokeDasharray="6 4"
+                    markerEnd="url(#inferred-arrow)"
+                  />
+                  {l.elapsed_seconds && (
+                    <text
+                      x={(a.x + b.x) / 2}
+                      y={(a.y + b.y) / 2 - 8}
+                      fill="#8BAFC8"
+                      fontSize="10"
+                      textAnchor="middle"
+                      className="mono"
+                    >
+                      {Math.round(l.elapsed_seconds)}s
                     </text>
                   )}
                 </g>
               );
             })}
-            {model.cameras.map((camera) => {
-              const visits = model.nodes.filter((node) => node.camera_id === camera.id);
-              const count = counts.get(camera.id);
-              const radius = count === undefined ? 16 : 10 + 12 * Math.sqrt(count / maximumCount);
+
+          {/* 3. Review Candidate Links (Amber dotted) */}
+          {showReview &&
+            reviewCandidates.map((r, idx) => {
+              const a = cameras.find((c) => c.id === r.source);
+              const b = cameras.find((c) => c.id === r.target);
+              if (!a || !b) return null;
+
               return (
-                <g key={camera.id}>
-                  <title>{camera.id + ": " + camera.kind + "; " + (count === undefined ? "runtime count unavailable" : count + " runtime visits")}</title>
-                  <circle cx={camera.x} cy={camera.y} r={radius} fill={visits.length ? "#1e3328" : "#191A1E"} stroke={visits.length ? "#82B095" : "#96939D"} strokeWidth="2" />
-                  <text x={camera.x} y={camera.y + 4} fill="#F3F0EB" fontSize="10" textAnchor="middle">{camera.id}</text>
-                  <text x={camera.x} y={camera.y + 34} fill="#96939D" fontSize="9" textAnchor="middle">
-                    {visits.length ? "Visit " + visits.map((visit) => visit.sequence).join(", ") : "Camera reference"}
-                  </text>
-                </g>
+                <line
+                  key={`review-${idx}`}
+                  x1={a.x}
+                  y1={a.y}
+                  x2={b.x}
+                  y2={b.y}
+                  stroke="#D2B477"
+                  strokeWidth="2.5"
+                  strokeDasharray="3 3"
+                  markerEnd="url(#review-arrow)"
+                />
               );
             })}
-          </svg>
-        </div>
-      )}
-      <p className="text-xs text-muted">
-        Approximate reference positions. Dashed straight connectors are inferred geometry, not an observed route or continuous GPS track.
-        {cameraCounts.length > 0 && " Circle size shows runtime visit counts, not traffic density."}
-        {" Boundary gaps are not route travel times; identity links are not scored in runtime."}
-      </p>
-      {journey && (
-        <ol className="map-visit-list" aria-label="Chronological camera visits">
-          {journey.visits.map((visit, index) => (
-            <li key={visit.tracklet_key + ":" + index}>
-              <strong>{visit.camera}</strong>{" / "}{visit.first_observed_s.toFixed(2)} to {visit.last_observed_s.toFixed(2)} s
-              {visit.evidence_samples.length > 0 && (
-                onSelectEvidence ? (
-                  <button type="button" className="btn btn-secondary btn-sm" onClick={() => onSelectEvidence({
-                    globalId: journey.global_id, visitIndex: index, sampleIndex: 0,
-                    cropSha256: visit.evidence_samples[0].crop_sha256,
-                  })}>Inspect visit evidence</button>
-                ) : <a href={api.evidenceFrameUrl(journey.global_id, index, 0)} target="_blank" rel="noreferrer">Open boxed frame</a>
-              )}
-            </li>
-          ))}
-        </ol>
-      )}
-    </div>
-  );
-}
 
-export function PredictionMapView({ onSelectEvidence }: { onSelectEvidence?: EvidenceSelectionHandler } = {}) {
-  const [query, setQuery] = useState("");
-  const [selectedId, setSelectedId] = useState("");
-  const status = useQuery({ queryKey: ["demo-status"], queryFn: ({ signal }) => api.status({ signal }), staleTime: 60_000 });
-  const analytics = useQuery({ queryKey: ["analytics"], queryFn: ({ signal }) => api.analytics({ signal }), staleTime: 60_000 });
-  const catalog = useQuery({
-    queryKey: ["map-vehicles", query],
-    queryFn: ({ signal }) => api.vehicles({ q: query, multiCameraOnly: true, limit: 100 }, { signal }),
-    staleTime: 60_000,
-  });
-  const vehicles = catalog.data ?? [];
-  const globalId = vehicles.some((vehicle) => vehicle.global_id === selectedId) ? selectedId : vehicles[0]?.global_id;
-  const journey = useQuery({
-    queryKey: ["map-journey", globalId],
-    queryFn: ({ signal }) => api.journey(globalId!, { signal }),
-    enabled: Boolean(globalId), staleTime: 60_000,
-  });
+          {/* 4. Rejected Links (Red solid/dashed) */}
+          {showRejected &&
+            rejectedLinks.map((rej, idx) => {
+              const a = cameras.find((c) => c.id === rej.source);
+              const b = cameras.find((c) => c.id === rej.target);
+              if (!a || !b) return null;
 
-  return (
-    <div className="view-container map-view">
-      <div className="view-header">
-        <div>
-          <h1 className="view-title">Prediction Network Map</h1>
-          <p className="view-subtitle">Observed camera visits and explicitly inferred geometry from frozen predictions.</p>
-        </div>
-        <StatusBadge status="uncertain" label="UNVERIFIED / PREDICTION-ONLY" />
+              return (
+                <line
+                  key={`rej-${idx}`}
+                  x1={a.x}
+                  y1={a.y}
+                  x2={b.x}
+                  y2={b.y}
+                  stroke="#D98689"
+                  strokeWidth="2"
+                  strokeDasharray="4 2"
+                  markerEnd="url(#rejected-arrow)"
+                />
+              );
+            })}
+
+          {/* 5. Camera Nodes (Physical Sensors) */}
+          {cameras.map((c) => {
+            const isObserved = nodes.some((n) => n.camera_id === c.id);
+            const isSelected = selectedCameraId === c.id;
+
+            return (
+              <g
+                key={c.id}
+                className="camera-node"
+                onClick={() => onSelectCamera?.(c.id)}
+                style={{ cursor: "pointer" }}
+              >
+                {/* Selection ring */}
+                {isSelected && (
+                  <circle
+                    cx={c.x}
+                    cy={c.y}
+                    r="24"
+                    fill="none"
+                    stroke="#B8A3D7"
+                    strokeWidth="2"
+                    strokeDasharray="2 2"
+                  />
+                )}
+
+                {/* Base camera outer circle */}
+                <circle
+                  cx={c.x}
+                  cy={c.y}
+                  r="18"
+                  fill={isObserved ? "#1e3328" : "#191A1E"}
+                  stroke={isObserved ? "#82B095" : "#454854"}
+                  strokeWidth={isObserved ? "2.5" : "1.5"}
+                />
+
+                {/* Camera label */}
+                <text
+                  x={c.x}
+                  y={c.y + 4}
+                  textAnchor="middle"
+                  fill={isObserved ? "#82B095" : "#F3F0EB"}
+                  fontSize="11"
+                  fontWeight="600"
+                  className="mono"
+                >
+                  {c.id}
+                </text>
+
+                {/* Zone metadata */}
+                <text
+                  x={c.x}
+                  y={c.y + 32}
+                  textAnchor="middle"
+                  fill="#96939D"
+                  fontSize="10"
+                >
+                  {c.zone_id || ""}
+                </text>
+              </g>
+            );
+          })}
+
+          {/* 6. Observed Nodes Sequence Badges (Numbered in green) */}
+          {nodes.map((n, idx) => {
+            const cam = cameras.find((c) => c.id === n.camera_id);
+            if (!cam) return null;
+
+            return (
+              <g
+                key={n.id || idx}
+                className="observed-node-badge"
+                onClick={() => onSelectNode?.(n.id)}
+                style={{ cursor: "pointer" }}
+              >
+                {/* Numbered badge on top right of camera */}
+                <circle
+                  cx={cam.x + 14}
+                  cy={cam.y - 14}
+                  r="9"
+                  fill="#82B095"
+                  stroke="#111214"
+                  strokeWidth="2"
+                />
+                <text
+                  x={cam.x + 14}
+                  y={cam.y - 11}
+                  textAnchor="middle"
+                  fill="#111214"
+                  fontSize="10"
+                  fontWeight="bold"
+                  className="mono"
+                >
+                  {idx + 1}
+                </text>
+              </g>
+            );
+          })}
+        </svg>
       </div>
-      <div className="panel">
-        {status.data && <p>{status.data.scenario}: {status.data.disclosure ?? status.data.evaluation_notice}</p>}
-        <div className="map-selection-controls">
-          <label>Filter RoadEye ID, tracklet, or camera
-            <input className="scope-input mono" value={query} maxLength={160} onChange={(event) => { setQuery(event.target.value); setSelectedId(""); }} />
-          </label>
-          <label>Predicted journey (up to 100 matches)
-            <select className="scope-input mono" value={globalId ?? ""} onChange={(event) => setSelectedId(event.target.value)} disabled={!vehicles.length}>
-              {!vehicles.length && <option value="">No prediction selected</option>}
-              {vehicles.map((vehicle) => <option key={vehicle.global_id} value={vehicle.global_id}>{vehicle.global_id + " / " + vehicle.camera_count + " cameras"}</option>)}
-            </select>
-          </label>
-        </div>
-        {(status.isPending || catalog.isPending || (globalId && journey.isPending)) && <p role="status">Loading map evidence...</p>}
-        {[status.error, catalog.error, journey.error, analytics.error].filter(Boolean).map((error, index) => (
-          <p className="status-banner banner-danger" role="alert" key={index}>{error?.message}</p>
-        ))}
-        {catalog.isSuccess && !vehicles.length && <p>No multi-camera predictions match this filter.</p>}
-        {journey.data?.disclosure && <p>{journey.data.disclosure}</p>}
-        <NetworkMap journey={journey.data} status={status.data} cameraCounts={analytics.data?.camera_density} height={480} onSelectEvidence={onSelectEvidence} />
+
+      <div className="map-footnote">
+        <span>Attribution: RoadEye Six-Camera Schematic Topology</span>
+        <span>Observed nodes are confirmed camera sightings; dashed lines indicate algorithmic path inference.</span>
       </div>
     </div>
   );
