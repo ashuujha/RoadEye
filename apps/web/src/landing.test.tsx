@@ -13,13 +13,14 @@ describe("public landing page", () => {
     expect(routeForPath("/anything-else")).toBe("landing");
   });
 
-  it("renders the requested dashboard path and dedicated hero image", () => {
+  it("renders the requested actions over Karman's video background", () => {
     const html = renderToStaticMarkup(
       <LandingPage onOpenDashboard={vi.fn()} />,
     );
 
-    expect(html).toContain("See every plate.");
-    expect(html).toContain("Live dashboard");
-    expect(html).toContain('class="landing-bg-art"');
+    expect(html).toContain("See Every Plate.");
+    expect(html).toContain("Live Dashboard");
+    expect(html).toContain('poster="/roadeye-login-bg.png"');
+    expect(html).toContain('src="/login-bg.mp4"');
   });
 });

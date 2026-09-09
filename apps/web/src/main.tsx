@@ -44,7 +44,7 @@ export function App() {
   );
   const [page, setPage] = useState<PageId>("Map");
   const [route, setRoute] = useState<AppRoute>(() =>
-    routeForPath(window.location.hash || window.location.pathname),
+    routeForPath(window.location.pathname),
   );
   const [selectedEvidence, setSelectedEvidence] =
     useState<EvidenceSelection | null>(null);
@@ -53,7 +53,7 @@ export function App() {
   const changeRoute = useCallback(
     (nextRoute: AppRoute, replace = false) => {
       const nextPath =
-        nextRoute === "landing" ? "/" : `/#/${nextRoute}`;
+        nextRoute === "landing" ? "/" : `/${nextRoute}`;
       window.history[replace ? "replaceState" : "pushState"]({}, "", nextPath);
       setRoute(nextRoute);
     },
@@ -91,12 +91,10 @@ export function App() {
 
   useEffect(() => {
     const syncRouteFromHistory = () =>
-      setRoute(routeForPath(window.location.hash || window.location.pathname));
+      setRoute(routeForPath(window.location.pathname));
     window.addEventListener("popstate", syncRouteFromHistory);
-    window.addEventListener("hashchange", syncRouteFromHistory);
     return () => {
       window.removeEventListener("popstate", syncRouteFromHistory);
-      window.removeEventListener("hashchange", syncRouteFromHistory);
     };
   }, []);
 
@@ -171,6 +169,7 @@ export function App() {
       state={authentication}
       onAuthenticated={handleAuthenticated}
       onRetryDiscovery={() => discoverSession()}
+      onBackToLanding={() => changeRoute("landing")}
     >
       {dashboard}
     </SessionGate>

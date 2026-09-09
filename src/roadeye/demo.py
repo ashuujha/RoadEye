@@ -568,6 +568,15 @@ def create_app(
             headers={"Cache-Control": "private, max-age=3600"},
         )
 
+    @app.get("/login", include_in_schema=False)
+    @app.get("/dashboard", include_in_schema=False)
+    def frontend_entry() -> FileResponse:
+        return FileResponse(
+            repository.paths.frontend / "index.html",
+            media_type="text/html",
+            headers={"Cache-Control": "no-cache"},
+        )
+
     app.mount(
         "/",
         StaticFiles(directory=repository.paths.frontend, html=True),

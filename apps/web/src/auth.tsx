@@ -60,21 +60,23 @@ export function loginErrorMessage(error: unknown): string {
 
 function LoginBackdrop({ children }: { readonly children: ReactNode }) {
   return (
-    <div className="login-page-wrapper">
-      <video
-        className="login-bg-video"
-        autoPlay
-        loop
-        muted
-        playsInline
-        poster="/roadeye-login-bg.png"
-        aria-hidden="true"
-        tabIndex={-1}
+    <div className="operator-login-page">
+      <section
+        className="operator-login-visual"
+        aria-label="RoadEye city monitoring"
       >
-        <source src="/login-bg.mp4" type="video/mp4" />
-      </video>
-      <div className="login-bg-overlay" aria-hidden="true" />
-      {children}
+        <div className="operator-login-visual-copy">
+          <p className="operator-city-badge">
+            <span aria-hidden="true">▣</span>
+            Built for real-moving cities
+          </p>
+          <h1>Find Signal to Action Instantly</h1>
+          <p className="operator-city-line">
+            CITIES SAFER <i /> ROADS SMARTER <i /> INDIA STRONGER
+          </p>
+        </div>
+      </section>
+      <section className="operator-login-access">{children}</section>
     </div>
   );
 }
@@ -83,12 +85,14 @@ interface LoginPageProps {
   readonly onAuthenticated: (session: AuthSession) => void;
   readonly discoveryError?: string;
   readonly onRetryDiscovery?: () => void;
+  readonly onBackToLanding?: () => void;
 }
 
 export function LoginPage({
   onAuthenticated,
   discoveryError,
   onRetryDiscovery,
+  onBackToLanding,
 }: LoginPageProps) {
   const [actor, setActor] = useState<Actor>("administrator");
   const [password, setPassword] = useState("");
@@ -117,72 +121,89 @@ export function LoginPage({
 
   return (
     <LoginBackdrop>
-      <header className="login-header">
-        <div className="login-brand-copy">
-          <strong>RoadEye</strong>
-          <span>Evidence-first operations · local demo</span>
-        </div>
-        <span className="synthetic-banner-unauth">
-          AUDITED PREDICTIONS · READ-ONLY
-        </span>
-      </header>
-
-      <main className="login">
-        <p className="login-eyebrow">LOCAL ACCESS</p>
-        <h1>Local demonstration sign in</h1>
-        <p>
-          Inspect hash-verified prediction evidence. Every demo actor has identical
-          read-only access.
+      <main className="operator-login-card">
+        <button
+          className="operator-back-link"
+          type="button"
+          onClick={onBackToLanding}
+          disabled={!onBackToLanding}
+        >
+          ← Back to Overview
+        </button>
+        <h1>Operator Access</h1>
+        <p className="operator-login-subtitle">
+          Restricted local console · authenticated read-only evidence
         </p>
 
+        <div className="operator-evaluation-box">
+          <strong>LOCAL EVALUATION MODE</strong>
+          <p>
+            Review audited predictions and source records through the local,
+            session-protected service.
+          </p>
+          <span>Evidence console ready →</span>
+        </div>
+
         <form onSubmit={signIn}>
-          <label>
-            Local actor
-            <select
-              value={actor}
-              onChange={(event) => setActor(event.target.value as Actor)}
-            >
-              {actors.map((value) => (
-                <option key={value} value={value}>
-                  {value}
-                </option>
-              ))}
-            </select>
+          <label className="operator-field">
+            Operator ID
+            <input type="text" value={actor} readOnly aria-label="Operator ID" />
           </label>
 
-          <label>
-            Local password
+          <div className="operator-presets" aria-label="Actor presets">
+            <span>PRESET:</span>
+            {actors.map((value) => (
+              <button
+                key={value}
+                type="button"
+                className={actor === value ? "selected" : ""}
+                aria-pressed={actor === value}
+                onClick={() => setActor(value)}
+              >
+                {value === "administrator" ? "Admin" : value}
+              </button>
+            ))}
+          </div>
+
+          <label className="operator-field">
+            Access Credential
             <input
               type="password"
               value={password}
               onChange={(event) => setPassword(event.target.value)}
               autoComplete="current-password"
+              placeholder="Enter password or credential token"
               required
             />
           </label>
 
-          <button type="submit" disabled={busy}>
-            {busy ? "Signing in…" : "Sign in"}
+          <button
+            className="operator-authenticate"
+            type="submit"
+            disabled={busy}
+          >
+            {busy ? "Authenticating…" : "Authenticate & Enter →"}
           </button>
         </form>
 
         {(message || discoveryError) && (
-          <p role="alert">{message || discoveryError}</p>
+          <p className="operator-alert" role="alert">
+            {message || discoveryError}
+          </p>
         )}
         {discoveryError && onRetryDiscovery && (
           <button
             type="button"
-            className="login-retry"
+            className="operator-retry"
             onClick={onRetryDiscovery}
           >
             Retry session check
           </button>
         )}
-        <p className="login-help">
-          Use the password supplied through the server's ignored local environment.
-          Sessions last up to eight hours and reset when the backend restarts.
+        <p className="operator-login-footnote">
+          Local credentials are required · sessions expire after eight hours
         </p>
-        <p className="login-health" aria-live="polite">
+        <p className="operator-login-health" aria-live="polite">
           <span className={health.data ? "health-ready" : "health-pending"} />
           {health.data
             ? "Local service ready"
@@ -199,6 +220,7 @@ interface SessionGateProps {
   readonly state: AuthenticationState;
   readonly onAuthenticated: (session: AuthSession) => void;
   readonly onRetryDiscovery: () => void;
+  readonly onBackToLanding?: () => void;
   readonly children: ReactNode;
 }
 
@@ -206,6 +228,7 @@ export function SessionGate({
   state,
   onAuthenticated,
   onRetryDiscovery,
+  onBackToLanding,
   children,
 }: SessionGateProps) {
   if (state.status === "authenticated") return <>{children}</>;
@@ -213,10 +236,13 @@ export function SessionGate({
   if (state.status === "loading") {
     return (
       <LoginBackdrop>
-        <main className="login login-session-loading" aria-live="polite">
+        <main
+          className="operator-login-card login-session-loading"
+          aria-live="polite"
+        >
           <span className="session-spinner" aria-hidden="true" />
           <div>
-            <p className="login-eyebrow">LOCAL ACCESS</p>
+            <p className="operator-loading-eyebrow">LOCAL ACCESS</p>
             <h1>Restoring your session</h1>
             <p>Checking the secure local session before loading evidence.</p>
           </div>
@@ -230,6 +256,7 @@ export function SessionGate({
       onAuthenticated={onAuthenticated}
       discoveryError={state.status === "error" ? state.message : undefined}
       onRetryDiscovery={state.status === "error" ? onRetryDiscovery : undefined}
+      onBackToLanding={onBackToLanding}
     />
   );
 }

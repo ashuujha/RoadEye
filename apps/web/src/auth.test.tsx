@@ -22,19 +22,20 @@ function renderWithQueries(element: React.ReactNode): string {
 }
 
 describe("authentication state and login gate", () => {
-  it("renders Karman's video shell, poster, actors, and administrator default", () => {
+  it("renders the static operator shell, actor presets, and administrator default", () => {
     const html = renderWithQueries(
       <LoginPage onAuthenticated={vi.fn()} />,
     );
 
-    expect(html).toContain('class="login-page-wrapper"');
-    expect(html).toContain('poster="/roadeye-login-bg.png"');
-    expect(html).toContain('src="/login-bg.mp4"');
+    expect(html).toContain('class="operator-login-page"');
+    expect(html).toContain('class="operator-login-visual"');
+    expect(html).toContain("Operator Access");
+    expect(html).not.toContain("login-bg.mp4");
     for (const actor of ["viewer", "investigator", "administrator", "approver"]) {
-      expect(html).toContain(`value="${actor}"`);
+      expect(html).toContain(actor);
     }
-    expect(html).toContain('value="administrator" selected=""');
-    expect(html).toContain("identical read-only access");
+    expect(html).toContain('value="administrator"');
+    expect(html).toContain('aria-pressed="true"');
   });
 
   it("shows a distinct session-discovery state and mounts only authenticated content", () => {

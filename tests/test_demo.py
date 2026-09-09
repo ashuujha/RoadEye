@@ -461,6 +461,8 @@ def test_health_login_and_static_frontend_are_public_but_docs_are_disabled(
     with DemoClient(app) as client:
         assert client.get("/api/health").json() == {"status": "ready"}
         assert client.get("/").text == "ok"
+        assert client.get("/login").text == "ok"
+        assert client.get("/dashboard").text == "ok"
         assert client.get("/api/docs").status_code == 404
         response = client.post(
             "/api/auth/login",
