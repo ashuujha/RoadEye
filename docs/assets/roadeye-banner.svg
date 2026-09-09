@@ -1,0 +1,82 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="480" viewBox="0 0 1440 480" role="img" aria-labelledby="title description">
+  <title id="title">RoadEye — evidence across cameras</title>
+  <desc id="description">RoadEye documentation banner. Three connected stages represent observing camera evidence, associating vehicle observations, and inspecting a predicted journey. This is an architectural illustration, not a measured vehicle route.</desc>
+  <defs>
+    <linearGradient id="background" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#101b26" />
+      <stop offset="1" stop-color="#080d14" />
+    </linearGradient>
+    <radialGradient id="warmGlow" cx="85%" cy="8%" r="75%">
+      <stop offset="0" stop-color="#d68451" stop-opacity="0.16" />
+      <stop offset="1" stop-color="#d68451" stop-opacity="0" />
+    </radialGradient>
+    <linearGradient id="line" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#76bad0" />
+      <stop offset="1" stop-color="#df9464" />
+    </linearGradient>
+    <pattern id="grid" width="32" height="32" patternUnits="userSpaceOnUse">
+      <path d="M 32 0 H 0 V 32" fill="none" stroke="#69859a" stroke-opacity="0.065" />
+    </pattern>
+  </defs>
+
+  <rect width="1440" height="480" rx="24" fill="url(#background)" />
+  <rect width="1440" height="480" rx="24" fill="url(#warmGlow)" />
+  <rect width="1440" height="480" rx="24" fill="url(#grid)" />
+  <rect x="1" y="1" width="1438" height="478" rx="23" fill="none" stroke="#2a3745" />
+
+  <g font-family="Segoe UI, Arial, sans-serif">
+    <g transform="translate(64 59)">
+      <rect width="48" height="48" rx="12" fill="#182632" stroke="#394958" />
+      <circle cx="17" cy="18" r="5" fill="#df9464" />
+      <circle cx="32" cy="18" r="5" fill="#79b7d0" />
+      <path d="M 14 32 H 34" stroke="#a4b4c4" stroke-width="3" stroke-linecap="round" />
+    </g>
+    <text x="130" y="92" fill="#cedae5" font-size="18" font-weight="600" letter-spacing="4">ROADEYE</text>
+    <text x="1376" y="88" text-anchor="end" fill="#9bafc0" font-size="13" letter-spacing="2">MULTI-CAMERA VISION RESEARCH</text>
+
+    <text x="64" y="199" fill="#f4f7fb" font-size="60" font-weight="700" letter-spacing="-2">Evidence across cameras.</text>
+    <text x="66" y="240" fill="#b4c4d3" font-size="23">Turn vehicle observations into inspectable journeys.</text>
+
+    <path d="M 157 319 H 1214" fill="none" stroke="url(#line)" stroke-width="2" stroke-dasharray="6 8" opacity="0.8" />
+    <g transform="translate(64 286)">
+      <rect width="397" height="111" rx="14" fill="#111e29" stroke="#314654" />
+      <rect x="22" y="24" width="55" height="55" rx="13" fill="#1b3441" />
+      <g fill="none" stroke="#86c6db" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="34" y="39" width="25" height="18" rx="4" />
+        <path d="M 59 43 L 67 39 V 57 L 59 53 M 47 58 V 67 M 39 67 H 55" />
+      </g>
+      <text x="97" y="45" fill="#8dbbd0" font-size="12" letter-spacing="2">01 / OBSERVE</text>
+      <text x="97" y="74" fill="#f1f5f9" font-size="21" font-weight="600">Camera evidence</text>
+    </g>
+
+    <g transform="translate(522 286)">
+      <rect width="397" height="111" rx="14" fill="#151e27" stroke="#3a4651" />
+      <rect x="22" y="24" width="55" height="55" rx="13" fill="#27313a" />
+      <g fill="none" stroke="#c2d0dd" stroke-width="2.2">
+        <path d="M 39 44 L 60 60 M 40 61 L 59 43" />
+        <circle cx="36" cy="41" r="5" fill="#27313a" />
+        <circle cx="63" cy="40" r="5" fill="#27313a" />
+        <circle cx="36" cy="64" r="5" fill="#27313a" />
+        <circle cx="63" cy="63" r="5" fill="#27313a" />
+      </g>
+      <text x="97" y="45" fill="#b4c4d3" font-size="12" letter-spacing="2">02 / ASSOCIATE</text>
+      <text x="97" y="74" fill="#f1f5f9" font-size="21" font-weight="600">Predicted connections</text>
+    </g>
+
+    <g transform="translate(980 286)">
+      <rect width="397" height="111" rx="14" fill="#211f21" stroke="#665044" />
+      <rect x="22" y="24" width="55" height="55" rx="13" fill="#3a2c25" />
+      <g fill="none" stroke="#e3a176" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M 34 40 H 65 M 34 52 H 57 M 34 64 H 49" />
+        <circle cx="34" cy="40" r="3" fill="#3a2c25" />
+        <circle cx="34" cy="52" r="3" fill="#3a2c25" />
+        <circle cx="34" cy="64" r="3" fill="#3a2c25" />
+      </g>
+      <text x="97" y="45" fill="#e0a17b" font-size="12" letter-spacing="2">03 / INSPECT</text>
+      <text x="97" y="74" fill="#f1f5f9" font-size="21" font-weight="600">Journey and provenance</text>
+    </g>
+
+    <text x="66" y="443" fill="#99adbf" font-size="14" letter-spacing="0.5">CPU inference  /  Frozen predictions  /  Independent evaluation</text>
+    <text x="1376" y="443" text-anchor="end" fill="#c8a18a" font-size="14" letter-spacing="0.5">OBSERVE. ASSOCIATE. INSPECT.</text>
+  </g>
+</svg>
