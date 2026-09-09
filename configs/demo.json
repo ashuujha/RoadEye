@@ -4,7 +4,7 @@
   "scenario": "S02_first_180_seconds",
   "runtime_artifacts": "artifacts/reid-trained-s02",
   "dataset_root": "data/cityflow",
-  "frontend_root": "test_frontend",
+  "frontend_root": "apps/web/dist",
   "plate_search": {
     "enabled": true,
     "availability": "READY",

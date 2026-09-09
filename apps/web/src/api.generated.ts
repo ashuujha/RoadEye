@@ -5,8 +5,9 @@
  * src/roadeye/demo.py, src/roadeye/analytics.py, and
  * src/roadeye/plate_search.py at backend checkpoint ff3a618.
  *
- * This deliberately excludes the discarded /v1 service, authentication,
- * jobs, alerts, watchlists, and writable review contracts.
+ * This deliberately excludes the discarded /v1 service, jobs, alerts,
+ * watchlists, and writable review contracts. The small local /api auth and
+ * health contract is declared directly in api.ts.
  */
 
 export type ClaimStatus = "PASS" | "FAIL" | "UNVERIFIED";

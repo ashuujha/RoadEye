@@ -2,16 +2,131 @@
 
 from __future__ import annotations
 
+import asyncio
 import hashlib
 import json
+from http.cookies import SimpleCookie
 from pathlib import Path
+from urllib.parse import urlsplit
 
 import cv2
 import numpy as np
 import pytest
 
+from roadeye.auth import (
+    COOKIE_NAME,
+    DEMO_PASSWORD_ENV,
+    SESSION_TTL_SECONDS,
+    LocalAuthService,
+)
 from roadeye.demo import DemoRepository, _bearing_degrees, create_app
 from roadeye.s06_demo import S06_DISCLOSURE
+
+
+class DemoResponse:
+    def __init__(self, messages: list[dict]) -> None:
+        start = next(
+            message
+            for message in messages
+            if message["type"] == "http.response.start"
+        )
+        self.status_code = start["status"]
+        self.headers = {
+            key.decode("latin-1").lower(): value.decode("latin-1")
+            for key, value in start["headers"]
+        }
+        self.content = b"".join(
+            message.get("body", b"")
+            for message in messages
+            if message["type"] == "http.response.body"
+        )
+
+    @property
+    def text(self) -> str:
+        return self.content.decode("utf-8")
+
+    def json(self) -> object:
+        return json.loads(self.content)
+
+
+class DemoClient:
+    """Small dependency-free ASGI client for the local API contract tests."""
+
+    def __init__(self, app, *, base_url: str = "http://testserver") -> None:
+        self.app = app
+        self.scheme = urlsplit(base_url).scheme
+        self.cookies: dict[str, str] = {}
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, _exc_type, _exc, _traceback) -> None:
+        return None
+
+    def get(self, path: str) -> DemoResponse:
+        return self.request("GET", path)
+
+    def post(self, path: str, **kwargs) -> DemoResponse:
+        payload = kwargs.get("json")
+        body = b"" if payload is None else json.dumps(payload).encode("utf-8")
+        return self.request("POST", path, body=body)
+
+    def request(
+        self, method: str, target: str, *, body: bytes = b""
+    ) -> DemoResponse:
+        parsed = urlsplit(target)
+        headers = [(b"host", b"testserver")]
+        if body:
+            headers.extend(
+                [
+                    (b"content-type", b"application/json"),
+                    (b"content-length", str(len(body)).encode("ascii")),
+                ]
+            )
+        if self.cookies:
+            cookie = "; ".join(
+                f"{key}={value}" for key, value in self.cookies.items()
+            )
+            headers.append((b"cookie", cookie.encode("latin-1")))
+        messages: list[dict] = []
+        request_sent = False
+
+        async def receive() -> dict:
+            nonlocal request_sent
+            if not request_sent:
+                request_sent = True
+                return {"type": "http.request", "body": body, "more_body": False}
+            await asyncio.sleep(0)
+            return {"type": "http.disconnect"}
+
+        async def send(message: dict) -> None:
+            messages.append(message)
+
+        scope = {
+            "type": "http",
+            "asgi": {"version": "3.0", "spec_version": "2.3"},
+            "http_version": "1.1",
+            "method": method,
+            "scheme": self.scheme,
+            "path": parsed.path,
+            "raw_path": parsed.path.encode("ascii"),
+            "query_string": parsed.query.encode("ascii"),
+            "root_path": "",
+            "headers": headers,
+            "client": ("testclient", 50000),
+            "server": ("testserver", 443 if self.scheme == "https" else 80),
+        }
+        asyncio.run(self.app(scope, receive, send))
+        response = DemoResponse(messages)
+        if "set-cookie" in response.headers:
+            cookie = SimpleCookie()
+            cookie.load(response.headers["set-cookie"])
+            for key, morsel in cookie.items():
+                if morsel["max-age"] == "0":
+                    self.cookies.pop(key, None)
+                else:
+                    self.cookies[key] = morsel.value
+        return response
 
 
 def write_json(path: Path, value: object) -> str:
@@ -205,6 +320,7 @@ def test_paths_cannot_escape_the_project(tmp_path, monkeypatch):
 
 
 def test_app_exposes_api_before_static_frontend(tmp_path, monkeypatch):
+    monkeypatch.setenv(DEMO_PASSWORD_ENV, "x" * 16)
     app = create_app(fixture_config(tmp_path, monkeypatch))
     paths = [route.path for route in app.routes]
     assert "/api/status" in paths
@@ -324,6 +440,199 @@ def test_demo_loads_only_prediction_linked_plate_entries(tmp_path, monkeypatch):
     plate = journey["visits"][0]["evidence_samples"][0]["plate_prediction"]
     assert plate["predicted_plate_text"] == "KA01AB1234"
     assert plate["is_probability"] is False
+
+
+def test_server_requires_a_long_environment_password(tmp_path, monkeypatch):
+    config = fixture_config(tmp_path, monkeypatch)
+    monkeypatch.delenv(DEMO_PASSWORD_ENV, raising=False)
+    with pytest.raises(ValueError, match=f"{DEMO_PASSWORD_ENV} is required"):
+        create_app(config)
+
+    monkeypatch.setenv(DEMO_PASSWORD_ENV, "short")
+    with pytest.raises(ValueError, match="at least 16 characters"):
+        create_app(config)
+
+
+def test_health_login_and_static_frontend_are_public_but_docs_are_disabled(
+    tmp_path, monkeypatch
+):
+    monkeypatch.setenv(DEMO_PASSWORD_ENV, "x" * 16)
+    app = create_app(fixture_config(tmp_path, monkeypatch))
+    with DemoClient(app) as client:
+        assert client.get("/api/health").json() == {"status": "ready"}
+        assert client.get("/").text == "ok"
+        assert client.get("/api/docs").status_code == 404
+        response = client.post(
+            "/api/auth/login",
+            json={"actor": "administrator", "password": "wrong"},
+        )
+        assert response.status_code == 401
+        assert response.json() == {"detail": "INVALID_CREDENTIALS"}
+
+
+@pytest.mark.parametrize(
+    "path",
+    [
+        "/api/auth/me",
+        "/api/auth/logout",
+        "/api/status",
+        "/api/vehicles",
+        "/api/analytics",
+        "/api/plate-search/status",
+        "/api/plate-search?q=KA01",
+        "/api/vehicles/roadeye_fixture",
+        "/api/vehicles/roadeye_fixture/visits/0/samples/0/crop",
+        "/api/vehicles/roadeye_fixture/visits/0/samples/0/frame",
+    ],
+)
+def test_every_data_and_evidence_route_requires_a_session(
+    path, tmp_path, monkeypatch
+):
+    monkeypatch.setenv(DEMO_PASSWORD_ENV, "x" * 16)
+    app = create_app(fixture_config(tmp_path, monkeypatch))
+    with DemoClient(app) as client:
+        method = client.post if path == "/api/auth/logout" else client.get
+        response = method(path)
+    assert response.status_code == 401
+    assert response.json() == {"detail": "SESSION_REQUIRED"}
+
+
+def test_invalid_actor_retains_fastapi_validation_response(tmp_path, monkeypatch):
+    monkeypatch.setenv(DEMO_PASSWORD_ENV, "x" * 16)
+    app = create_app(fixture_config(tmp_path, monkeypatch))
+    with DemoClient(app) as client:
+        response = client.post(
+            "/api/auth/login",
+            json={"actor": "operator", "password": "x" * 16},
+        )
+    assert response.status_code == 422
+    assert response.json()["detail"][0]["type"] == "literal_error"
+
+
+def test_all_four_actors_have_identical_read_only_access(tmp_path, monkeypatch):
+    password = "x" * 16
+    monkeypatch.setenv(DEMO_PASSWORD_ENV, password)
+    config = fixture_config(tmp_path, monkeypatch)
+    app = create_app(config)
+    expected_status = app.state.repository.status()
+
+    for actor in ("viewer", "investigator", "administrator", "approver"):
+        with DemoClient(app) as client:
+            login = client.post(
+                "/api/auth/login", json={"actor": actor, "password": password}
+            )
+            assert login.status_code == 200
+            assert login.json() == {"actor": actor, "mode": "local_demo"}
+            assert client.get("/api/auth/me").json() == login.json()
+            assert client.get("/api/status").json() == expected_status
+            assert client.post("/api/auth/logout").json() == {"logged_out": True}
+
+
+def test_session_cookie_is_opaque_digest_only_and_https_aware(tmp_path, monkeypatch):
+    password = "x" * 16
+    monkeypatch.setenv(DEMO_PASSWORD_ENV, password)
+    config = fixture_config(tmp_path, monkeypatch)
+    app = create_app(config)
+
+    with DemoClient(app, base_url="http://testserver") as client:
+        response = client.post(
+            "/api/auth/login",
+            json={"actor": "administrator", "password": password},
+        )
+        cookie_header = response.headers["set-cookie"].lower()
+        raw_token = client.cookies.get(COOKIE_NAME)
+        assert "httponly" in cookie_header
+        assert "samesite=strict" in cookie_header
+        assert "path=/" in cookie_header
+        assert f"max-age={SESSION_TTL_SECONDS}" in cookie_header
+        assert "secure" not in cookie_header
+        assert raw_token is not None
+        assert raw_token not in app.state.auth_service._sessions
+        assert all(
+            len(digest) == 64
+            and set(digest) <= set("0123456789abcdef")
+            for digest in app.state.auth_service._sessions
+        )
+
+    secure_app = create_app(config)
+    with DemoClient(secure_app, base_url="https://testserver") as client:
+        response = client.post(
+            "/api/auth/login",
+            json={"actor": "viewer", "password": password},
+        )
+        assert "secure" in response.headers["set-cookie"].lower()
+
+
+def test_session_restoration_expiry_and_logout(tmp_path, monkeypatch):
+    clock = [1_000.0]
+    authentication = LocalAuthService("x" * 16, now=lambda: clock[0])
+    app = create_app(
+        fixture_config(tmp_path, monkeypatch), auth_service=authentication
+    )
+
+    with DemoClient(app) as client:
+        login = client.post(
+            "/api/auth/login",
+            json={"actor": "investigator", "password": "x" * 16},
+        )
+        assert login.status_code == 200
+        assert client.get("/api/auth/me").json() == {
+            "actor": "investigator",
+            "mode": "local_demo",
+        }
+
+        clock[0] += SESSION_TTL_SECONDS
+        expired = client.get("/api/auth/me")
+        assert expired.status_code == 401
+        assert expired.json() == {"detail": "SESSION_REQUIRED"}
+        assert authentication._sessions == {}
+
+        client.cookies.clear()
+        client.post(
+            "/api/auth/login",
+            json={"actor": "approver", "password": "x" * 16},
+        )
+        logout = client.post("/api/auth/logout")
+        assert logout.json() == {"logged_out": True}
+        assert "max-age=0" in logout.headers["set-cookie"].lower()
+        assert client.get("/api/auth/me").status_code == 401
+
+
+def test_authenticated_api_responses_preserve_prediction_semantics(
+    tmp_path, monkeypatch
+):
+    password = "x" * 16
+    monkeypatch.setenv(DEMO_PASSWORD_ENV, password)
+    app = create_app(fixture_config(tmp_path, monkeypatch))
+    repository = app.state.repository
+
+    with DemoClient(app) as client:
+        client.post(
+            "/api/auth/login",
+            json={"actor": "viewer", "password": password},
+        )
+        assert client.get("/api/status").json() == repository.status()
+        assert client.get("/api/vehicles").json() == repository.list_vehicles()
+        assert client.get("/api/analytics").json() == repository.analytics()
+        assert (
+            client.get("/api/plate-search/status").json()
+            == repository.plate_search_status()
+        )
+        assert client.get("/api/vehicles/roadeye_fixture").json() == (
+            repository.journey("roadeye_fixture")
+        )
+        crop = client.get(
+            "/api/vehicles/roadeye_fixture/visits/0/samples/0/crop"
+        )
+        assert crop.status_code == 200
+        assert crop.content == repository.crop_path(
+            "roadeye_fixture", 0, 0
+        ).read_bytes()
+        frame = client.get(
+            "/api/vehicles/roadeye_fixture/visits/0/samples/0/frame"
+        )
+        assert frame.status_code == 200
+        assert frame.headers["content-type"] == "image/jpeg"
 
 
 def test_frontend_contains_disabled_plate_search_contract():

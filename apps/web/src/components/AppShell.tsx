@@ -7,7 +7,9 @@ export type PageId = "Map" | "Trajectories" | "Analytics" | "Evidence";
 interface AppShellProps {
   currentPage: PageId;
   onNavigate: (page: PageId) => void;
+  actor: string;
   sourceMode?: string;
+  onSignOut: () => void;
   children: ReactNode;
 }
 
@@ -25,7 +27,9 @@ const navItems: Array<{
 export function AppShell({
   currentPage,
   onNavigate,
+  actor,
   sourceMode = "AUDITED PREDICTIONS · READ-ONLY",
+  onSignOut,
   children,
 }: AppShellProps) {
   return (
@@ -71,6 +75,19 @@ export function AppShell({
           <div className="mode-indicator" title="Current data pipeline provenance">
             <span className="mode-pulse" />
             <span className="mode-label">{sourceMode}</span>
+          </div>
+          <div className="user-profile">
+            <span className="actor-badge" title="Authenticated local actor">
+              {actor}
+            </span>
+            <button
+              type="button"
+              className="btn-signout"
+              onClick={onSignOut}
+              title="Sign out or switch actor"
+            >
+              Exit
+            </button>
           </div>
         </div>
       </header>

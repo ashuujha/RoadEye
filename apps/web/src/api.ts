@@ -8,6 +8,33 @@ import type {
   VehicleSummary,
 } from "./api.generated";
 
+export const actors = [
+  "administrator",
+  "investigator",
+  "viewer",
+  "approver",
+] as const;
+
+export type Actor = (typeof actors)[number];
+
+export interface AuthSession {
+  readonly actor: Actor;
+  readonly mode: "local_demo";
+}
+
+export interface LoginRequest {
+  readonly actor: Actor;
+  readonly password: string;
+}
+
+export interface HealthResponse {
+  readonly status: "ready";
+}
+
+export interface LogoutResponse {
+  readonly logged_out: true;
+}
+
 export interface RequestOptions {
   readonly signal?: AbortSignal;
 }
@@ -31,6 +58,7 @@ export type FetchImplementation = (
 export interface RoadEyeApiOptions {
   readonly baseUrl?: string;
   readonly fetch?: FetchImplementation;
+  readonly onSessionExpired?: () => void;
 }
 
 export class RoadEyeApiError extends Error {
@@ -116,24 +144,41 @@ function errorDetail(payload: unknown): unknown {
   return payload;
 }
 
+export function isSessionRequiredError(error: unknown): boolean {
+  return (
+    error instanceof RoadEyeApiError &&
+    error.status === 401 &&
+    error.detail === "SESSION_REQUIRED"
+  );
+}
+
 export function createRoadEyeApi(options: RoadEyeApiOptions = {}) {
   const baseUrl = normalizeBaseUrl(options.baseUrl);
   const fetchRequest: FetchImplementation =
     options.fetch ?? ((input, init) => globalThis.fetch(input, init));
 
-  async function getJson<T>(path: string, request: RequestOptions = {}): Promise<T> {
+  async function requestJson<T>(
+    method: "GET" | "POST",
+    path: string,
+    request: RequestOptions = {},
+    body?: unknown,
+  ): Promise<T> {
+    const headers: Record<string, string> = { Accept: "application/json" };
+    if (body !== undefined) headers["Content-Type"] = "application/json";
     const response = await fetchRequest(`${baseUrl}${path}`, {
-      method: "GET",
-      headers: { Accept: "application/json" },
+      method,
+      credentials: "same-origin",
+      headers,
+      body: body === undefined ? undefined : JSON.stringify(body),
       signal: request.signal,
     });
     const payload = await responsePayload(response);
     if (!response.ok) {
-      throw new RoadEyeApiError(
-        response.status,
-        response.statusText,
-        errorDetail(payload),
-      );
+      const detail = errorDetail(payload);
+      if (response.status === 401 && detail === "SESSION_REQUIRED") {
+        options.onSessionExpired?.();
+      }
+      throw new RoadEyeApiError(response.status, response.statusText, detail);
     }
     if (payload === null) {
       throw new RoadEyeApiError(
@@ -146,8 +191,24 @@ export function createRoadEyeApi(options: RoadEyeApiOptions = {}) {
   }
 
   return Object.freeze({
+    health(request?: RequestOptions): Promise<HealthResponse> {
+      return requestJson("GET", "/api/health", request);
+    },
+
+    login(body: LoginRequest, request?: RequestOptions): Promise<AuthSession> {
+      return requestJson("POST", "/api/auth/login", request, body);
+    },
+
+    me(request?: RequestOptions): Promise<AuthSession> {
+      return requestJson("GET", "/api/auth/me", request);
+    },
+
+    logout(request?: RequestOptions): Promise<LogoutResponse> {
+      return requestJson("POST", "/api/auth/logout", request);
+    },
+
     status(request?: RequestOptions): Promise<DemoStatus> {
-      return getJson("/api/status", request);
+      return requestJson("GET", "/api/status", request);
     },
 
     vehicles(
@@ -159,15 +220,15 @@ export function createRoadEyeApi(options: RoadEyeApiOptions = {}) {
         multi_camera_only: String(query.multiCameraOnly ?? true),
         limit: String(boundedInteger(query.limit, 50, 1, 100, "limit")),
       });
-      return getJson(`/api/vehicles?${parameters}`, request);
+      return requestJson("GET", `/api/vehicles?${parameters}`, request);
     },
 
     analytics(request?: RequestOptions): Promise<AnalyticsResponse> {
-      return getJson("/api/analytics", request);
+      return requestJson("GET", "/api/analytics", request);
     },
 
     plateSearchStatus(request?: RequestOptions): Promise<PlateSearchStatus> {
-      return getJson("/api/plate-search/status", request);
+      return requestJson("GET", "/api/plate-search/status", request);
     },
 
     searchPlates(
@@ -178,11 +239,15 @@ export function createRoadEyeApi(options: RoadEyeApiOptions = {}) {
         q: query.q,
         limit: String(boundedInteger(query.limit, 25, 1, 100, "limit")),
       });
-      return getJson(`/api/plate-search?${parameters}`, request);
+      return requestJson("GET", `/api/plate-search?${parameters}`, request);
     },
 
     journey(globalId: string, request?: RequestOptions): Promise<Journey> {
-      return getJson(`/api/vehicles/${encodedGlobalId(globalId)}`, request);
+      return requestJson(
+        "GET",
+        `/api/vehicles/${encodedGlobalId(globalId)}`,
+        request,
+      );
     },
 
     evidenceCropUrl(
@@ -205,4 +270,18 @@ export function createRoadEyeApi(options: RoadEyeApiOptions = {}) {
 
 export type RoadEyeApi = ReturnType<typeof createRoadEyeApi>;
 
-export const api: RoadEyeApi = createRoadEyeApi();
+type SessionExpiredListener = () => void;
+const sessionExpiredListeners = new Set<SessionExpiredListener>();
+
+export function subscribeToSessionExpiry(
+  listener: SessionExpiredListener,
+): () => void {
+  sessionExpiredListeners.add(listener);
+  return () => sessionExpiredListeners.delete(listener);
+}
+
+export const api: RoadEyeApi = createRoadEyeApi({
+  onSessionExpired: () => {
+    for (const listener of sessionExpiredListeners) listener();
+  },
+});

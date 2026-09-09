@@ -7,14 +7,22 @@ import json
 import math
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any
+from typing import Any, Literal
 
 import cv2
-from fastapi import FastAPI, HTTPException, Query, Response
+from fastapi import Depends, FastAPI, HTTPException, Query, Request, Response
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
+from pydantic import BaseModel
 
 from .analytics import build_prediction_analytics
+from .auth import (
+    COOKIE_NAME,
+    SESSION_TTL_SECONDS,
+    Actor,
+    AuthSession,
+    LocalAuthService,
+)
 from .plate_search import PlateSearchIndex
 from .s06_demo import S06_DISCLOSURE
 
@@ -88,7 +96,7 @@ class DemoRepository:
             frontend=_within(ROOT, config["frontend_root"], label="frontend"),
         )
         if not self.paths.frontend.is_dir():
-            raise ValueError("Test frontend directory is missing")
+            raise ValueError("Frontend build directory is missing")
         for name in self._RUNTIME_FILES:
             if not (self.paths.artifacts / name).is_file():
                 raise ValueError(f"Missing runtime artifact: {name}")
@@ -386,18 +394,100 @@ class DemoRepository:
         return buffer.tobytes()
 
 
-def create_app(config_path: Path = ROOT / "configs/demo.json") -> FastAPI:
+class LoginRequest(BaseModel):
+    actor: Actor
+    password: str
+
+
+class AuthResponse(BaseModel):
+    actor: Actor
+    mode: Literal["local_demo"] = "local_demo"
+
+
+def _uses_https(request: Request) -> bool:
+    return request.url.scheme.casefold() == "https"
+
+
+def _set_session_cookie(response: Response, token: str, *, secure: bool) -> None:
+    response.set_cookie(
+        key=COOKIE_NAME,
+        value=token,
+        max_age=SESSION_TTL_SECONDS,
+        httponly=True,
+        secure=secure,
+        samesite="strict",
+        path="/",
+    )
+
+
+def _clear_session_cookie(response: Response, *, secure: bool) -> None:
+    response.delete_cookie(
+        key=COOKIE_NAME,
+        httponly=True,
+        secure=secure,
+        samesite="strict",
+        path="/",
+    )
+
+
+def create_app(
+    config_path: Path = ROOT / "configs/demo.json",
+    *,
+    auth_service: LocalAuthService | None = None,
+) -> FastAPI:
+    authentication = auth_service or LocalAuthService.from_environment()
     repository = DemoRepository(config_path)
     app = FastAPI(
         title="RoadEye local test interface",
-        version="0.1.0",
-        docs_url="/api/docs",
+        version="0.2.0",
+        docs_url=None,
         redoc_url=None,
+        openapi_url=None,
     )
     app.state.repository = repository
+    app.state.auth_service = authentication
+
+    def require_session(request: Request) -> AuthSession:
+        session = authentication.authenticate(request.cookies.get(COOKIE_NAME))
+        if session is None:
+            raise HTTPException(status_code=401, detail="SESSION_REQUIRED")
+        return session
+
+    @app.get("/api/health")
+    def health() -> dict[str, str]:
+        return {"status": "ready"}
+
+    @app.post("/api/auth/login", response_model=AuthResponse)
+    def login(body: LoginRequest, request: Request, response: Response) -> AuthResponse:
+        result = authentication.login(body.actor, body.password)
+        if result is None:
+            raise HTTPException(status_code=401, detail="INVALID_CREDENTIALS")
+        token, session = result
+        _set_session_cookie(response, token, secure=_uses_https(request))
+        response.headers["Cache-Control"] = "no-store"
+        return AuthResponse(actor=session.actor)
+
+    @app.get("/api/auth/me", response_model=AuthResponse)
+    def me(
+        response: Response,
+        session: AuthSession = Depends(require_session),
+    ) -> AuthResponse:
+        response.headers["Cache-Control"] = "no-store"
+        return AuthResponse(actor=session.actor)
+
+    @app.post("/api/auth/logout")
+    def logout(
+        request: Request,
+        response: Response,
+        _session: AuthSession = Depends(require_session),
+    ) -> dict[str, bool]:
+        authentication.logout(request.cookies.get(COOKIE_NAME))
+        _clear_session_cookie(response, secure=_uses_https(request))
+        response.headers["Cache-Control"] = "no-store"
+        return {"logged_out": True}
 
     @app.get("/api/status")
-    def status() -> dict[str, Any]:
+    def status(_session: AuthSession = Depends(require_session)) -> dict[str, Any]:
         return repository.status()
 
     @app.get("/api/vehicles")
@@ -405,23 +495,29 @@ def create_app(config_path: Path = ROOT / "configs/demo.json") -> FastAPI:
         q: str = Query(default="", max_length=160),
         multi_camera_only: bool = True,
         limit: int = Query(default=50, ge=1, le=100),
+        _session: AuthSession = Depends(require_session),
     ) -> list[dict[str, Any]]:
         return repository.list_vehicles(
             q, multi_camera_only=multi_camera_only, limit=limit
         )
 
     @app.get("/api/analytics")
-    def analytics() -> dict[str, Any]:
+    def analytics(
+        _session: AuthSession = Depends(require_session),
+    ) -> dict[str, Any]:
         return repository.analytics()
 
     @app.get("/api/plate-search/status")
-    def plate_search_status() -> dict[str, Any]:
+    def plate_search_status(
+        _session: AuthSession = Depends(require_session),
+    ) -> dict[str, Any]:
         return repository.plate_search_status()
 
     @app.get("/api/plate-search")
     def plate_search(
         q: str = Query(default="", max_length=32),
         limit: int = Query(default=25, ge=1, le=100),
+        _session: AuthSession = Depends(require_session),
     ) -> dict[str, Any]:
         try:
             return repository.search_plates(q, limit=limit)
@@ -429,7 +525,10 @@ def create_app(config_path: Path = ROOT / "configs/demo.json") -> FastAPI:
             raise HTTPException(status_code=422, detail=str(error)) from error
 
     @app.get("/api/vehicles/{global_id}")
-    def journey(global_id: str) -> dict[str, Any]:
+    def journey(
+        global_id: str,
+        _session: AuthSession = Depends(require_session),
+    ) -> dict[str, Any]:
         try:
             return repository.journey(global_id)
         except KeyError as error:
@@ -438,7 +537,12 @@ def create_app(config_path: Path = ROOT / "configs/demo.json") -> FastAPI:
     @app.get(
         "/api/vehicles/{global_id}/visits/{visit_index}/samples/{sample_index}/crop"
     )
-    def crop(global_id: str, visit_index: int, sample_index: int) -> FileResponse:
+    def crop(
+        global_id: str,
+        visit_index: int,
+        sample_index: int,
+        _session: AuthSession = Depends(require_session),
+    ) -> FileResponse:
         try:
             path = repository.crop_path(global_id, visit_index, sample_index)
         except (KeyError, FileNotFoundError) as error:
@@ -448,7 +552,12 @@ def create_app(config_path: Path = ROOT / "configs/demo.json") -> FastAPI:
     @app.get(
         "/api/vehicles/{global_id}/visits/{visit_index}/samples/{sample_index}/frame"
     )
-    def frame(global_id: str, visit_index: int, sample_index: int) -> Response:
+    def frame(
+        global_id: str,
+        visit_index: int,
+        sample_index: int,
+        _session: AuthSession = Depends(require_session),
+    ) -> Response:
         try:
             image = repository.source_frame_jpeg(global_id, visit_index, sample_index)
         except (KeyError, FileNotFoundError) as error:
@@ -462,6 +571,6 @@ def create_app(config_path: Path = ROOT / "configs/demo.json") -> FastAPI:
     app.mount(
         "/",
         StaticFiles(directory=repository.paths.frontend, html=True),
-        name="test_frontend",
+        name="frontend",
     )
     return app
