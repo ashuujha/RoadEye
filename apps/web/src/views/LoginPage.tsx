@@ -1,12 +1,5 @@
 import React, { useState } from "react";
-import {
-  IconMail,
-  IconLock,
-  IconEye,
-  IconEyeOff,
-  IconArrowRight,
-  IconShield,
-} from "../components/Icons";
+import { IconShield } from "../components/Icons";
 import type { components } from "../api.generated";
 
 interface LoginPageProps {

@@ -7,8 +7,6 @@ import {
   useQueryClient,
 } from "@tanstack/react-query";
 import { client, key, unwrap } from "./api";
-import { State } from "./components";
-import type { components } from "./api.generated";
 import "./style.css";
 
 // Components
@@ -22,6 +20,8 @@ import { TrajectoryView } from "./views/TrajectoryView";
 import { ReviewWorkbenchView } from "./views/ReviewWorkbenchView";
 import { AlertsView } from "./views/AlertsView";
 import { AnalyticsView } from "./views/AnalyticsView";
+import { LandingPageView } from "./views/LandingPageView";
+import { LoginPage } from "./views/LoginPage";
 import { SystemView } from "./views/SystemView";
 
 type RecordData = Record<string, any>;
@@ -33,8 +33,9 @@ const queryClient = new QueryClient({
 function App() {
   const qc = useQueryClient();
   const [page, setPage] = useState<PageId>("Overview");
-  const [actor, setActor] = useState<components["schemas"]["Role"]>("administrator");
-  const [password, setPassword] = useState("");
+  const [entryPage, setEntryPage] = useState<"landing" | "login">(
+    window.location.pathname === "/login" ? "login" : "landing",
+  );
   const [runId, setRunId] = useState("");
   const [start, setStart] = useState("2026-01-15T08:00:00Z");
   const [end, setEnd] = useState("2026-01-15T09:00:00Z");
@@ -312,87 +313,36 @@ function App() {
     setRunId(runs.data[0].id);
   }
 
-  /* =========================================================================
-     1. UNMODIFIED LOGIN PAGE (Explicitly Preserved & Out of Scope)
-     ========================================================================= */
+  /* Public entry views supplied by 13849b8. */
   if (!loggedIn) {
+    if (entryPage === "landing") {
+      return (
+        <LandingPageView
+          onOpenDashboard={() => setEntryPage("login")}
+          onOpenLogin={() => setEntryPage("login")}
+        />
+      );
+    }
+
     return (
-      <div className="login-page-wrapper">
-        {/* Fullscreen background video */}
-        <video
-          className="login-bg-video"
-          autoPlay
-          loop
-          muted
-          playsInline
-          poster=""
-        >
-          <source src="/login-bg.mp4" type="video/mp4" />
-        </video>
-        <div className="login-bg-overlay" />
-
-        <header className="login-header">
-          <div>
-            <strong>RoadEye</strong>
-            <span>Engineering console · SIH2026172</span>
-          </div>
-          <span className="synthetic-banner-unauth">
-            SYNTHETIC INPUT · MOCK OCR CANDIDATES
-          </span>
-        </header>
-
-        <main className="login">
-          <h1>Local demonstration sign in</h1>
-          <p>
-            Processing and persistence are real. Recognition accuracy is unmeasured.
-          </p>
-
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              action(async () => {
-                unwrap(
-                  await client.POST("/v1/auth/login", {
-                    body: { actor, password },
-                  }),
-                );
-                setPassword("");
-              });
-            }}
-          >
-            <label>
-              Local actor
-              <select
-                value={actor}
-                onChange={(e) => setActor(e.target.value as typeof actor)}
-              >
-                {["administrator", "investigator", "viewer", "approver"].map((a) => (
-                  <option key={a}>{a}</option>
-                ))}
-              </select>
-            </label>
-
-            <label>
-              Local password
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-              />
-            </label>
-
-            <button disabled={busy}>Sign in</button>
-          </form>
-
-          <p role="alert">{message}</p>
-          <p>
-            Use the local password from your ignored .env file. Each actor has separate
-            server-enforced permissions.
-          </p>
-          <State query={health} />
-        </main>
-      </div>
+      <LoginPage
+        onLogin={async (nextActor, nextPassword) => {
+          await action(async () => {
+            unwrap(
+              await client.POST("/v1/auth/login", {
+                body: { actor: nextActor, password: nextPassword },
+              }),
+            );
+          });
+        }}
+        onExploreOffline={() =>
+          setMessage("The live local backend is available; sign in to enter the console.")
+        }
+        onBackToDashboard={() => setEntryPage("landing")}
+        busy={busy}
+        message={message}
+        backendReady={!!health.data}
+      />
     );
   }
 
