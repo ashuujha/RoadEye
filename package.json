@@ -1,0 +1,12 @@
+{
+  "name": "roadeye-deployment",
+  "private": true,
+  "scripts": {
+    "install:web": "npm --prefix apps/web ci",
+    "build": "npm --prefix apps/web run build",
+    "test:web": "npm --prefix apps/web test"
+  },
+  "engines": {
+    "node": ">=22.15.0"
+  }
+}
