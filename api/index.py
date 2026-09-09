@@ -55,9 +55,13 @@ async def normalize_vercel_function_path(
     request: Request,
     call_next: Callable[[Request], Awaitable[Response]],
 ) -> Response:
-    """Accept both preserved rewrite paths and Vercel's /api function path."""
+    """Restore the API path after Vite routes it through the /api function."""
 
-    if request.scope["path"].startswith("/api/v1/"):
+    rewritten_path = request.query_params.get("__roadeye_path")
+    if rewritten_path is not None and rewritten_path.startswith("/v1/"):
+        request.scope["path"] = rewritten_path
+        request.scope["raw_path"] = rewritten_path.encode("utf-8")
+    elif request.scope["path"].startswith("/api/v1/"):
         request.scope["path"] = request.scope["path"][4:]
         raw_path = request.scope.get("raw_path")
         if isinstance(raw_path, bytes) and raw_path.startswith(b"/api/v1/"):

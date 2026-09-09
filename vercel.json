@@ -12,7 +12,7 @@
   "rewrites": [
     {
       "source": "/v1/:path*",
-      "destination": "/api/v1/:path*"
+      "destination": "/api?__roadeye_path=/v1/:path*"
     },
     {
       "source": "/login",

@@ -38,6 +38,9 @@ def test_vercel_entrypoint_supports_login_and_evaluation_data(monkeypatch) -> No
         # Vercel's file-based Python runtime may present the rewritten function
         # path to ASGI; the middleware normalizes it to the existing API contract.
         assert client.get("/api/v1/health/ready").status_code == 200
+        assert client.get(
+            "/api?__roadeye_path=/v1/health/ready"
+        ).status_code == 200
 
 
 def test_vercel_entrypoint_reports_missing_password_without_crashing(monkeypatch) -> None:
