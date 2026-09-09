@@ -14,6 +14,7 @@ export type PageId =
   | "Overview"
   | "Cameras"
   | "Vehicles"
+  | "Map"
   | "Analytics"
   | "Alerts"
   | "Review"
@@ -48,6 +49,7 @@ export function AppShell({
     { id: "Overview", label: "Overview", icon: <IconOverview size={16} /> },
     { id: "Cameras", label: "Cameras & Video", icon: <IconCamera size={16} /> },
     { id: "Vehicles", label: "Vehicles & Trajectory", icon: <IconRoute size={16} /> },
+    { id: "Map", label: "Live Map", icon: <IconRoute size={16} /> },
     { id: "Analytics", label: "Analytics", icon: <IconAnalytics size={16} /> },
     {
       id: "Alerts",

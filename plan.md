@@ -112,3 +112,19 @@ strict index/manifest hashes, exact evidence joins, and a frontend handoff to th
 source visit/sample. OCR never alters vehicle association. Coverage is sparse:
 S02 indexed one of 216 crops and S06 indexed two of 849, so usefulness and CityFlow
 plate accuracy remain **UNVERIFIED** rather than being inferred from implementation.
+
+## Post-56h additive map visualization
+
+The test console adds an isolated authenticated map workspace backed by new
+`/v1/map/cameras` and `/v1/map/trajectories` endpoints. Leaflet 1.9.4 renders
+OpenStreetMap Standard raster tiles with the visible `© OpenStreetMap contributors`
+attribution and no API key. This choice keeps the demo small and removes dependence
+on a MapTiler or Stadia account/quota. Static paths and a time-ordered replay share
+the same frozen journey records; animated dashes show direction only.
+
+CityFlow V2 does not supply surveyed camera GPS for this demo. Map points retain
+the existing calibration-derived road-reference coordinates and are labelled
+`APPROXIMATE_NOT_SURVEYED_GPS`. Straight segments are predicted camera-to-camera
+associations, not measured road routes, speeds, or ground truth. OpenStreetMap's
+public raster service is best-effort and rate-limited; production or large-event
+traffic requires a contracted OSM-derived provider or self-hosted tiles.

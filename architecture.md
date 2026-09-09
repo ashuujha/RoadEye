@@ -257,3 +257,49 @@ transcription provenance/status fields, and ranks unfinished rows by the frozen
 model's uncalibrated score. Detailed suggestions and identifiers stay under
 ignored `artifacts/anpr/`; only aggregate counts and claim boundaries may enter
 tracked audit material. Triage never supplies truth or changes which rows count.
+
+## Additive OpenStreetMap trajectory view
+
+The authenticated React console includes a standalone Leaflet map workspace.
+Two new read-only endpoints expose map-specific shapes without altering the
+existing camera, graph, observation, or plate-trajectory contracts:
+
+- `GET /v1/map/cameras?run_id=...` returns camera identifiers, representative
+  latitude/longitude, coordinate provenance, and tile attribution metadata.
+- `GET /v1/map/trajectories?run_id=...` returns frozen RoadEye vehicle IDs,
+  optional predicted plate text, and timestamp-ordered camera points. Optional
+  `vehicle_id`, `multi_camera_only`, and `limit` query parameters bound selection.
+
+Both endpoints reuse the existing session dependency and read the already
+hash-verified runtime repository. They do not open identity ground truth, perform
+inference, change association, or persist state. The browser requests them through
+the existing `/v1` Vercel rewrite.
+
+Leaflet 1.9.4 was selected over MapLibre GL JS. Leaflet's raster tile and polyline
+model is sufficient for the current tens to low hundreds of trajectories, supports
+camera markers and later heatmap plugins, and avoids a vector-style service and API
+key. MapLibre is the stronger option for GPU-rendered vector layers at city scale,
+but it adds bundle and style-hosting complexity without improving this bounded demo.
+
+The tile source is OpenStreetMap Standard at
+`https://tile.openstreetmap.org/{z}/{x}/{y}.png`. It requires no API key, so a
+MapTiler or Stadia free-tier quota cannot interrupt the hackathon login flow. The
+map keeps the required visible `© OpenStreetMap contributors` attribution linking
+to the OSM copyright page. OSM map data is licensed under ODbL; the community tile
+service is best-effort, has no SLA, requires normal browser caching and a valid
+Referer, and forbids bulk download or offline prefetch. Tile failures leave the
+camera and trajectory overlay usable, with a visible warning.
+
+This public OSM endpoint is appropriate only for light interactive demonstration.
+A deployment serving sustained public traffic or real Indian ANPR camera feeds
+must use a provider with an appropriate service agreement or self-host OSM-derived
+tiles, while preserving OSM attribution and the applicable provider terms.
+MapTiler and Stadia remain valid hosted alternatives but require account/key and
+quota management; no such paid or locked-in dependency is introduced here.
+
+CityFlow V2 camera locations in this project are not surveyed GPS points. The API
+uses the existing inverse-calibration representative road references and labels
+all payloads `APPROXIMATE_NOT_SURVEYED_GPS`. Polylines join observations in
+ascending `identified_at_s` order. Static mode displays the complete predicted
+path; replay mode interpolates a marker over the recorded time ordering. Animated
+dashes communicate direction, not vehicle speed or a verified road-network route.

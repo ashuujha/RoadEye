@@ -24,6 +24,10 @@ import { LandingPageView } from "./views/LandingPageView";
 import { LoginPage } from "./views/LoginPage";
 import { SystemView } from "./views/SystemView";
 
+const MapView = React.lazy(() =>
+  import("./views/MapView").then((module) => ({ default: module.MapView })),
+);
+
 type RecordData = Record<string, any>;
 
 const queryClient = new QueryClient({
@@ -419,6 +423,13 @@ function App() {
           busy={busy}
           message={message}
         />
+      )}
+
+      {/* Additive OpenStreetMap trajectory workspace */}
+      {page === "Map" && (
+        <React.Suspense fallback={<div role="status">Loading map workspace…</div>}>
+          <MapView runId={runId} />
+        </React.Suspense>
       )}
 
       {/* 4. Analytics Workspace */}

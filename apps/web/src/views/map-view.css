@@ -1,0 +1,444 @@
+.road-map-page {
+  min-height: calc(100vh - 112px);
+  padding: 26px 30px 18px;
+  color: #eef3f7;
+  background:
+    radial-gradient(circle at 82% 5%, rgba(208, 111, 61, 0.12), transparent 32%),
+    #090e14;
+}
+
+.road-map-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 18px;
+}
+
+.road-map-header h1 {
+  margin: 5px 0 6px;
+  font-size: clamp(1.65rem, 3vw, 2.45rem);
+  line-height: 1.05;
+}
+
+.road-map-header p {
+  max-width: 800px;
+  margin: 0;
+  color: #99a8b8;
+  line-height: 1.5;
+}
+
+.road-map-eyebrow {
+  color: #e18a56;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+}
+
+.road-map-status {
+  display: grid;
+  min-width: 180px;
+  gap: 5px;
+  padding: 12px 16px;
+  border: 1px solid #33404d;
+  border-radius: 10px;
+  background: rgba(16, 23, 31, 0.88);
+  text-align: right;
+}
+
+.road-map-status span {
+  color: #9cabb8;
+  font-size: 0.75rem;
+}
+
+.road-map-status strong {
+  color: #e5b17d;
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+}
+
+.road-map-message {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 12px;
+  padding: 11px 14px;
+  border: 1px solid #33404d;
+  border-radius: 8px;
+  color: #b9c9d7;
+  background: #121b24;
+}
+
+.road-map-message--error {
+  border-color: #7c3f45;
+  color: #ffb6bb;
+  background: #2a171c;
+}
+
+.road-map-message--warning {
+  border-color: #70552d;
+  color: #e7c389;
+  background: #292116;
+}
+
+.road-map-layout {
+  display: grid;
+  grid-template-columns: minmax(245px, 310px) minmax(0, 1fr);
+  min-height: 620px;
+  overflow: hidden;
+  border: 1px solid #2d3944;
+  border-radius: 14px;
+  background: #0d141c;
+  box-shadow: 0 18px 60px rgba(0, 0, 0, 0.3);
+}
+
+.road-map-panel {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  border-right: 1px solid #2b3742;
+  background: linear-gradient(180deg, #111a23, #0d141b);
+}
+
+.road-map-panel-heading,
+.road-map-search,
+.road-map-replay {
+  padding: 15px;
+  border-bottom: 1px solid #27323c;
+}
+
+.road-map-panel-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.road-map-panel-heading div {
+  display: flex;
+  align-items: baseline;
+  gap: 9px;
+}
+
+.road-map-panel-heading span,
+.road-map-search span,
+.road-map-replay label span {
+  color: #9fb0bf;
+  font-size: 0.74rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+
+.road-map-panel-heading strong {
+  color: #f19a63;
+}
+
+.road-map-clear {
+  border: 0;
+  color: #8fc9dc;
+  background: transparent;
+  cursor: pointer;
+}
+
+.road-map-clear:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.road-map-search {
+  display: grid;
+  gap: 8px;
+}
+
+.road-map-search input {
+  width: 100%;
+  padding: 10px 11px;
+  border: 1px solid #364553;
+  border-radius: 7px;
+  outline: none;
+  color: #e9eff5;
+  background: #0b1218;
+}
+
+.road-map-search input:focus {
+  border-color: #dc8150;
+  box-shadow: 0 0 0 2px rgba(220, 129, 80, 0.14);
+}
+
+.road-map-list {
+  min-height: 180px;
+  max-height: 390px;
+  overflow: auto;
+  padding: 8px;
+}
+
+.road-map-vehicle {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 5px;
+  padding: 10px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  color: #dce6ee;
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+}
+
+.road-map-vehicle:hover {
+  background: #17222c;
+}
+
+.road-map-vehicle.active {
+  border-color: #a75f38;
+  background: #2b211c;
+}
+
+.road-map-vehicle span {
+  display: grid;
+  min-width: 0;
+  gap: 3px;
+}
+
+.road-map-vehicle strong,
+.road-map-vehicle small {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.road-map-vehicle small {
+  color: #8495a5;
+  font-size: 0.67rem;
+}
+
+.road-map-vehicle em {
+  flex: none;
+  color: #d18b60;
+  font-size: 0.68rem;
+  font-style: normal;
+}
+
+.road-map-empty {
+  padding: 14px 10px;
+  color: #8495a5;
+  line-height: 1.45;
+}
+
+.road-map-replay {
+  display: grid;
+  gap: 13px;
+  margin-top: auto;
+  border-top: 1px solid #27323c;
+  border-bottom: 0;
+}
+
+.road-map-replay-actions {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 7px;
+}
+
+.road-map-replay button {
+  padding: 9px 10px;
+  border: 1px solid #b7683e;
+  border-radius: 7px;
+  color: #fff6f0;
+  background: #9b512f;
+  cursor: pointer;
+}
+
+.road-map-replay button + button {
+  border-color: #3a4855;
+  color: #bbc9d5;
+  background: #17212a;
+}
+
+.road-map-replay button:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.road-map-replay label {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 7px;
+}
+
+.road-map-replay output {
+  color: #f2a06c;
+  font-size: 0.74rem;
+}
+
+.road-map-replay input {
+  grid-column: 1 / -1;
+  accent-color: #d97848;
+}
+
+.road-map-canvas-wrap {
+  position: relative;
+  min-width: 0;
+}
+
+.road-map-canvas {
+  width: 100%;
+  height: 100%;
+  min-height: 620px;
+  background: #17212a;
+}
+
+.road-map-canvas .leaflet-control-attribution {
+  color: #3a4855;
+  font-size: 10px;
+}
+
+.road-map-camera-marker,
+.road-map-vehicle-marker {
+  background: transparent;
+}
+
+.road-map-camera-marker > span {
+  display: grid;
+  width: 30px;
+  height: 30px;
+  place-items: center;
+  border: 2px solid #dcecf3;
+  border-radius: 50%;
+  background: #173947;
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.45);
+}
+
+.road-map-camera-marker i {
+  display: block;
+  width: 10px;
+  height: 8px;
+  border: 2px solid #8ed0e2;
+  border-radius: 2px;
+  position: relative;
+}
+
+.road-map-camera-marker i::after {
+  content: "";
+  position: absolute;
+  top: 1px;
+  right: -6px;
+  width: 4px;
+  height: 4px;
+  border: 1px solid #8ed0e2;
+}
+
+.road-map-vehicle-marker > span {
+  display: block;
+  width: 20px;
+  height: 20px;
+  border: 3px solid #fff7f0;
+  border-radius: 50%;
+  background: #f57f42;
+  box-shadow: 0 0 0 5px rgba(245, 127, 66, 0.24), 0 4px 14px rgba(0, 0, 0, 0.5);
+}
+
+path.road-map-trajectory-line {
+  animation: road-map-flow 1.2s linear infinite;
+  cursor: pointer;
+}
+
+path.road-map-trajectory-line--selected {
+  filter: drop-shadow(0 0 4px rgba(255, 126, 63, 0.72));
+}
+
+@keyframes road-map-flow {
+  to { stroke-dashoffset: -44; }
+}
+
+.road-map-legend {
+  position: absolute;
+  z-index: 500;
+  top: 12px;
+  right: 12px;
+  display: flex;
+  gap: 12px;
+  padding: 8px 10px;
+  border: 1px solid rgba(49, 64, 77, 0.8);
+  border-radius: 7px;
+  color: #ced9e2;
+  background: rgba(9, 15, 21, 0.88);
+  font-size: 0.7rem;
+}
+
+.road-map-legend span {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.road-map-legend-camera,
+.road-map-legend-path {
+  display: inline-block;
+}
+
+.road-map-legend-camera {
+  width: 10px;
+  height: 10px;
+  border: 2px solid #dcecf3;
+  border-radius: 50%;
+  background: #285b6d;
+}
+
+.road-map-legend-path {
+  width: 24px;
+  border-top: 2px dashed #f28a50;
+}
+
+.road-map-overlay-empty {
+  position: absolute;
+  z-index: 450;
+  inset: 50% auto auto 50%;
+  width: min(360px, 80%);
+  padding: 16px;
+  transform: translate(-50%, -50%);
+  border: 1px solid #4a5966;
+  border-radius: 9px;
+  color: #c6d2dd;
+  background: rgba(12, 18, 25, 0.9);
+  text-align: center;
+}
+
+.road-map-notice {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 18px;
+  padding-top: 12px;
+  color: #7f91a0;
+  font-size: 0.7rem;
+}
+
+.road-map-notice span:first-child {
+  color: #a9bac8;
+}
+
+.road-map-state {
+  display: grid;
+  min-height: 420px;
+  place-content: center;
+  text-align: center;
+}
+
+.road-map-state p {
+  color: #97a8b7;
+}
+
+@media (max-width: 900px) {
+  .road-map-page { padding: 20px 14px; }
+  .road-map-header { display: grid; }
+  .road-map-status { text-align: left; }
+  .road-map-layout { grid-template-columns: 1fr; }
+  .road-map-panel { border-right: 0; border-bottom: 1px solid #2b3742; }
+  .road-map-list { max-height: 230px; }
+  .road-map-canvas, .road-map-layout { min-height: 520px; }
+  .road-map-canvas-wrap { height: 520px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  path.road-map-trajectory-line { animation: none; }
+}

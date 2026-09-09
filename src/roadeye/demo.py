@@ -23,6 +23,7 @@ from .auth import (
     LocalAuthService,
 )
 from .frontend_compat import FrontendCompatibility
+from .map_api import create_map_router
 from .plate_search import PlateSearchIndex
 from .s06_demo import S06_DISCLOSURE
 
@@ -465,6 +466,14 @@ def create_app(
         if session is None:
             raise HTTPException(status_code=401, detail="SESSION_REQUIRED")
         return session
+
+    app.include_router(
+        create_map_router(
+            repository=repository,
+            run_id=frontend_compatibility.run_id,
+            require_session=require_session,
+        )
+    )
 
     @app.get("/api/health")
     def health() -> dict[str, str]:
