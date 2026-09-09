@@ -23,6 +23,7 @@ from .auth import (
     AuthSession,
     LocalAuthService,
 )
+from .frontend_compat import FrontendCompatibility
 from .plate_search import PlateSearchIndex
 from .s06_demo import S06_DISCLOSURE
 
@@ -404,6 +405,15 @@ class AuthResponse(BaseModel):
     mode: Literal["local_demo"] = "local_demo"
 
 
+class TrajectoryRequest(BaseModel):
+    run_id: str
+    start: str
+    end: str
+    plate: str
+    include_review: bool = False
+    limit: int = 100
+
+
 def _uses_https(request: Request) -> bool:
     return request.url.scheme.casefold() == "https"
 
@@ -437,6 +447,7 @@ def create_app(
 ) -> FastAPI:
     authentication = auth_service or LocalAuthService.from_environment()
     repository = DemoRepository(config_path)
+    frontend_compatibility = FrontendCompatibility(repository)
     app = FastAPI(
         title="RoadEye local test interface",
         version="0.2.0",
@@ -446,6 +457,7 @@ def create_app(
     )
     app.state.repository = repository
     app.state.auth_service = authentication
+    app.state.frontend_compatibility = frontend_compatibility
 
     def require_session(request: Request) -> AuthSession:
         session = authentication.authenticate(request.cookies.get(COOKIE_NAME))
@@ -485,6 +497,161 @@ def create_app(
         _clear_session_cookie(response, secure=_uses_https(request))
         response.headers["Cache-Control"] = "no-store"
         return {"logged_out": True}
+
+    @app.get("/v1/health/ready")
+    def frontend_health() -> dict[str, Any]:
+        return {"data": frontend_compatibility.health()}
+
+    @app.post("/v1/auth/login")
+    def frontend_login(
+        body: LoginRequest, request: Request, response: Response
+    ) -> dict[str, Any]:
+        result = authentication.login(body.actor, body.password)
+        if result is None:
+            raise HTTPException(status_code=401, detail="INVALID_CREDENTIALS")
+        token, session = result
+        _set_session_cookie(response, token, secure=_uses_https(request))
+        response.headers["Cache-Control"] = "no-store"
+        return {"data": {"actor": session.actor, "mode": "local_demo"}}
+
+    @app.get("/v1/auth/me")
+    def frontend_me(
+        response: Response,
+        session: AuthSession = Depends(require_session),
+    ) -> dict[str, Any]:
+        response.headers["Cache-Control"] = "no-store"
+        return {"data": {"actor": session.actor, "mode": "local_demo"}}
+
+    @app.post("/v1/auth/logout")
+    def frontend_logout(
+        request: Request,
+        response: Response,
+        _session: AuthSession = Depends(require_session),
+    ) -> dict[str, Any]:
+        authentication.logout(request.cookies.get(COOKIE_NAME))
+        _clear_session_cookie(response, secure=_uses_https(request))
+        response.headers["Cache-Control"] = "no-store"
+        return {"data": {"logged_out": True}}
+
+    @app.get("/v1/demo/runs")
+    def frontend_runs(
+        _session: AuthSession = Depends(require_session),
+    ) -> dict[str, Any]:
+        return {"data": frontend_compatibility.runs()}
+
+    @app.get("/v1/demo/runs/{run_id}")
+    def frontend_run(
+        run_id: str,
+        _session: AuthSession = Depends(require_session),
+    ) -> dict[str, Any]:
+        try:
+            frontend_compatibility.require_run(run_id)
+        except KeyError as error:
+            raise HTTPException(status_code=404, detail=str(error)) from error
+        return {"data": frontend_compatibility.run()}
+
+    @app.get("/v1/demo/scenarios")
+    def frontend_scenarios(
+        _session: AuthSession = Depends(require_session),
+    ) -> dict[str, Any]:
+        return {"data": frontend_compatibility.scenarios()}
+
+    @app.get("/v1/cameras")
+    def frontend_cameras(
+        _session: AuthSession = Depends(require_session),
+    ) -> dict[str, Any]:
+        return {"data": frontend_compatibility.cameras()}
+
+    @app.get("/v1/graph")
+    def frontend_graph(
+        _session: AuthSession = Depends(require_session),
+    ) -> dict[str, Any]:
+        return {"data": frontend_compatibility.graph()}
+
+    @app.get("/v1/analytics/{metric}")
+    def frontend_analytics(
+        metric: str,
+        run_id: str,
+        start: str,
+        end: str,
+        _session: AuthSession = Depends(require_session),
+    ) -> dict[str, Any]:
+        if metric != "summary":
+            raise HTTPException(status_code=404, detail="Unsupported analytics metric")
+        try:
+            data = frontend_compatibility.analytics(run_id, start=start, end=end)
+        except KeyError as error:
+            raise HTTPException(status_code=404, detail=str(error)) from error
+        return {"data": data}
+
+    @app.get("/v1/observations")
+    def frontend_observations(
+        run_id: str,
+        start: str,
+        end: str,
+        offset: int = Query(default=0, ge=0),
+        limit: int = Query(default=100, ge=1, le=1000),
+        _session: AuthSession = Depends(require_session),
+    ) -> dict[str, Any]:
+        del start, end
+        try:
+            data = frontend_compatibility.observations(
+                run_id, offset=offset, limit=limit
+            )
+        except KeyError as error:
+            raise HTTPException(status_code=404, detail=str(error)) from error
+        return {"data": data}
+
+    @app.get("/v1/observations/{observation_id}")
+    def frontend_observation(
+        observation_id: str,
+        _session: AuthSession = Depends(require_session),
+    ) -> dict[str, Any]:
+        try:
+            data = frontend_compatibility.observation(observation_id)
+        except KeyError as error:
+            raise HTTPException(status_code=404, detail=str(error)) from error
+        return {"data": data}
+
+    @app.get("/v1/evidence/{evidence_id}")
+    def frontend_evidence(
+        evidence_id: str,
+        _session: AuthSession = Depends(require_session),
+    ) -> FileResponse:
+        try:
+            reference = frontend_compatibility.evidence_reference(evidence_id)
+            path = repository.crop_path(
+                reference.global_id,
+                reference.visit_index,
+                reference.sample_index,
+            )
+        except (KeyError, FileNotFoundError) as error:
+            raise HTTPException(status_code=404, detail=str(error)) from error
+        return FileResponse(
+            path,
+            media_type="image/jpeg",
+            headers={"Cache-Control": "private, max-age=3600"},
+        )
+
+    @app.post("/v1/trajectories")
+    def frontend_trajectory(
+        body: TrajectoryRequest,
+        _session: AuthSession = Depends(require_session),
+    ) -> dict[str, Any]:
+        if not 1 <= body.limit <= 100:
+            raise HTTPException(status_code=422, detail="limit must be between 1 and 100")
+        try:
+            data = frontend_compatibility.trajectory(
+                run_id=body.run_id,
+                plate=body.plate,
+                include_review=body.include_review,
+                limit=body.limit,
+            )
+        except KeyError as error:
+            raise HTTPException(status_code=404, detail=str(error)) from error
+        except ValueError as error:
+            raise HTTPException(status_code=422, detail=str(error)) from error
+        return {"data": data}
 
     @app.get("/api/status")
     def status(_session: AuthSession = Depends(require_session)) -> dict[str, Any]:

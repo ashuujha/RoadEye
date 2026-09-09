@@ -645,3 +645,195 @@ def test_frontend_contains_disabled_plate_search_contract():
     assert 'id="plate-search-button"' in html
     assert "/api/plate-search/status" in javascript
     assert "predicted plate observation" in javascript
+
+
+def test_v1_health_and_auth_use_frontend_response_envelopes(tmp_path, monkeypatch):
+    password = "x" * 16
+    monkeypatch.setenv(DEMO_PASSWORD_ENV, password)
+    app = create_app(fixture_config(tmp_path, monkeypatch))
+
+    with DemoClient(app) as client:
+        assert client.get("/v1/health/ready").json()["data"]["status"] == "ready"
+        assert client.get("/v1/auth/me").status_code == 401
+        response = client.post(
+            "/v1/auth/login",
+            json={"actor": "administrator", "password": password},
+        )
+        assert response.json() == {
+            "data": {"actor": "administrator", "mode": "local_demo"}
+        }
+        assert client.get("/v1/auth/me").json() == {
+            "data": {"actor": "administrator", "mode": "local_demo"}
+        }
+        assert client.post("/v1/auth/logout").json() == {
+            "data": {"logged_out": True}
+        }
+        assert client.get("/v1/auth/me").status_code == 401
+
+
+def test_v1_auth_rejects_wrong_password_and_unknown_actor(tmp_path, monkeypatch):
+    password = "x" * 16
+    monkeypatch.setenv(DEMO_PASSWORD_ENV, password)
+    app = create_app(fixture_config(tmp_path, monkeypatch))
+
+    with DemoClient(app) as client:
+        wrong_password = client.post(
+            "/v1/auth/login",
+            json={"actor": "viewer", "password": "wrong"},
+        )
+        unknown_actor = client.post(
+            "/v1/auth/login",
+            json={"actor": "operator", "password": password},
+        )
+    assert wrong_password.status_code == 401
+    assert wrong_password.json() == {"detail": "INVALID_CREDENTIALS"}
+    assert unknown_actor.status_code == 422
+
+
+@pytest.mark.parametrize(
+    "path",
+    [
+        "/v1/demo/runs",
+        "/v1/demo/scenarios",
+        "/v1/cameras",
+        "/v1/graph",
+        "/v1/analytics/summary?run_id=unknown&start=a&end=b",
+        "/v1/observations?run_id=unknown&start=a&end=b",
+        "/v1/observations/unknown",
+        "/v1/evidence/unknown",
+    ],
+)
+def test_v1_prediction_routes_require_a_session(path, tmp_path, monkeypatch):
+    monkeypatch.setenv(DEMO_PASSWORD_ENV, "x" * 16)
+    app = create_app(fixture_config(tmp_path, monkeypatch))
+
+    with DemoClient(app) as client:
+        response = client.get(path)
+    assert response.status_code == 401
+    assert response.json() == {"detail": "SESSION_REQUIRED"}
+
+
+def test_v1_trajectory_requires_a_session(tmp_path, monkeypatch):
+    monkeypatch.setenv(DEMO_PASSWORD_ENV, "x" * 16)
+    app = create_app(fixture_config(tmp_path, monkeypatch))
+    body = {
+        "run_id": app.state.frontend_compatibility.run_id,
+        "start": "2026-01-15T08:00:00Z",
+        "end": "2026-01-15T09:00:00Z",
+        "plate": "KA01AB1234",
+        "include_review": False,
+        "limit": 100,
+    }
+
+    with DemoClient(app) as client:
+        response = client.post("/v1/trajectories", json=body)
+    assert response.status_code == 401
+    assert response.json() == {"detail": "SESSION_REQUIRED"}
+
+
+def test_v1_read_adapter_maps_frozen_predictions_and_evidence(tmp_path, monkeypatch):
+    password = "x" * 16
+    monkeypatch.setenv(DEMO_PASSWORD_ENV, password)
+    app = create_app(fixture_config(tmp_path, monkeypatch))
+    compatibility = app.state.frontend_compatibility
+
+    with DemoClient(app) as client:
+        client.post(
+            "/v1/auth/login",
+            json={"actor": "viewer", "password": password},
+        )
+        run = client.get("/v1/demo/runs").json()["data"][0]
+        assert run["id"] == compatibility.run_id
+        assert run["state"] == "delivered"
+        assert run["source_mode"] == "recorded_real"
+
+        cameras = client.get("/v1/cameras").json()["data"]
+        assert [camera["id"] for camera in cameras] == ["c1", "c2"]
+        graph = client.get("/v1/graph").json()["data"]
+        assert graph["edges"][0]["source"] == "c1"
+        assert graph["edges"][0]["target"] == "c2"
+
+        query = f"run_id={run['id']}&start=2026-01-15T08:00:00Z&end=2026-01-15T09:00:00Z"
+        page = client.get(f"/v1/observations?{query}").json()["data"]
+        assert page["total"] == 2
+        observation = page["items"][0]
+        assert observation["status"] == "review_required"
+        assert observation["prediction_status"] == (
+            "predicted_not_runtime_ground_truth"
+        )
+        assert observation["machine"]["score_meaning"].endswith(
+            "not_probability"
+        )
+
+        detail = client.get(f"/v1/observations/{observation['id']}").json()[
+            "data"
+        ]
+        assert detail["evidence_sha256"] == observation["evidence_sha256"]
+        evidence = client.get(f"/v1/evidence/{observation['evidence_id']}")
+        assert evidence.status_code == 200
+        assert evidence.content == app.state.repository.crop_path(
+            "roadeye_fixture", 0, 0
+        ).read_bytes()
+
+        analytics = client.get(f"/v1/analytics/summary?{query}").json()["data"]
+        assert analytics["vehicle_passages"] == 2
+        assert analytics["accepted_plates"] == 0
+        assert analytics["review_required"] == 2
+        assert analytics["travel_times"] == []
+        assert analytics["claim_boundaries"]["uses_runtime_ground_truth"] is False
+
+
+def test_v1_trajectory_uses_only_runtime_plate_search_results(tmp_path, monkeypatch):
+    password = "x" * 16
+    monkeypatch.setenv(DEMO_PASSWORD_ENV, password)
+    app = create_app(fixture_config(tmp_path, monkeypatch))
+    repository = app.state.repository
+    monkeypatch.setattr(
+        repository,
+        "search_plates",
+        lambda _plate, *, limit: {
+            "availability": "READY",
+            "prediction_label": "predicted_plate_text_not_ground_truth",
+            "reason": None,
+            "results": [{"global_id": "roadeye_fixture"}][:limit],
+        },
+    )
+
+    with DemoClient(app) as client:
+        client.post(
+            "/v1/auth/login",
+            json={"actor": "investigator", "password": password},
+        )
+        response = client.post(
+            "/v1/trajectories",
+            json={
+                "run_id": app.state.frontend_compatibility.run_id,
+                "start": "2026-01-15T08:00:00Z",
+                "end": "2026-01-15T09:00:00Z",
+                "plate": "KA01AB1234",
+                "include_review": False,
+                "limit": 100,
+            },
+        )
+    assert response.status_code == 200
+    trajectory = response.json()["data"]
+    assert len(trajectory["observed_nodes"]) == 2
+    assert len(trajectory["inferred_links"]) == 1
+    assert trajectory["inferred_links"][0]["speed_kph"] is None
+    assert "not probabilities" in trajectory["limitations"]
+
+
+def test_v1_does_not_claim_unsupported_mutable_backend_routes(tmp_path, monkeypatch):
+    monkeypatch.setenv(DEMO_PASSWORD_ENV, "x" * 16)
+    app = create_app(fixture_config(tmp_path, monkeypatch))
+    route_paths = {route.path for route in app.routes}
+    assert not {
+        "/v1/alerts",
+        "/v1/watchlists",
+        "/v1/audit",
+        "/v1/jobs",
+        "/v1/recordings",
+        "/v1/recorded/runs",
+        "/v1/observations/{observation_id}/reviews",
+        "/v1/demo/runs/{run_id}/control",
+    } & route_paths
