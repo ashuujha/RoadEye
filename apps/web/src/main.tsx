@@ -17,6 +17,7 @@ import {
   authenticationReducer,
   initialAuthenticationState,
 } from "./auth";
+import { LandingPage, routeForPath, type AppRoute } from "./landing";
 import { AppShell, type PageId } from "./components/AppShell";
 import { EvidenceDrawer } from "./components/EvidenceDrawer";
 import { PredictionMapView } from "./components/NetworkMap";
@@ -42,9 +43,22 @@ export function App() {
     initialAuthenticationState,
   );
   const [page, setPage] = useState<PageId>("Map");
+  const [route, setRoute] = useState<AppRoute>(() =>
+    routeForPath(window.location.hash || window.location.pathname),
+  );
   const [selectedEvidence, setSelectedEvidence] =
     useState<EvidenceSelection | null>(null);
   const closeEvidence = useCallback(() => setSelectedEvidence(null), []);
+
+  const changeRoute = useCallback(
+    (nextRoute: AppRoute, replace = false) => {
+      const nextPath =
+        nextRoute === "landing" ? "/" : `/#/${nextRoute}`;
+      window.history[replace ? "replaceState" : "pushState"]({}, "", nextPath);
+      setRoute(nextRoute);
+    },
+    [],
+  );
 
   const discoverSession = useCallback((signal?: AbortSignal) => {
     dispatchAuthentication({ type: "DISCOVERY_STARTED" });
@@ -67,19 +81,34 @@ export function App() {
   }, []);
 
   useEffect(() => {
+    if (route === "landing" || authentication.status === "authenticated") {
+      return;
+    }
     const controller = new AbortController();
     discoverSession(controller.signal);
     return () => controller.abort();
-  }, [discoverSession]);
+  }, [discoverSession, route]);
+
+  useEffect(() => {
+    const syncRouteFromHistory = () =>
+      setRoute(routeForPath(window.location.hash || window.location.pathname));
+    window.addEventListener("popstate", syncRouteFromHistory);
+    window.addEventListener("hashchange", syncRouteFromHistory);
+    return () => {
+      window.removeEventListener("popstate", syncRouteFromHistory);
+      window.removeEventListener("hashchange", syncRouteFromHistory);
+    };
+  }, []);
 
   useEffect(
     () =>
       subscribeToSessionExpiry(() => {
         cache.clear();
         setSelectedEvidence(null);
+        changeRoute("login", true);
         dispatchAuthentication({ type: "SESSION_EXPIRED" });
       }),
-    [cache],
+    [cache, changeRoute],
   );
 
   const handleAuthenticated = useCallback(
@@ -87,9 +116,10 @@ export function App() {
       cache.clear();
       setPage("Map");
       setSelectedEvidence(null);
+      changeRoute("dashboard", true);
       dispatchAuthentication({ type: "SESSION_FOUND", session });
     },
-    [cache],
+    [cache, changeRoute],
   );
 
   const signOut = useCallback(async () => {
@@ -101,8 +131,9 @@ export function App() {
     cache.clear();
     setPage("Map");
     setSelectedEvidence(null);
+    changeRoute("login", true);
     dispatchAuthentication({ type: "SIGNED_OUT" });
-  }, [cache]);
+  }, [cache, changeRoute]);
 
   const dashboard =
     authentication.status === "authenticated" ? (
@@ -130,6 +161,10 @@ export function App() {
         <EvidenceDrawer selection={selectedEvidence} onClose={closeEvidence} />
       </AppShell>
     ) : null;
+
+  if (route === "landing") {
+    return <LandingPage onOpenDashboard={() => changeRoute("login")} />;
+  }
 
   return (
     <SessionGate
