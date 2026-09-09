@@ -1,0 +1,18 @@
+{
+  "synthetic/evaluation/cam_north/001": {
+    "samples": [
+      {
+        "frame": 101,
+        "time_s": 11.0
+      }
+    ]
+  },
+  "synthetic/evaluation/cam_central/002": {
+    "samples": [
+      {
+        "frame": 441,
+        "time_s": 45.0
+      }
+    ]
+  }
+}

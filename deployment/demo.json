@@ -1,0 +1,10 @@
+{
+  "schema_version": 1,
+  "scope": "synthetic_evaluation_fixture_without_ground_truth",
+  "scenario": "Vercel_evaluation_fixture",
+  "claim_status": "UNVERIFIED",
+  "evaluation_notice": "Synthetic evaluation records only; no CityFlow identities, raw footage, or ground truth are deployed.",
+  "runtime_artifacts": "deployment/demo-runtime",
+  "dataset_root": "deployment/unavailable-source-video",
+  "frontend_root": "deployment/static"
+}

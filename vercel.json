@@ -4,7 +4,16 @@
   "installCommand": "npm run install:web",
   "buildCommand": "npm run build",
   "outputDirectory": "apps/web/dist",
+  "functions": {
+    "api/index.py": {
+      "excludeFiles": "{apps/web/**,tests/**,data/**,artifacts/**,reports/**,notebooks/**,scripts/**,configs/**,packages/**}"
+    }
+  },
   "rewrites": [
+    {
+      "source": "/v1/:path*",
+      "destination": "/api/v1/:path*"
+    },
     {
       "source": "/login",
       "destination": "/index.html"

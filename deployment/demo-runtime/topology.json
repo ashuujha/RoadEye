@@ -1,0 +1,15 @@
+{
+  "kind": "approximate",
+  "positions": {
+    "cam_north": {
+      "latitude": 28.6328,
+      "longitude": 77.2197,
+      "kind": "approximate"
+    },
+    "cam_central": {
+      "latitude": 28.6275,
+      "longitude": 77.2241,
+      "kind": "approximate"
+    }
+  }
+}

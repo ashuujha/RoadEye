@@ -1,0 +1,63 @@
+[
+  {
+    "global_id": "roadeye_evaluation_vehicle_001",
+    "camera_count": 2,
+    "geometry_status": "observations_only_no_road_route_claim",
+    "visits": [
+      {
+        "tracklet_key": "synthetic/evaluation/cam_north/001",
+        "camera": "cam_north",
+        "first_observed_s": 10.0,
+        "identified_at_s": 11.0,
+        "last_observed_s": 12.0,
+        "reference_position": {
+          "latitude": 28.6328,
+          "longitude": 77.2197,
+          "kind": "approximate"
+        },
+        "evidence_samples": [
+          {
+            "key": "synthetic/evaluation/cam_north/001",
+            "camera": "cam_north",
+            "frame": 101,
+            "time_s": 11.0,
+            "bbox_xywh": [100, 80, 160, 90],
+            "baseline_score": 0.82,
+            "video": "not-deployed.mp4",
+            "crop": "not-deployed.jpg",
+            "crop_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+            "clipped_xyxy": [100, 80, 260, 170],
+            "score_kind": "synthetic_evaluation_score_not_probability"
+          }
+        ]
+      },
+      {
+        "tracklet_key": "synthetic/evaluation/cam_central/002",
+        "camera": "cam_central",
+        "first_observed_s": 44.0,
+        "identified_at_s": 45.0,
+        "last_observed_s": 46.0,
+        "reference_position": {
+          "latitude": 28.6275,
+          "longitude": 77.2241,
+          "kind": "approximate"
+        },
+        "evidence_samples": [
+          {
+            "key": "synthetic/evaluation/cam_central/002",
+            "camera": "cam_central",
+            "frame": 441,
+            "time_s": 45.0,
+            "bbox_xywh": [140, 90, 155, 88],
+            "baseline_score": 0.79,
+            "video": "not-deployed.mp4",
+            "crop": "not-deployed.jpg",
+            "crop_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+            "clipped_xyxy": [140, 90, 295, 178],
+            "score_kind": "synthetic_evaluation_score_not_probability"
+          }
+        ]
+      }
+    ]
+  }
+]

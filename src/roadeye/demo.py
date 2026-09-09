@@ -9,7 +9,6 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Literal
 
-import cv2
 from fastapi import Depends, FastAPI, HTTPException, Query, Request, Response
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
@@ -368,6 +367,8 @@ class DemoRepository:
         video = _within(self.paths.dataset, sample["video"], label="video")
         if not video.is_file():
             raise FileNotFoundError("Source video is missing")
+        import cv2
+
         capture = cv2.VideoCapture(str(video))
         try:
             capture.set(cv2.CAP_PROP_POS_FRAMES, sample["frame"] - 1)
