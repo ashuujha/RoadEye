@@ -1,7 +1,9 @@
-import React, { useCallback, useEffect, useReducer, useState } from "react";
+import React, { useState } from "react";
+import { createRoot } from "react-dom/client";
 import {
   QueryClient,
   QueryClientProvider,
+  useQuery,
   useQueryClient,
 } from "@tanstack/react-query";
 import { client, key, unwrap } from "./api";
@@ -25,12 +27,7 @@ import { SystemView } from "./views/SystemView";
 type RecordData = Record<string, any>;
 
 const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      retry: false,
-      refetchOnWindowFocus: false,
-    },
-  },
+  defaultOptions: { queries: { retry: false, refetchInterval: 3000 } },
 });
 
 function App() {
@@ -172,84 +169,6 @@ function App() {
     } finally {
       setBusy(false);
     }
-    const controller = new AbortController();
-    discoverSession(controller.signal);
-    return () => controller.abort();
-  }, [discoverSession, route]);
-
-  useEffect(() => {
-    const syncRouteFromHistory = () =>
-      setRoute(routeForPath(window.location.pathname));
-    window.addEventListener("popstate", syncRouteFromHistory);
-    return () => {
-      window.removeEventListener("popstate", syncRouteFromHistory);
-    };
-  }, []);
-
-  useEffect(
-    () =>
-      subscribeToSessionExpiry(() => {
-        cache.clear();
-        setSelectedEvidence(null);
-        changeRoute("login", true);
-        dispatchAuthentication({ type: "SESSION_EXPIRED" });
-      }),
-    [cache, changeRoute],
-  );
-
-  const handleAuthenticated = useCallback(
-    (session: AuthSession) => {
-      cache.clear();
-      setPage("Map");
-      setSelectedEvidence(null);
-      changeRoute("dashboard", true);
-      dispatchAuthentication({ type: "SESSION_FOUND", session });
-    },
-    [cache, changeRoute],
-  );
-
-  const signOut = useCallback(async () => {
-    try {
-      await api.logout();
-    } catch (error) {
-      if (!isSessionRequiredError(error)) return;
-    }
-    cache.clear();
-    setPage("Map");
-    setSelectedEvidence(null);
-    changeRoute("login", true);
-    dispatchAuthentication({ type: "SIGNED_OUT" });
-  }, [cache, changeRoute]);
-
-  const dashboard =
-    authentication.status === "authenticated" ? (
-      <AppShell
-        currentPage={page}
-        onNavigate={setPage}
-        actor={authentication.session.actor}
-        sourceMode="AUDITED PREDICTIONS · READ-ONLY"
-        onSignOut={() => void signOut()}
-      >
-        {page === "Map" && (
-          <PredictionMapView onSelectEvidence={setSelectedEvidence} />
-        )}
-
-        {page === "Trajectories" && (
-          <TrajectoryView onSelectEvidence={setSelectedEvidence} />
-        )}
-
-        {page === "Analytics" && <AnalyticsView />}
-
-        {page === "Evidence" && (
-          <CameraWorkspaceView onSelectEvidence={setSelectedEvidence} />
-        )}
-
-        <EvidenceDrawer selection={selectedEvidence} onClose={closeEvidence} />
-      </AppShell>
-    ) : null;
-
-  if (route === "landing") {
-    return <LandingPage onOpenDashboard={() => changeRoute("login")} />;
   }
 
   // Trajectory Query Handler
