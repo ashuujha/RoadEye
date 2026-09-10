@@ -37,6 +37,13 @@ export interface MapTrajectory {
 export interface CameraMapPayload {
   run_id: string;
   scenario: string;
+  location_label: string;
+  location_country: string | null;
+  approximate_center: {
+    latitude: number;
+    longitude: number;
+    source: string;
+  };
   coordinate_accuracy: string;
   coordinate_notice: string;
   tile_source: {
@@ -70,6 +77,35 @@ export function orderedPoints(points: MapPoint[]): MapPoint[] {
     (left, right) =>
       left.identified_at_s - right.identified_at_s || left.sequence - right.sequence,
   );
+}
+
+export function featuredTrajectory(trajectories: MapTrajectory[]): MapTrajectory | null {
+  return [...trajectories].sort(
+    (left, right) =>
+      right.camera_count - left.camera_count ||
+      right.point_count - left.point_count ||
+      left.points[0].identified_at_s - right.points[0].identified_at_s ||
+      left.vehicle_id.localeCompare(right.vehicle_id),
+  )[0] ?? null;
+}
+
+export function cameraSequence(trajectory: MapTrajectory): string {
+  return orderedPoints(trajectory.points)
+    .map((point) => point.camera_id)
+    .join(" → ");
+}
+
+export function trajectorySpanSeconds(trajectory: MapTrajectory): number {
+  const points = orderedPoints(trajectory.points);
+  if (!points.length) return 0;
+  return Math.max(0, points[points.length - 1].last_observed_s - points[0].first_observed_s);
+}
+
+export function minimumAssociationScore(trajectory: MapTrajectory): number | null {
+  const scores = trajectory.points.flatMap((point) =>
+    point.incoming_association ? [point.incoming_association.score] : [],
+  );
+  return scores.length ? Math.min(...scores) : null;
 }
 
 export function visibleTrajectory(

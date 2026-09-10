@@ -1,9 +1,16 @@
 {
   "schema_version": 1,
-  "scope": "synthetic_evaluation_fixture_without_ground_truth",
-  "scenario": "Vercel_evaluation_fixture",
+  "scope": "frozen_S02_selected_predictions_without_ground_truth_or_media",
+  "scenario": "CityFlow_V2_S02_US_demo_subset",
   "claim_status": "UNVERIFIED",
-  "evaluation_notice": "Synthetic evaluation records only; no CityFlow identities, raw footage, or ground truth are deployed.",
+  "evaluation_notice": "Eight pre-selected frozen CityFlow S02 prediction journeys are deployed as metadata only. Identity ground truth, source video, and crops are not deployed; associations remain UNVERIFIED except where separately documented.",
+  "location_label": "CityFlow S02 · approximate U.S. scenario center",
+  "location_country": "United States",
+  "approximate_center": {
+    "latitude": 42.491916,
+    "longitude": -90.723723,
+    "source": "CityFlow V2 ReadMe S02 approximate scenario center"
+  },
   "runtime_artifacts": "deployment/demo-runtime",
   "dataset_root": "deployment/unavailable-source-video",
   "frontend_root": "deployment/static"

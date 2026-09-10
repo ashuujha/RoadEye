@@ -1,15 +1,38 @@
 {
-  "kind": "approximate",
+  "kind": "calibration_proximity_graph_not_verified_road_connectivity",
   "positions": {
-    "cam_north": {
-      "latitude": 28.6328,
-      "longitude": 77.2197,
-      "kind": "approximate"
+    "c006": {
+      "latitude": 42.49199270258965,
+      "longitude": -90.72360884551125,
+      "kind": "inverse_homography_roi_median_road_reference_not_camera_GPS",
+      "calibration_sha256": "e17e3f08595bbde0048e9ed65f8bdf03eecaf8fe8ac7679d4e60a3d0ab541ef3",
+      "roi_sha256": "f25daf815ec1e9b071ac6266f1dca947dcbcf6a91c528eccdf357d0c84dd1eb6"
     },
-    "cam_central": {
-      "latitude": 28.6275,
-      "longitude": 77.2241,
-      "kind": "approximate"
+    "c007": {
+      "latitude": 42.49196011168428,
+      "longitude": -90.72378360928452,
+      "kind": "inverse_homography_roi_median_road_reference_not_camera_GPS",
+      "calibration_sha256": "6cc90c5d7519a037d711298a4fa3a3c4ff3238a70de67abb68409164578a6bd5",
+      "roi_sha256": "5e9b8c81e8b4f346fe0d8267d72fc571434dc619a72c6e63cf997f4a3ea05fa5"
+    },
+    "c008": {
+      "latitude": 42.49188368447666,
+      "longitude": -90.72367964622971,
+      "kind": "inverse_homography_roi_median_road_reference_not_camera_GPS",
+      "calibration_sha256": "b5e4047fdbf6ad6f206e93361db27ea35bd3c14e7948c2f6665636a41ffe02f6",
+      "roi_sha256": "69ac0096f3d352a0f625726ea383cbd9e9fd9c97bd290fcaee9b26fcd637ed2b"
+    },
+    "c009": {
+      "latitude": 42.491850815233974,
+      "longitude": -90.72388937148045,
+      "kind": "inverse_homography_roi_median_road_reference_not_camera_GPS",
+      "calibration_sha256": "f3c4cbcf8a7a9fed96b1a0bc03a18f427cb0c60eb583b1d8e3d8cbea8f37e674",
+      "roi_sha256": "5473d89163d0ffe9927cc560c73f277c7e72aa58efbc70c453256a47c7d2b2a0"
     }
+  },
+  "source_scenario_center": {
+    "latitude": 42.491916,
+    "longitude": -90.723723,
+    "status": "approximate_center_published_with_cityflow_s02"
   }
 }

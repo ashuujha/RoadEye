@@ -1,5 +1,14 @@
 import { describe, expect, it } from "vitest";
-import { orderedPoints, visibleTrajectory, type MapPoint } from "./map-model";
+import {
+  cameraSequence,
+  featuredTrajectory,
+  minimumAssociationScore,
+  orderedPoints,
+  trajectorySpanSeconds,
+  visibleTrajectory,
+  type MapPoint,
+  type MapTrajectory,
+} from "./map-model";
 
 const points: MapPoint[] = [
   {
@@ -63,5 +72,35 @@ describe("trajectory replay model", () => {
       [30, 30],
     ]);
     expect(complete.currentPosition).toEqual([30, 30]);
+  });
+});
+
+describe("trajectory presentation model", () => {
+  const trajectory: MapTrajectory = {
+    vehicle_id: "roadeye_demo",
+    predicted_plate: null,
+    camera_count: 3,
+    point_count: 3,
+    prediction_status: "UNVERIFIED",
+    geometry_status: "observations_only_no_road_route_claim",
+    disclosure: null,
+    points: points.map((point, index) => ({
+      ...point,
+      incoming_association:
+        index === 0
+          ? null
+          : { score: index === 1 ? 0.91 : 0.85, score_kind: "cosine", is_probability: false },
+    })),
+  };
+
+  it("summarizes the timestamp-ordered camera route and observed span", () => {
+    expect(cameraSequence(trajectory)).toBe("c1 → c2 → c3");
+    expect(trajectorySpanSeconds(trajectory)).toBe(22);
+    expect(minimumAssociationScore(trajectory)).toBe(0.85);
+  });
+
+  it("selects the journey with the strongest camera coverage", () => {
+    const shorter = { ...trajectory, vehicle_id: "roadeye_short", camera_count: 2 };
+    expect(featuredTrajectory([shorter, trajectory])?.vehicle_id).toBe("roadeye_demo");
   });
 });

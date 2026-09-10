@@ -8,7 +8,7 @@
 
 RoadEye connects vehicle observations across cameras and makes each predicted journey inspectable through its source evidence: camera, timestamp, vehicle crop, bounding box, association score, and approximate location.
 
-The repository brings together a **React operations console**, a **FastAPI evidence API**, and a **CPU inference and evaluation pipeline**. It also includes a small Vercel deployment fixture for demonstrating authentication and sample records without distributing private datasets or model weights.
+The repository brings together a **React operations console**, a **FastAPI evidence API**, and a **CPU inference and evaluation pipeline**. It also includes a small, metadata-only Vercel prediction fixture for demonstrating authentication and map records without distributing private datasets or model weights.
 
 **Project context:** Smart India Hackathon · SIH2026172 · Bharat Electronics Limited problem statement.
 
@@ -26,7 +26,7 @@ The repository brings together a **React operations console**, a **FastAPI evide
 | Plate search | CPU detector/OCR predictions indexed against exact journey evidence | Sparse coverage; predicted strings remain unverified |
 | Analytics | Camera visit counts, predicted origin/destination endpoints, and transition support | Aggregates of predictions; no verified congestion or speed measurement |
 | Web console | React/TypeScript interface with landing, login, and operations views | The backend implements a read-only subset of the displayed workflows |
-| Cloud preview | Vite static build and a Python function on the same Vercel domain | One synthetic vehicle journey across two sample cameras |
+| Cloud preview | Vite static build and a Python function on the same Vercel domain | Eight pre-selected frozen CityFlow S02 prediction journeys across cameras c006-c009; identity accuracy is unverified |
 | Evaluation | Frozen splits, independent human OCR review, identity matching, and audit reports | Evaluation truth stays outside the runtime data boundary |
 
 The current backend does not implement mutable alerts, watchlists, review decisions, processing jobs, or scenario controls. UI presence alone does not establish backend support. It also does not provide ownership lookup or a production identity-management system.
@@ -35,14 +35,14 @@ The current backend does not implement mutable alerts, watchlists, review decisi
 
 | Mode | Configuration | Data | Requirements |
 | --- | --- | --- | --- |
-| Local sample preview | `deployment/demo.json` | Small committed synthetic fixture | Python API dependencies and Node.js |
+| Local sample preview | `deployment/demo.json` | Metadata-only frozen CityFlow S02 prediction subset | Python API dependencies and Node.js |
 | Local recorded-evidence demo | `configs/demo.json` | Frozen S02 predictions and private source media | Prepared artifacts, licensed dataset, and CPU dependencies |
 | Optional S06 demo | `configs/demo-s06.json` | Frozen S06 predictions | Separate prepared S06 artifacts; identity accuracy is unverified |
-| Vercel preview | `api/index.py` loads `deployment/demo.json` | The same synthetic fixture | Repository-root deployment and a configured demo password |
+| Vercel preview | `api/index.py` loads `deployment/demo.json` | The same metadata-only S02 prediction subset | Repository-root deployment and a configured demo password |
 
 A fresh clone includes the sample fixture, code, configuration, and reports. Real videos, evidence crops, model checkpoints, and full prediction artifacts are intentionally absent.
 
-The cloud fixture does not run detection, OCR, or Re-ID. It has no source video or image crops, and plate search is not enabled. Some compatibility metadata still uses labels such as `recorded_real`; for this fixture, those labels do **not** indicate real captured data. Its scope is defined by [deployment/demo.json](deployment/demo.json).
+The cloud fixture does not run detection, OCR, or Re-ID at request time. It contains selected outputs from the frozen S02 pipeline, but has no source video, image crops, or identity ground truth, and plate search is not enabled. Its predictions remain **UNVERIFIED**. Its scope is defined by [deployment/demo.json](deployment/demo.json).
 
 ## Architecture
 
@@ -262,7 +262,7 @@ The `/v1/:path*` rewrite forwards to `/api?__roadeye_path=/v1/:path*`; the entry
 
 Changing project environment variables requires a new deployment to use the new values. For root-directory and build behavior, see Vercel's [build configuration documentation](https://vercel.com/docs/builds/configure-a-build).
 
-The deployment bundles synthetic JSON records. It excludes private datasets, full inference artifacts, and heavyweight model dependencies. A successful deployment or ready endpoint does not turn this fixture into a live video-processing backend.
+The deployment bundles a metadata-only selection of frozen CityFlow S02 prediction records. It excludes private datasets, source media, identity ground truth, full inference artifacts, and heavyweight model dependencies. A successful deployment or ready endpoint does not turn this fixture into a live video-processing backend or establish prediction correctness.
 
 ## Configuration and sessions
 
@@ -319,7 +319,7 @@ The local server also exposes native inspection routes such as `/api/status`, `/
 
 ## Measured results
 
-These are recorded research results from frozen local slices. They do not measure the synthetic cloud fixture and do not establish city-wide or official benchmark performance.
+These are recorded research results from frozen local slices. They do not establish the correctness of the unscored cloud prediction subset or city-wide or official benchmark performance.
 
 | Evaluation | Recorded result | Interpretation and evidence |
 | --- | --- | --- |
@@ -383,7 +383,7 @@ The existing frontend `generate` script targets `packages/roadeye/openapi.json`,
 | Local `/v1` requests fail through Vite | Confirm the API is running on port 8000, or set `API_PROXY` in the Vite terminal before startup. |
 | `Frontend build directory is missing` | Run `npm run build` for the recorded-evidence configuration, which points to `apps/web/dist`. |
 | Missing runtime files or hash mismatch | Restore the complete matching artifact set for the selected config. Do not bypass integrity checks or mix files from different runs. |
-| Evidence image returns `404` in the sample preview | The committed cloud/sample fixture has no source crops or videos. Use prepared local evidence for image inspection. |
+| Evidence image returns `404` in the sample preview | The committed metadata-only cloud/sample fixture has no source crops or videos. Use prepared local evidence for image inspection. |
 | Alerts, reviews, jobs, or scenario controls fail | Those mutable operations are not implemented by the current read-only backend. |
 | Plate search is empty | Check the selected configuration and index availability; the sample fixture disables search, and real-data coverage is sparse. |
 | `/docs` returns `404` | Interactive API docs are disabled on the normal demo app. Refer to the route implementation and API guide above. |
@@ -397,7 +397,7 @@ RoadEye/
 ├── api/                     # Vercel Python entrypoint
 ├── apps/web/                # React console, Vite configuration, frontend tests
 ├── configs/                 # Frozen experiments and local demo configuration
-├── deployment/              # Public synthetic fixture and lightweight API config
+├── deployment/              # Public metadata-only prediction fixture and API config
 ├── docs/assets/             # README visuals
 ├── notebooks/               # Private GPU training workflow
 ├── reports/                 # Measured results, provenance, audits, and runbooks

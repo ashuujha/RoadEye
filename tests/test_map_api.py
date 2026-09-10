@@ -3,6 +3,7 @@
 from pathlib import Path
 
 from fastapi.testclient import TestClient
+from pytest import approx
 
 from roadeye.auth import LocalAuthService
 from roadeye.demo import create_app
@@ -51,12 +52,20 @@ def test_map_routes_serve_ordered_runtime_journeys() -> None:
     assert cameras_response.status_code == 200
     cameras = cameras_response.json()["data"]
     assert cameras["coordinate_accuracy"] == "APPROXIMATE_NOT_SURVEYED_GPS"
-    assert "synthetic representative" in cameras["coordinate_notice"].lower()
+    assert "representative road" in cameras["coordinate_notice"].lower()
+    assert cameras["location_country"] == "United States"
+    assert cameras["approximate_center"] == {
+        "latitude": 42.491916,
+        "longitude": -90.723723,
+        "source": "CityFlow V2 ReadMe S02 approximate scenario center",
+    }
     assert cameras["tile_source"]["provider"] == "OpenStreetMap Standard"
     assert cameras["tile_source"]["api_key_required"] is False
     assert [camera["camera_id"] for camera in cameras["cameras"]] == [
-        "cam_central",
-        "cam_north",
+        "c006",
+        "c007",
+        "c008",
+        "c009",
     ]
 
     assert trajectories_response.status_code == 200
@@ -64,13 +73,33 @@ def test_map_routes_serve_ordered_runtime_journeys() -> None:
     assert payload["trajectory_geometry"] == (
         "STRAIGHT_LINE_BETWEEN_CAMERA_OBSERVATIONS"
     )
-    assert len(payload["trajectories"]) == 1
-    trajectory = payload["trajectories"][0]
-    assert trajectory["vehicle_id"] == "roadeye_evaluation_vehicle_001"
-    assert [point["camera_id"] for point in trajectory["points"]] == [
-        "cam_north",
-        "cam_central",
+    assert len(payload["trajectories"]) == 8
+    assert [row["vehicle_id"] for row in payload["trajectories"]] == [
+        "roadeye_5d01be7368ca57e9a2db",
+        "roadeye_0e0b4f50a52b58ae9ec3",
+        "roadeye_714071559a2b5ce2a24d",
+        "roadeye_ab1e3b31f713579385c7",
+        "roadeye_0d40f23565a857108d14",
+        "roadeye_b9fe8f69ee2d5909bd57",
+        "roadeye_5229ccd9991653beabda",
+        "roadeye_e7134e2992dd5b3e8166",
     ]
+    trajectory = next(
+        row
+        for row in payload["trajectories"]
+        if row["vehicle_id"] == "roadeye_5d01be7368ca57e9a2db"
+    )
+    assert [point["camera_id"] for point in trajectory["points"]] == [
+        "c008",
+        "c007",
+        "c009",
+    ]
+    assert trajectory["camera_count"] == 3
+    assert min(
+        point["incoming_association"]["score"]
+        for point in trajectory["points"]
+        if point["incoming_association"] is not None
+    ) == approx(0.8504939079)
     times = [point["identified_at_s"] for point in trajectory["points"]]
     assert times == sorted(times)
     assert all(

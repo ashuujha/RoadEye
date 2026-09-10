@@ -1,14 +1,1631 @@
 [
   {
-    "from_key": "synthetic/evaluation/cam_north/001",
-    "to_key": "synthetic/evaluation/cam_central/002",
-    "similarity": 0.84,
-    "second_best_similarity": 0.73,
-    "margin": 0.11,
-    "distance_m": 742.0,
-    "temporal_gap_s": 32.0,
-    "reason": "synthetic_forward_time_and_distance_bound",
-    "decision_time_s": 44.0,
-    "score_kind": "synthetic_evaluation_similarity_not_probability"
+    "global_id": "roadeye_714071559a2b5ce2a24d",
+    "from_key": "validation/S02/c006/3",
+    "similarity": 0.8518204689025879,
+    "distance_m": 14.780389973948258,
+    "reason": "nearby_views_may_overlap",
+    "to_key": "validation/S02/c007/18",
+    "decision_time_s": 4.561,
+    "temporal_gap_s": 0.06099999999999994,
+    "second_best_similarity": 0.6469987630844116,
+    "margin": 0.20482170581817627,
+    "score_kind": "uncalibrated_cosine_similarity_not_probability",
+    "from_evidence": {
+      "key": "validation/S02/c006/3",
+      "camera": "c006",
+      "frame": 46,
+      "time_s": 4.5,
+      "bbox_xywh": [
+        198.61,
+        600.0,
+        244.86,
+        203.39
+      ],
+      "baseline_score": 1.0
+    },
+    "to_evidence": {
+      "key": "validation/S02/c007/18",
+      "camera": "c007",
+      "frame": 46,
+      "time_s": 4.561,
+      "bbox_xywh": [
+        1396.37,
+        336.92,
+        303.14,
+        110.22
+      ],
+      "baseline_score": 1.0
+    },
+    "from_appearance_samples": [
+      {
+        "key": "validation/S02/c006/3",
+        "camera": "c006",
+        "frame": 3,
+        "time_s": 0.2,
+        "bbox_xywh": [
+          595.37,
+          279.32,
+          95.23,
+          74.87
+        ],
+        "baseline_score": 1.0,
+        "video": "AICity22_Track1_MTMC_Tracking/validation/S02/c006/vdo.avi",
+        "crop": "crops/validation/S02/c006/3/000003.jpg",
+        "crop_sha256": "024702c1f3c2d94fd4991f2264d533083a75637272821d96b37e7a8acd12efa7",
+        "clipped_xyxy": [
+          595,
+          279,
+          691,
+          355
+        ],
+        "score_kind": "baseline_track_score_not_calibrated_detection_confidence"
+      },
+      {
+        "key": "validation/S02/c006/3",
+        "camera": "c006",
+        "frame": 4,
+        "time_s": 0.3,
+        "bbox_xywh": [
+          592.75,
+          281.74,
+          96.19,
+          75.55
+        ],
+        "baseline_score": 1.0,
+        "video": "AICity22_Track1_MTMC_Tracking/validation/S02/c006/vdo.avi",
+        "crop": "crops/validation/S02/c006/3/000004.jpg",
+        "crop_sha256": "8069cd3671a7936129a9d01c079c0bcb1d00f02a5bcb086ff20b2312a39ff77d",
+        "clipped_xyxy": [
+          592,
+          281,
+          689,
+          358
+        ],
+        "score_kind": "baseline_track_score_not_calibrated_detection_confidence"
+      },
+      {
+        "key": "validation/S02/c006/3",
+        "camera": "c006",
+        "frame": 5,
+        "time_s": 0.4,
+        "bbox_xywh": [
+          589.04,
+          284.32,
+          96.96,
+          76.06
+        ],
+        "baseline_score": 1.0,
+        "video": "AICity22_Track1_MTMC_Tracking/validation/S02/c006/vdo.avi",
+        "crop": "crops/validation/S02/c006/3/000005.jpg",
+        "crop_sha256": "f0fd58c384559b135950fdea66448e6767c2c860aa2ed808b3ac2f158ae9d452",
+        "clipped_xyxy": [
+          589,
+          284,
+          686,
+          361
+        ],
+        "score_kind": "baseline_track_score_not_calibrated_detection_confidence"
+      }
+    ],
+    "to_appearance_samples": [
+      {
+        "key": "validation/S02/c007/18",
+        "camera": "c007",
+        "frame": 44,
+        "time_s": 4.361,
+        "bbox_xywh": [
+          1532.84,
+          334.32,
+          291.96,
+          106.42
+        ],
+        "baseline_score": 1.0,
+        "video": "AICity22_Track1_MTMC_Tracking/validation/S02/c007/vdo.avi",
+        "crop": "crops/validation/S02/c007/18/000044.jpg",
+        "crop_sha256": "9dfa909e1ae888af64c01643f2c784766a53d37616d7c0ef8e0b82af39af2721",
+        "clipped_xyxy": [
+          1532,
+          334,
+          1825,
+          441
+        ],
+        "score_kind": "baseline_track_score_not_calibrated_detection_confidence"
+      },
+      {
+        "key": "validation/S02/c007/18",
+        "camera": "c007",
+        "frame": 45,
+        "time_s": 4.461,
+        "bbox_xywh": [
+          1466.1,
+          335.12,
+          295.93,
+          107.71
+        ],
+        "baseline_score": 1.0,
+        "video": "AICity22_Track1_MTMC_Tracking/validation/S02/c007/vdo.avi",
+        "crop": "crops/validation/S02/c007/18/000045.jpg",
+        "crop_sha256": "a84413744a3e08e3de9350b5ce8d1a828767d0c26cc3c776baaa0fc9e121eb57",
+        "clipped_xyxy": [
+          1466,
+          335,
+          1763,
+          443
+        ],
+        "score_kind": "baseline_track_score_not_calibrated_detection_confidence"
+      },
+      {
+        "key": "validation/S02/c007/18",
+        "camera": "c007",
+        "frame": 46,
+        "time_s": 4.561,
+        "bbox_xywh": [
+          1396.37,
+          336.92,
+          303.14,
+          110.22
+        ],
+        "baseline_score": 1.0,
+        "video": "AICity22_Track1_MTMC_Tracking/validation/S02/c007/vdo.avi",
+        "crop": "crops/validation/S02/c007/18/000046.jpg",
+        "crop_sha256": "2698735954fc083961aba9287b8698dbcfe9ab763ff1e2f71c74aee43d7e4987",
+        "clipped_xyxy": [
+          1396,
+          336,
+          1700,
+          448
+        ],
+        "score_kind": "baseline_track_score_not_calibrated_detection_confidence"
+      }
+    ]
+  },
+  {
+    "global_id": "roadeye_ab1e3b31f713579385c7",
+    "from_key": "validation/S02/c007/33",
+    "similarity": 0.8747477531433105,
+    "distance_m": 14.929779612687067,
+    "reason": "nearby_views_may_overlap",
+    "to_key": "validation/S02/c009/146",
+    "decision_time_s": 9.76,
+    "temporal_gap_s": 0.0990000000000002,
+    "second_best_similarity": 0.6762035489082336,
+    "margin": 0.1985442042350769,
+    "score_kind": "uncalibrated_cosine_similarity_not_probability",
+    "from_evidence": {
+      "key": "validation/S02/c007/33",
+      "camera": "c007",
+      "frame": 97,
+      "time_s": 9.661,
+      "bbox_xywh": [
+        -73.91,
+        435.72,
+        308.45,
+        139.47
+      ],
+      "baseline_score": 1.0
+    },
+    "to_evidence": {
+      "key": "validation/S02/c009/146",
+      "camera": "c009",
+      "frame": 92,
+      "time_s": 9.76,
+      "bbox_xywh": [
+        1653.89,
+        383.09,
+        152.49,
+        106.47
+      ],
+      "baseline_score": 1.0
+    },
+    "from_appearance_samples": [
+      {
+        "key": "validation/S02/c007/33",
+        "camera": "c007",
+        "frame": 82,
+        "time_s": 8.161,
+        "bbox_xywh": [
+          1488.33,
+          353.22,
+          299.29,
+          148.35
+        ],
+        "baseline_score": 1.0,
+        "video": "AICity22_Track1_MTMC_Tracking/validation/S02/c007/vdo.avi",
+        "crop": "crops/validation/S02/c007/33/000082.jpg",
+        "crop_sha256": "8fb2dee4a83963e2ccf95a16de68af601f7a2c699efa2b88f87d0b94f63a9460",
+        "clipped_xyxy": [
+          1488,
+          353,
+          1788,
+          502
+        ],
+        "score_kind": "baseline_track_score_not_calibrated_detection_confidence"
+      },
+      {
+        "key": "validation/S02/c007/33",
+        "camera": "c007",
+        "frame": 83,
+        "time_s": 8.261,
+        "bbox_xywh": [
+          1384.06,
+          356.63,
+          301.23,
+          147.88
+        ],
+        "baseline_score": 1.0,
+        "video": "AICity22_Track1_MTMC_Tracking/validation/S02/c007/vdo.avi",
+        "crop": "crops/validation/S02/c007/33/000083.jpg",
+        "crop_sha256": "3944dcd3927501a8e1ac950e71d7f1071de58afa32a3005008372f1b4f7cf976",
+        "clipped_xyxy": [
+          1384,
+          356,
+          1686,
+          505
+        ],
+        "score_kind": "baseline_track_score_not_calibrated_detection_confidence"
+      },
+      {
+        "key": "validation/S02/c007/33",
+        "camera": "c007",
+        "frame": 84,
+        "time_s": 8.361,
+        "bbox_xywh": [
+          1276.0,
+          359.28,
+          307.21,
+          149.05
+        ],
+        "baseline_score": 1.0,
+        "video": "AICity22_Track1_MTMC_Tracking/validation/S02/c007/vdo.avi",
+        "crop": "crops/validation/S02/c007/33/000084.jpg",
+        "crop_sha256": "6e8459ddd4e47c9212e676184eed6c3d0a9f11a451cd254a2afccd7f7abcd159",
+        "clipped_xyxy": [
+          1276,
+          359,
+          1584,
+          509
+        ],
+        "score_kind": "baseline_track_score_not_calibrated_detection_confidence"
+      }
+    ],
+    "to_appearance_samples": [
+      {
+        "key": "validation/S02/c009/146",
+        "camera": "c009",
+        "frame": 90,
+        "time_s": 9.56,
+        "bbox_xywh": [
+          1719.15,
+          401.44,
+          156.46,
+          110.81
+        ],
+        "baseline_score": 1.0,
+        "video": "AICity22_Track1_MTMC_Tracking/validation/S02/c009/vdo.avi",
+        "crop": "crops/validation/S02/c009/146/000090.jpg",
+        "crop_sha256": "27c29e279b03fef786bdfb3a0469895f08ff5fbf37c62a0659cb4bb0285b5ac8",
+        "clipped_xyxy": [
+          1719,
+          401,
+          1876,
+          513
+        ],
+        "score_kind": "baseline_track_score_not_calibrated_detection_confidence"
+      },
+      {
+        "key": "validation/S02/c009/146",
+        "camera": "c009",
+        "frame": 91,
+        "time_s": 9.66,
+        "bbox_xywh": [
+          1684.52,
+          391.81,
+          156.76,
+          110.25
+        ],
+        "baseline_score": 1.0,
+        "video": "AICity22_Track1_MTMC_Tracking/validation/S02/c009/vdo.avi",
+        "crop": "crops/validation/S02/c009/146/000091.jpg",
+        "crop_sha256": "ec6ef682fbe47936ad9f11b10f6c63ae35853e0f72a6bed3fd4423f526053161",
+        "clipped_xyxy": [
+          1684,
+          391,
+          1842,
+          503
+        ],
+        "score_kind": "baseline_track_score_not_calibrated_detection_confidence"
+      },
+      {
+        "key": "validation/S02/c009/146",
+        "camera": "c009",
+        "frame": 92,
+        "time_s": 9.76,
+        "bbox_xywh": [
+          1653.89,
+          383.09,
+          152.49,
+          106.47
+        ],
+        "baseline_score": 1.0,
+        "video": "AICity22_Track1_MTMC_Tracking/validation/S02/c009/vdo.avi",
+        "crop": "crops/validation/S02/c009/146/000092.jpg",
+        "crop_sha256": "b991f433e81ce3657dc6adbf83fb2d1c0702b9b02fc3f5782ab5f13d7c59769c",
+        "clipped_xyxy": [
+          1653,
+          383,
+          1807,
+          490
+        ],
+        "score_kind": "baseline_track_score_not_calibrated_detection_confidence"
+      }
+    ]
+  },
+  {
+    "global_id": "roadeye_5d01be7368ca57e9a2db",
+    "from_key": "validation/S02/c008/104",
+    "similarity": 0.9202885627746582,
+    "distance_m": 12.036714922672477,
+    "reason": "nearby_views_may_overlap",
+    "to_key": "validation/S02/c007/46",
+    "decision_time_s": 15.261,
+    "temporal_gap_s": 0.03999999999999915,
+    "second_best_similarity": 0.7807691097259521,
+    "margin": 0.13951945304870605,
+    "score_kind": "uncalibrated_cosine_similarity_not_probability",
+    "from_evidence": {
+      "key": "validation/S02/c008/104",
+      "camera": "c008",
+      "frame": 149,
+      "time_s": 15.221,
+      "bbox_xywh": [
+        1472.5,
+        709.02,
+        311.17,
+        306.96
+      ],
+      "baseline_score": 1.0
+    },
+    "to_evidence": {
+      "key": "validation/S02/c007/46",
+      "camera": "c007",
+      "frame": 153,
+      "time_s": 15.261,
+      "bbox_xywh": [
+        1335.72,
+        349.49,
+        211.01,
+        153.81
+      ],
+      "baseline_score": 1.0
+    },
+    "from_appearance_samples": [
+      {
+        "key": "validation/S02/c008/104",
+        "camera": "c008",
+        "frame": 143,
+        "time_s": 14.620999999999999,
+        "bbox_xywh": [
+          149.2,
+          672.14,
+          161.5,
+          315.57
+        ],
+        "baseline_score": 1.0,
+        "video": "AICity22_Track1_MTMC_Tracking/validation/S02/c008/vdo.avi",
+        "crop": "crops/validation/S02/c008/104/000143.jpg",
+        "crop_sha256": "2a4c60f9b3ab5b00e947f50a60d2821a2a156cb6c08cb73ec85985e0ec5ad546",
+        "clipped_xyxy": [
+          149,
+          672,
+          311,
+          988
+        ],
+        "score_kind": "baseline_track_score_not_calibrated_detection_confidence"
+      },
+      {
+        "key": "validation/S02/c008/104",
+        "camera": "c008",
+        "frame": 144,
+        "time_s": 14.721,
+        "bbox_xywh": [
+          272.67,
+          670.88,
+          193.0,
+          333.45
+        ],
+        "baseline_score": 1.0,
+        "video": "AICity22_Track1_MTMC_Tracking/validation/S02/c008/vdo.avi",
+        "crop": "crops/validation/S02/c008/104/000144.jpg",
+        "crop_sha256": "237bdeb218bd0d41dbef9790c9d63b95cacbdcebff819eb15059df7171a66e99",
+        "clipped_xyxy": [
+          272,
+          670,
+          466,
+          1005
+        ],
+        "score_kind": "baseline_track_score_not_calibrated_detection_confidence"
+      },
+      {
+        "key": "validation/S02/c008/104",
+        "camera": "c008",
+        "frame": 145,
+        "time_s": 14.821,
+        "bbox_xywh": [
+          484.6,
+          678.58,
+          222.28,
+          336.43
+        ],
+        "baseline_score": 1.0,
+        "video": "AICity22_Track1_MTMC_Tracking/validation/S02/c008/vdo.avi",
+        "crop": "crops/validation/S02/c008/104/000145.jpg",
+        "crop_sha256": "3e713b6116ccb28b65e8b97071fc79dd2d59d2141eebd93caf9617fa07eebd7d",
+        "clipped_xyxy": [
+          484,
+          678,
+          707,
+          1016
+        ],
+        "score_kind": "baseline_track_score_not_calibrated_detection_confidence"
+      }
+    ],
+    "to_appearance_samples": [
+      {
+        "key": "validation/S02/c007/46",
+        "camera": "c007",
+        "frame": 151,
+        "time_s": 15.061,
+        "bbox_xywh": [
+          1616.13,
+          345.39,
+          185.66,
+          148.07
+        ],
+        "baseline_score": 1.0,
+        "video": "AICity22_Track1_MTMC_Tracking/validation/S02/c007/vdo.avi",
+        "crop": "crops/validation/S02/c007/46/000151.jpg",
+        "crop_sha256": "3da04b3f61da342446d2b59eb6eeb5804e44ad4978ff99ab5896a347bb42e456",
+        "clipped_xyxy": [
+          1616,
+          345,
+          1802,
+          494
+        ],
+        "score_kind": "baseline_track_score_not_calibrated_detection_confidence"
+      },
+      {
+        "key": "validation/S02/c007/46",
+        "camera": "c007",
+        "frame": 152,
+        "time_s": 15.161,
+        "bbox_xywh": [
+          1483.12,
+          344.33,
+          199.25,
+          152.19
+        ],
+        "baseline_score": 1.0,
+        "video": "AICity22_Track1_MTMC_Tracking/validation/S02/c007/vdo.avi",
+        "crop": "crops/validation/S02/c007/46/000152.jpg",
+        "crop_sha256": "a70dd1ec73e6b3467497a7dc8f25a3faa8280f5c0fa4f3ca669416696996b98c",
+        "clipped_xyxy": [
+          1483,
+          344,
+          1683,
+          497
+        ],
+        "score_kind": "baseline_track_score_not_calibrated_detection_confidence"
+      },
+      {
+        "key": "validation/S02/c007/46",
+        "camera": "c007",
+        "frame": 153,
+        "time_s": 15.261,
+        "bbox_xywh": [
+          1335.72,
+          349.49,
+          211.01,
+          153.81
+        ],
+        "baseline_score": 1.0,
+        "video": "AICity22_Track1_MTMC_Tracking/validation/S02/c007/vdo.avi",
+        "crop": "crops/validation/S02/c007/46/000153.jpg",
+        "crop_sha256": "0a760765507fcb42389fea61cf4305655baba54cadbaa71f8972477ea3ea57bd",
+        "clipped_xyxy": [
+          1335,
+          349,
+          1547,
+          504
+        ],
+        "score_kind": "baseline_track_score_not_calibrated_detection_confidence"
+      }
+    ]
+  },
+  {
+    "global_id": "roadeye_5d01be7368ca57e9a2db",
+    "from_key": "validation/S02/c007/46",
+    "similarity": 0.8504939079284668,
+    "distance_m": 14.929779612687067,
+    "reason": "nearby_views_may_overlap",
+    "to_key": "validation/S02/c009/185",
+    "decision_time_s": 16.36,
+    "temporal_gap_s": 0.0990000000000002,
+    "second_best_similarity": 0.7472968101501465,
+    "margin": 0.10319709777832031,
+    "score_kind": "uncalibrated_cosine_similarity_not_probability",
+    "from_evidence": {
+      "key": "validation/S02/c007/46",
+      "camera": "c007",
+      "frame": 163,
+      "time_s": 16.261,
+      "bbox_xywh": [
+        -62.02,
+        427.61,
+        278.71,
+        150.45
+      ],
+      "baseline_score": 1.0
+    },
+    "to_evidence": {
+      "key": "validation/S02/c009/185",
+      "camera": "c009",
+      "frame": 158,
+      "time_s": 16.36,
+      "bbox_xywh": [
+        1604.91,
+        366.57,
+        167.07,
+        111.7
+      ],
+      "baseline_score": 1.0
+    },
+    "from_appearance_samples": [
+      {
+        "key": "validation/S02/c007/46",
+        "camera": "c007",
+        "frame": 151,
+        "time_s": 15.061,
+        "bbox_xywh": [
+          1616.13,
+          345.39,
+          185.66,
+          148.07
+        ],
+        "baseline_score": 1.0,
+        "video": "AICity22_Track1_MTMC_Tracking/validation/S02/c007/vdo.avi",
+        "crop": "crops/validation/S02/c007/46/000151.jpg",
+        "crop_sha256": "3da04b3f61da342446d2b59eb6eeb5804e44ad4978ff99ab5896a347bb42e456",
+        "clipped_xyxy": [
+          1616,
+          345,
+          1802,
+          494
+        ],
+        "score_kind": "baseline_track_score_not_calibrated_detection_confidence"
+      },
+      {
+        "key": "validation/S02/c007/46",
+        "camera": "c007",
+        "frame": 152,
+        "time_s": 15.161,
+        "bbox_xywh": [
+          1483.12,
+          344.33,
+          199.25,
+          152.19
+        ],
+        "baseline_score": 1.0,
+        "video": "AICity22_Track1_MTMC_Tracking/validation/S02/c007/vdo.avi",
+        "crop": "crops/validation/S02/c007/46/000152.jpg",
+        "crop_sha256": "a70dd1ec73e6b3467497a7dc8f25a3faa8280f5c0fa4f3ca669416696996b98c",
+        "clipped_xyxy": [
+          1483,
+          344,
+          1683,
+          497
+        ],
+        "score_kind": "baseline_track_score_not_calibrated_detection_confidence"
+      },
+      {
+        "key": "validation/S02/c007/46",
+        "camera": "c007",
+        "frame": 153,
+        "time_s": 15.261,
+        "bbox_xywh": [
+          1335.72,
+          349.49,
+          211.01,
+          153.81
+        ],
+        "baseline_score": 1.0,
+        "video": "AICity22_Track1_MTMC_Tracking/validation/S02/c007/vdo.avi",
+        "crop": "crops/validation/S02/c007/46/000153.jpg",
+        "crop_sha256": "0a760765507fcb42389fea61cf4305655baba54cadbaa71f8972477ea3ea57bd",
+        "clipped_xyxy": [
+          1335,
+          349,
+          1547,
+          504
+        ],
+        "score_kind": "baseline_track_score_not_calibrated_detection_confidence"
+      }
+    ],
+    "to_appearance_samples": [
+      {
+        "key": "validation/S02/c009/185",
+        "camera": "c009",
+        "frame": 156,
+        "time_s": 16.16,
+        "bbox_xywh": [
+          1679.83,
+          387.2,
+          175.45,
+          118.31
+        ],
+        "baseline_score": 1.0,
+        "video": "AICity22_Track1_MTMC_Tracking/validation/S02/c009/vdo.avi",
+        "crop": "crops/validation/S02/c009/185/000156.jpg",
+        "crop_sha256": "dd491a7ddfe776ca2764c2be06afc7b9f87f0eea1914e74a2a61217bf9f9fc95",
+        "clipped_xyxy": [
+          1679,
+          387,
+          1856,
+          506
+        ],
+        "score_kind": "baseline_track_score_not_calibrated_detection_confidence"
+      },
+      {
+        "key": "validation/S02/c009/185",
+        "camera": "c009",
+        "frame": 157,
+        "time_s": 16.259999999999998,
+        "bbox_xywh": [
+          1643.63,
+          376.73,
+          170.07,
+          114.22
+        ],
+        "baseline_score": 1.0,
+        "video": "AICity22_Track1_MTMC_Tracking/validation/S02/c009/vdo.avi",
+        "crop": "crops/validation/S02/c009/185/000157.jpg",
+        "crop_sha256": "ef39a2b1a42e5d4e1996827b6b8fd49000066e9a64053122fd124e865066226e",
+        "clipped_xyxy": [
+          1643,
+          376,
+          1814,
+          491
+        ],
+        "score_kind": "baseline_track_score_not_calibrated_detection_confidence"
+      },
+      {
+        "key": "validation/S02/c009/185",
+        "camera": "c009",
+        "frame": 158,
+        "time_s": 16.36,
+        "bbox_xywh": [
+          1604.91,
+          366.57,
+          167.07,
+          111.7
+        ],
+        "baseline_score": 1.0,
+        "video": "AICity22_Track1_MTMC_Tracking/validation/S02/c009/vdo.avi",
+        "crop": "crops/validation/S02/c009/185/000158.jpg",
+        "crop_sha256": "ae060c0f785478e78a6e5fa2d820f4c7e2bca69ad8deb27f7f5a4d36322029aa",
+        "clipped_xyxy": [
+          1604,
+          366,
+          1772,
+          479
+        ],
+        "score_kind": "baseline_track_score_not_calibrated_detection_confidence"
+      }
+    ]
+  },
+  {
+    "global_id": "roadeye_e7134e2992dd5b3e8166",
+    "from_key": "validation/S02/c007/88",
+    "similarity": 0.9067628383636475,
+    "distance_m": 14.929779612687067,
+    "reason": "nearby_views_may_overlap",
+    "to_key": "validation/S02/c009/426",
+    "decision_time_s": 31.16,
+    "temporal_gap_s": 0.2989999999999995,
+    "second_best_similarity": 0.7798084020614624,
+    "margin": 0.12695443630218506,
+    "score_kind": "uncalibrated_cosine_similarity_not_probability",
+    "from_evidence": {
+      "key": "validation/S02/c007/88",
+      "camera": "c007",
+      "frame": 309,
+      "time_s": 30.861,
+      "bbox_xywh": [
+        -214.33,
+        418.66,
+        273.89,
+        113.07
+      ],
+      "baseline_score": 1.0
+    },
+    "to_evidence": {
+      "key": "validation/S02/c009/426",
+      "camera": "c009",
+      "frame": 306,
+      "time_s": 31.16,
+      "bbox_xywh": [
+        1597.99,
+        319.76,
+        142.22,
+        100.64
+      ],
+      "baseline_score": 1.0
+    },
+    "from_appearance_samples": [
+      {
+        "key": "validation/S02/c007/88",
+        "camera": "c007",
+        "frame": 295,
+        "time_s": 29.461,
+        "bbox_xywh": [
+          1345.63,
+          294.43,
+          385.29,
+          156.86
+        ],
+        "baseline_score": 1.0,
+        "video": "AICity22_Track1_MTMC_Tracking/validation/S02/c007/vdo.avi",
+        "crop": "crops/validation/S02/c007/88/000295.jpg",
+        "crop_sha256": "ae347e4b87ef6f0decd7edeefa0a1a1283601c36dd0c3c51a4543bdd3d8e6107",
+        "clipped_xyxy": [
+          1345,
+          294,
+          1731,
+          452
+        ],
+        "score_kind": "baseline_track_score_not_calibrated_detection_confidence"
+      },
+      {
+        "key": "validation/S02/c007/88",
+        "camera": "c007",
+        "frame": 296,
+        "time_s": 29.561,
+        "bbox_xywh": [
+          1209.19,
+          294.9,
+          394.49,
+          159.26
+        ],
+        "baseline_score": 1.0,
+        "video": "AICity22_Track1_MTMC_Tracking/validation/S02/c007/vdo.avi",
+        "crop": "crops/validation/S02/c007/88/000296.jpg",
+        "crop_sha256": "b92f67717d70e8c45cd1f6b69ce92deeed919db6d196b2454028b2637b052d18",
+        "clipped_xyxy": [
+          1209,
+          294,
+          1604,
+          455
+        ],
+        "score_kind": "baseline_track_score_not_calibrated_detection_confidence"
+      },
+      {
+        "key": "validation/S02/c007/88",
+        "camera": "c007",
+        "frame": 297,
+        "time_s": 29.661,
+        "bbox_xywh": [
+          1081.07,
+          305.29,
+          392.51,
+          156.21
+        ],
+        "baseline_score": 1.0,
+        "video": "AICity22_Track1_MTMC_Tracking/validation/S02/c007/vdo.avi",
+        "crop": "crops/validation/S02/c007/88/000297.jpg",
+        "crop_sha256": "b01e3490486245ab50cfb65f07650ec8787b0140926a5ad97fd364d92ef2d712",
+        "clipped_xyxy": [
+          1081,
+          305,
+          1474,
+          462
+        ],
+        "score_kind": "baseline_track_score_not_calibrated_detection_confidence"
+      }
+    ],
+    "to_appearance_samples": [
+      {
+        "key": "validation/S02/c009/426",
+        "camera": "c009",
+        "frame": 304,
+        "time_s": 30.96,
+        "bbox_xywh": [
+          1658.73,
+          325.5,
+          164.14,
+          115.57
+        ],
+        "baseline_score": 1.0,
+        "video": "AICity22_Track1_MTMC_Tracking/validation/S02/c009/vdo.avi",
+        "crop": "crops/validation/S02/c009/426/000304.jpg",
+        "crop_sha256": "0add1ba9ab7146a72dfb103dda0b94fb02d6b1d76b99e4f631b4128ca41244f8",
+        "clipped_xyxy": [
+          1658,
+          325,
+          1823,
+          442
+        ],
+        "score_kind": "baseline_track_score_not_calibrated_detection_confidence"
+      },
+      {
+        "key": "validation/S02/c009/426",
+        "camera": "c009",
+        "frame": 305,
+        "time_s": 31.06,
+        "bbox_xywh": [
+          1625.89,
+          321.73,
+          154.88,
+          109.32
+        ],
+        "baseline_score": 1.0,
+        "video": "AICity22_Track1_MTMC_Tracking/validation/S02/c009/vdo.avi",
+        "crop": "crops/validation/S02/c009/426/000305.jpg",
+        "crop_sha256": "07a47ec07be439f5d5559d390cdb97d06775995b016bf7d8740365507e77d6de",
+        "clipped_xyxy": [
+          1625,
+          321,
+          1781,
+          432
+        ],
+        "score_kind": "baseline_track_score_not_calibrated_detection_confidence"
+      },
+      {
+        "key": "validation/S02/c009/426",
+        "camera": "c009",
+        "frame": 306,
+        "time_s": 31.16,
+        "bbox_xywh": [
+          1597.99,
+          319.76,
+          142.22,
+          100.64
+        ],
+        "baseline_score": 1.0,
+        "video": "AICity22_Track1_MTMC_Tracking/validation/S02/c009/vdo.avi",
+        "crop": "crops/validation/S02/c009/426/000306.jpg",
+        "crop_sha256": "80e2c82cc40a545f4a83503165c8634c788d0866aa7c3546a9ef77c8657a222c",
+        "clipped_xyxy": [
+          1597,
+          319,
+          1741,
+          421
+        ],
+        "score_kind": "baseline_track_score_not_calibrated_detection_confidence"
+      }
+    ]
+  },
+  {
+    "global_id": "roadeye_b9fe8f69ee2d5909bd57",
+    "from_key": "validation/S02/c006/1007",
+    "similarity": 0.8538039922714233,
+    "distance_m": 14.780389973948258,
+    "reason": "nearby_views_may_overlap",
+    "to_key": "validation/S02/c007/139",
+    "decision_time_s": 81.361,
+    "temporal_gap_s": 0.06100000000000705,
+    "second_best_similarity": 0.7013719081878662,
+    "margin": 0.15243208408355713,
+    "score_kind": "uncalibrated_cosine_similarity_not_probability",
+    "from_evidence": {
+      "key": "validation/S02/c006/1007",
+      "camera": "c006",
+      "frame": 814,
+      "time_s": 81.3,
+      "bbox_xywh": [
+        458.21,
+        534.52,
+        460.81,
+        190.67
+      ],
+      "baseline_score": 1.0
+    },
+    "to_evidence": {
+      "key": "validation/S02/c007/139",
+      "camera": "c007",
+      "frame": 814,
+      "time_s": 81.361,
+      "bbox_xywh": [
+        1640.37,
+        355.49,
+        188.82,
+        160.79
+      ],
+      "baseline_score": 1.0
+    },
+    "from_appearance_samples": [
+      {
+        "key": "validation/S02/c006/1007",
+        "camera": "c006",
+        "frame": 800,
+        "time_s": 79.9,
+        "bbox_xywh": [
+          1390.47,
+          549.13,
+          406.88,
+          177.3
+        ],
+        "baseline_score": 1.0,
+        "video": "AICity22_Track1_MTMC_Tracking/validation/S02/c006/vdo.avi",
+        "crop": "crops/validation/S02/c006/1007/000800.jpg",
+        "crop_sha256": "ca7c9bf55dfa634d56e4199288d4f73d829890b740af084cdc20079ceb2c77b5",
+        "clipped_xyxy": [
+          1390,
+          549,
+          1798,
+          727
+        ],
+        "score_kind": "baseline_track_score_not_calibrated_detection_confidence"
+      },
+      {
+        "key": "validation/S02/c006/1007",
+        "camera": "c006",
+        "frame": 801,
+        "time_s": 80.0,
+        "bbox_xywh": [
+          1334.8,
+          548.59,
+          404.29,
+          175.86
+        ],
+        "baseline_score": 1.0,
+        "video": "AICity22_Track1_MTMC_Tracking/validation/S02/c006/vdo.avi",
+        "crop": "crops/validation/S02/c006/1007/000801.jpg",
+        "crop_sha256": "90219c27ed7a36bd6097c4c69026c75f808c980b94d8c8c5d4cb04034aa474e2",
+        "clipped_xyxy": [
+          1334,
+          548,
+          1740,
+          725
+        ],
+        "score_kind": "baseline_track_score_not_calibrated_detection_confidence"
+      },
+      {
+        "key": "validation/S02/c006/1007",
+        "camera": "c006",
+        "frame": 802,
+        "time_s": 80.1,
+        "bbox_xywh": [
+          1271.82,
+          549.99,
+          407.26,
+          176.7
+        ],
+        "baseline_score": 1.0,
+        "video": "AICity22_Track1_MTMC_Tracking/validation/S02/c006/vdo.avi",
+        "crop": "crops/validation/S02/c006/1007/000802.jpg",
+        "crop_sha256": "7d1928e079cd3043c8df90bef27805358a5f4861a433f22cdad628b357c4a4b2",
+        "clipped_xyxy": [
+          1271,
+          549,
+          1680,
+          727
+        ],
+        "score_kind": "baseline_track_score_not_calibrated_detection_confidence"
+      }
+    ],
+    "to_appearance_samples": [
+      {
+        "key": "validation/S02/c007/139",
+        "camera": "c007",
+        "frame": 812,
+        "time_s": 81.161,
+        "bbox_xywh": [
+          1679.96,
+          369.74,
+          199.36,
+          175.21
+        ],
+        "baseline_score": 1.0,
+        "video": "AICity22_Track1_MTMC_Tracking/validation/S02/c007/vdo.avi",
+        "crop": "crops/validation/S02/c007/139/000812.jpg",
+        "crop_sha256": "2a29f30dd90052dbb8799b83f9678b89753b92cb7318d79fd1b6c1f0d8cf37e8",
+        "clipped_xyxy": [
+          1679,
+          369,
+          1880,
+          545
+        ],
+        "score_kind": "baseline_track_score_not_calibrated_detection_confidence"
+      },
+      {
+        "key": "validation/S02/c007/139",
+        "camera": "c007",
+        "frame": 813,
+        "time_s": 81.26100000000001,
+        "bbox_xywh": [
+          1660.75,
+          363.72,
+          193.07,
+          167.2
+        ],
+        "baseline_score": 1.0,
+        "video": "AICity22_Track1_MTMC_Tracking/validation/S02/c007/vdo.avi",
+        "crop": "crops/validation/S02/c007/139/000813.jpg",
+        "crop_sha256": "f5989cf8bd6e88ea6fcbb562960c83ae42cb5369449480fb5decaeb577533a99",
+        "clipped_xyxy": [
+          1660,
+          363,
+          1854,
+          531
+        ],
+        "score_kind": "baseline_track_score_not_calibrated_detection_confidence"
+      },
+      {
+        "key": "validation/S02/c007/139",
+        "camera": "c007",
+        "frame": 814,
+        "time_s": 81.361,
+        "bbox_xywh": [
+          1640.37,
+          355.49,
+          188.82,
+          160.79
+        ],
+        "baseline_score": 1.0,
+        "video": "AICity22_Track1_MTMC_Tracking/validation/S02/c007/vdo.avi",
+        "crop": "crops/validation/S02/c007/139/000814.jpg",
+        "crop_sha256": "429d229ea553563592b960d728c81897938dd249e383367683ae9e1526598e81",
+        "clipped_xyxy": [
+          1640,
+          355,
+          1830,
+          517
+        ],
+        "score_kind": "baseline_track_score_not_calibrated_detection_confidence"
+      }
+    ]
+  },
+  {
+    "global_id": "roadeye_0e0b4f50a52b58ae9ec3",
+    "from_key": "validation/S02/c008/499",
+    "similarity": 0.9271599054336548,
+    "distance_m": 12.036714922672477,
+    "reason": "nearby_views_may_overlap",
+    "to_key": "validation/S02/c007/187",
+    "decision_time_s": 118.46100000000001,
+    "temporal_gap_s": 12.64,
+    "second_best_similarity": 0.6911382079124451,
+    "margin": 0.23602169752120972,
+    "score_kind": "uncalibrated_cosine_similarity_not_probability",
+    "from_evidence": {
+      "key": "validation/S02/c008/499",
+      "camera": "c008",
+      "frame": 1055,
+      "time_s": 105.82100000000001,
+      "bbox_xywh": [
+        1313.09,
+        692.92,
+        374.86,
+        359.59
+      ],
+      "baseline_score": 1.0
+    },
+    "to_evidence": {
+      "key": "validation/S02/c007/187",
+      "camera": "c007",
+      "frame": 1185,
+      "time_s": 118.46100000000001,
+      "bbox_xywh": [
+        1320.67,
+        342.15,
+        181.9,
+        166.93
+      ],
+      "baseline_score": 1.0
+    },
+    "from_appearance_samples": [
+      {
+        "key": "validation/S02/c008/499",
+        "camera": "c008",
+        "frame": 1051,
+        "time_s": 105.421,
+        "bbox_xywh": [
+          244.54,
+          669.15,
+          286.3,
+          346.77
+        ],
+        "baseline_score": 1.0,
+        "video": "AICity22_Track1_MTMC_Tracking/validation/S02/c008/vdo.avi",
+        "crop": "crops/validation/S02/c008/499/001051.jpg",
+        "crop_sha256": "e093a69d540bd56c98501fb5247a15cf85d8b3c5bb15e8a19aca94c12ac82d53",
+        "clipped_xyxy": [
+          244,
+          669,
+          531,
+          1016
+        ],
+        "score_kind": "baseline_track_score_not_calibrated_detection_confidence"
+      },
+      {
+        "key": "validation/S02/c008/499",
+        "camera": "c008",
+        "frame": 1052,
+        "time_s": 105.521,
+        "bbox_xywh": [
+          500.22,
+          670.07,
+          316.03,
+          355.07
+        ],
+        "baseline_score": 1.0,
+        "video": "AICity22_Track1_MTMC_Tracking/validation/S02/c008/vdo.avi",
+        "crop": "crops/validation/S02/c008/499/001052.jpg",
+        "crop_sha256": "43a95e43b9875a63fbd768a353634b72f7161236daf9412009fb5adf38420c5c",
+        "clipped_xyxy": [
+          500,
+          670,
+          817,
+          1026
+        ],
+        "score_kind": "baseline_track_score_not_calibrated_detection_confidence"
+      },
+      {
+        "key": "validation/S02/c008/499",
+        "camera": "c008",
+        "frame": 1053,
+        "time_s": 105.62100000000001,
+        "bbox_xywh": [
+          796.31,
+          678.81,
+          347.72,
+          360.85
+        ],
+        "baseline_score": 1.0,
+        "video": "AICity22_Track1_MTMC_Tracking/validation/S02/c008/vdo.avi",
+        "crop": "crops/validation/S02/c008/499/001053.jpg",
+        "crop_sha256": "a75a2de98002d6970441912ed4e232325ada19284f3db017531c34875ec9f03b",
+        "clipped_xyxy": [
+          796,
+          678,
+          1145,
+          1040
+        ],
+        "score_kind": "baseline_track_score_not_calibrated_detection_confidence"
+      }
+    ],
+    "to_appearance_samples": [
+      {
+        "key": "validation/S02/c007/187",
+        "camera": "c007",
+        "frame": 1183,
+        "time_s": 118.26100000000001,
+        "bbox_xywh": [
+          1632.75,
+          329.05,
+          157.06,
+          167.12
+        ],
+        "baseline_score": 1.0,
+        "video": "AICity22_Track1_MTMC_Tracking/validation/S02/c007/vdo.avi",
+        "crop": "crops/validation/S02/c007/187/001183.jpg",
+        "crop_sha256": "e8850940209f57dd81ea96f875c921c0d7fc0b8d7231d595b0cd673319f36fa2",
+        "clipped_xyxy": [
+          1632,
+          329,
+          1790,
+          497
+        ],
+        "score_kind": "baseline_track_score_not_calibrated_detection_confidence"
+      },
+      {
+        "key": "validation/S02/c007/187",
+        "camera": "c007",
+        "frame": 1184,
+        "time_s": 118.361,
+        "bbox_xywh": [
+          1489.12,
+          334.8,
+          167.98,
+          166.37
+        ],
+        "baseline_score": 1.0,
+        "video": "AICity22_Track1_MTMC_Tracking/validation/S02/c007/vdo.avi",
+        "crop": "crops/validation/S02/c007/187/001184.jpg",
+        "crop_sha256": "6c15b6caa00c2d377c6b6a5c4d3eb532926a03a18e0baa5e5fdd4b286da03398",
+        "clipped_xyxy": [
+          1489,
+          334,
+          1658,
+          502
+        ],
+        "score_kind": "baseline_track_score_not_calibrated_detection_confidence"
+      },
+      {
+        "key": "validation/S02/c007/187",
+        "camera": "c007",
+        "frame": 1185,
+        "time_s": 118.46100000000001,
+        "bbox_xywh": [
+          1320.67,
+          342.15,
+          181.9,
+          166.93
+        ],
+        "baseline_score": 1.0,
+        "video": "AICity22_Track1_MTMC_Tracking/validation/S02/c007/vdo.avi",
+        "crop": "crops/validation/S02/c007/187/001185.jpg",
+        "crop_sha256": "0cfd4d0bd38934fbc2e33222b6fc40a095786570f8add36aa11e3736b0c88482",
+        "clipped_xyxy": [
+          1320,
+          342,
+          1503,
+          510
+        ],
+        "score_kind": "baseline_track_score_not_calibrated_detection_confidence"
+      }
+    ]
+  },
+  {
+    "global_id": "roadeye_0d40f23565a857108d14",
+    "from_key": "validation/S02/c008/654",
+    "similarity": 0.8648339509963989,
+    "distance_m": 12.036714922672477,
+    "reason": "nearby_views_may_overlap",
+    "to_key": "validation/S02/c007/235",
+    "decision_time_s": 142.36100000000002,
+    "temporal_gap_s": 7.840000000000032,
+    "second_best_similarity": 0.67649245262146,
+    "margin": 0.18834149837493896,
+    "score_kind": "uncalibrated_cosine_similarity_not_probability",
+    "from_evidence": {
+      "key": "validation/S02/c008/654",
+      "camera": "c008",
+      "frame": 1342,
+      "time_s": 134.521,
+      "bbox_xywh": [
+        1707.33,
+        632.97,
+        507.49,
+        417.34
+      ],
+      "baseline_score": 1.0
+    },
+    "to_evidence": {
+      "key": "validation/S02/c007/235",
+      "camera": "c007",
+      "frame": 1424,
+      "time_s": 142.36100000000002,
+      "bbox_xywh": [
+        1014.98,
+        330.07,
+        379.21,
+        179.52
+      ],
+      "baseline_score": 1.0
+    },
+    "from_appearance_samples": [
+      {
+        "key": "validation/S02/c008/654",
+        "camera": "c008",
+        "frame": 1336,
+        "time_s": 133.921,
+        "bbox_xywh": [
+          209.75,
+          619.35,
+          439.11,
+          413.82
+        ],
+        "baseline_score": 1.0,
+        "video": "AICity22_Track1_MTMC_Tracking/validation/S02/c008/vdo.avi",
+        "crop": "crops/validation/S02/c008/654/001336.jpg",
+        "crop_sha256": "c868e742a1f0037d3295f5cf4b3038dce83c882f5957797f80f8ec154ef5b0d8",
+        "clipped_xyxy": [
+          209,
+          619,
+          649,
+          1034
+        ],
+        "score_kind": "baseline_track_score_not_calibrated_detection_confidence"
+      },
+      {
+        "key": "validation/S02/c008/654",
+        "camera": "c008",
+        "frame": 1337,
+        "time_s": 134.021,
+        "bbox_xywh": [
+          444.98,
+          609.91,
+          480.84,
+          434.26
+        ],
+        "baseline_score": 1.0,
+        "video": "AICity22_Track1_MTMC_Tracking/validation/S02/c008/vdo.avi",
+        "crop": "crops/validation/S02/c008/654/001337.jpg",
+        "crop_sha256": "85e9b2abd5e497b3326d9bd68f443f5cf5397c1637d99527f619ddffd479a554",
+        "clipped_xyxy": [
+          444,
+          609,
+          926,
+          1045
+        ],
+        "score_kind": "baseline_track_score_not_calibrated_detection_confidence"
+      },
+      {
+        "key": "validation/S02/c008/654",
+        "camera": "c008",
+        "frame": 1338,
+        "time_s": 134.12099999999998,
+        "bbox_xywh": [
+          759.23,
+          617.31,
+          505.82,
+          434.0
+        ],
+        "baseline_score": 1.0,
+        "video": "AICity22_Track1_MTMC_Tracking/validation/S02/c008/vdo.avi",
+        "crop": "crops/validation/S02/c008/654/001338.jpg",
+        "crop_sha256": "4ed395123c367edff5bf76d15b06e243c4e53aa6ae286eeeadaad7ac1ca79891",
+        "clipped_xyxy": [
+          759,
+          617,
+          1266,
+          1052
+        ],
+        "score_kind": "baseline_track_score_not_calibrated_detection_confidence"
+      }
+    ],
+    "to_appearance_samples": [
+      {
+        "key": "validation/S02/c007/235",
+        "camera": "c007",
+        "frame": 1422,
+        "time_s": 142.161,
+        "bbox_xywh": [
+          1355.37,
+          318.38,
+          355.03,
+          172.8
+        ],
+        "baseline_score": 1.0,
+        "video": "AICity22_Track1_MTMC_Tracking/validation/S02/c007/vdo.avi",
+        "crop": "crops/validation/S02/c007/235/001422.jpg",
+        "crop_sha256": "1770d2f43a784eed80be49a2587352a45fcfda954c7b6b9fa05907d4cb0cc824",
+        "clipped_xyxy": [
+          1355,
+          318,
+          1711,
+          492
+        ],
+        "score_kind": "baseline_track_score_not_calibrated_detection_confidence"
+      },
+      {
+        "key": "validation/S02/c007/235",
+        "camera": "c007",
+        "frame": 1423,
+        "time_s": 142.261,
+        "bbox_xywh": [
+          1191.16,
+          326.63,
+          370.02,
+          177.88
+        ],
+        "baseline_score": 1.0,
+        "video": "AICity22_Track1_MTMC_Tracking/validation/S02/c007/vdo.avi",
+        "crop": "crops/validation/S02/c007/235/001423.jpg",
+        "crop_sha256": "3528daec40c239958b45e8cc5086a2f92548cb881912c78552ee8776049a966c",
+        "clipped_xyxy": [
+          1191,
+          326,
+          1562,
+          505
+        ],
+        "score_kind": "baseline_track_score_not_calibrated_detection_confidence"
+      },
+      {
+        "key": "validation/S02/c007/235",
+        "camera": "c007",
+        "frame": 1424,
+        "time_s": 142.36100000000002,
+        "bbox_xywh": [
+          1014.98,
+          330.07,
+          379.21,
+          179.52
+        ],
+        "baseline_score": 1.0,
+        "video": "AICity22_Track1_MTMC_Tracking/validation/S02/c007/vdo.avi",
+        "crop": "crops/validation/S02/c007/235/001424.jpg",
+        "crop_sha256": "9fceb42e99a72aaf44919e656cf75875c534843859c036b226bd1b345cfc8083",
+        "clipped_xyxy": [
+          1014,
+          330,
+          1395,
+          510
+        ],
+        "score_kind": "baseline_track_score_not_calibrated_detection_confidence"
+      }
+    ]
+  },
+  {
+    "global_id": "roadeye_5229ccd9991653beabda",
+    "from_key": "validation/S02/c007/267",
+    "similarity": 0.8690404295921326,
+    "distance_m": 14.929779612687067,
+    "reason": "nearby_views_may_overlap",
+    "to_key": "validation/S02/c009/1337",
+    "decision_time_s": 166.66,
+    "temporal_gap_s": 10.998999999999995,
+    "second_best_similarity": 0.7379237413406372,
+    "margin": 0.13111668825149536,
+    "score_kind": "uncalibrated_cosine_similarity_not_probability",
+    "from_evidence": {
+      "key": "validation/S02/c007/267",
+      "camera": "c007",
+      "frame": 1557,
+      "time_s": 155.661,
+      "bbox_xywh": [
+        -79.1,
+        427.02,
+        175.72,
+        78.62
+      ],
+      "baseline_score": 1.0
+    },
+    "to_evidence": {
+      "key": "validation/S02/c009/1337",
+      "camera": "c009",
+      "frame": 1661,
+      "time_s": 166.66,
+      "bbox_xywh": [
+        1675.28,
+        357.15,
+        157.24,
+        77.83
+      ],
+      "baseline_score": 1.0
+    },
+    "from_appearance_samples": [
+      {
+        "key": "validation/S02/c007/267",
+        "camera": "c007",
+        "frame": 1552,
+        "time_s": 155.161,
+        "bbox_xywh": [
+          -22.59,
+          402.94,
+          254.28,
+          101.6
+        ],
+        "baseline_score": 1.0,
+        "video": "AICity22_Track1_MTMC_Tracking/validation/S02/c007/vdo.avi",
+        "crop": "crops/validation/S02/c007/267/001552.jpg",
+        "crop_sha256": "2c06db8ae5790e36c46e43457b99084d230d573ca2077cac6c9c32775a0b331a",
+        "clipped_xyxy": [
+          0,
+          402,
+          232,
+          505
+        ],
+        "score_kind": "baseline_track_score_not_calibrated_detection_confidence"
+      },
+      {
+        "key": "validation/S02/c007/267",
+        "camera": "c007",
+        "frame": 1553,
+        "time_s": 155.261,
+        "bbox_xywh": [
+          -39.2,
+          404.83,
+          249.29,
+          100.96
+        ],
+        "baseline_score": 1.0,
+        "video": "AICity22_Track1_MTMC_Tracking/validation/S02/c007/vdo.avi",
+        "crop": "crops/validation/S02/c007/267/001553.jpg",
+        "crop_sha256": "ccde00b23fc0bdd0f48c90555e30c0dbb8f621b06c11c4cd5acca91dbb90fce8",
+        "clipped_xyxy": [
+          0,
+          404,
+          211,
+          506
+        ],
+        "score_kind": "baseline_track_score_not_calibrated_detection_confidence"
+      },
+      {
+        "key": "validation/S02/c007/267",
+        "camera": "c007",
+        "frame": 1554,
+        "time_s": 155.36100000000002,
+        "bbox_xywh": [
+          -51.61,
+          407.69,
+          235.77,
+          97.59
+        ],
+        "baseline_score": 1.0,
+        "video": "AICity22_Track1_MTMC_Tracking/validation/S02/c007/vdo.avi",
+        "crop": "crops/validation/S02/c007/267/001554.jpg",
+        "crop_sha256": "6f55a40338416530f8832b31f5a1ce9012d45904f67b0e207684b6a1b6d5161b",
+        "clipped_xyxy": [
+          0,
+          407,
+          185,
+          506
+        ],
+        "score_kind": "baseline_track_score_not_calibrated_detection_confidence"
+      }
+    ],
+    "to_appearance_samples": [
+      {
+        "key": "validation/S02/c009/1337",
+        "camera": "c009",
+        "frame": 1659,
+        "time_s": 166.46,
+        "bbox_xywh": [
+          1709.72,
+          363.13,
+          164.19,
+          81.02
+        ],
+        "baseline_score": 1.0,
+        "video": "AICity22_Track1_MTMC_Tracking/validation/S02/c009/vdo.avi",
+        "crop": "crops/validation/S02/c009/1337/001659.jpg",
+        "crop_sha256": "9350cc87562f980ee374fb8832445372df37209e1f44b1f1739d751acba4b2cd",
+        "clipped_xyxy": [
+          1709,
+          363,
+          1874,
+          445
+        ],
+        "score_kind": "baseline_track_score_not_calibrated_detection_confidence"
+      },
+      {
+        "key": "validation/S02/c009/1337",
+        "camera": "c009",
+        "frame": 1660,
+        "time_s": 166.56,
+        "bbox_xywh": [
+          1691.62,
+          360.22,
+          160.48,
+          79.24
+        ],
+        "baseline_score": 1.0,
+        "video": "AICity22_Track1_MTMC_Tracking/validation/S02/c009/vdo.avi",
+        "crop": "crops/validation/S02/c009/1337/001660.jpg",
+        "crop_sha256": "314babf4c7ff26d64c412ff708b17c805bfb6131bf4354fb3831a9de7142e776",
+        "clipped_xyxy": [
+          1691,
+          360,
+          1853,
+          440
+        ],
+        "score_kind": "baseline_track_score_not_calibrated_detection_confidence"
+      },
+      {
+        "key": "validation/S02/c009/1337",
+        "camera": "c009",
+        "frame": 1661,
+        "time_s": 166.66,
+        "bbox_xywh": [
+          1675.28,
+          357.15,
+          157.24,
+          77.83
+        ],
+        "baseline_score": 1.0,
+        "video": "AICity22_Track1_MTMC_Tracking/validation/S02/c009/vdo.avi",
+        "crop": "crops/validation/S02/c009/1337/001661.jpg",
+        "crop_sha256": "b55dd7121600be8d6e8a30643a251096d98fd6fdef4329241a1c003a274420ed",
+        "clipped_xyxy": [
+          1675,
+          357,
+          1833,
+          435
+        ],
+        "score_kind": "baseline_track_score_not_calibrated_detection_confidence"
+      }
+    ]
   }
 ]

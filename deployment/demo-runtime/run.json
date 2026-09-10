@@ -1,7 +1,28 @@
 {
-  "prepared_sha256": "21693ba61a02b960290c3f2f7a02978335811f6a6991c83870ec63c71a7ed9b0",
+  "schema_version": 1,
+  "prepared_sha256": "caab7e57f65feef5b2fd68361d29428094816987275f1d368db54fde8c96c41f",
   "prediction_sha256": {
-    "journeys": "47a062d7566ab6b663afa1dd5da5b25f9f9f652334cec278e9aae232c3f3d65c",
-    "links": "6eb8553f4218ed27413493a9be6107019cb1d75aca9f3d400ac2b01c896a931c"
+    "journeys": "2981220b8b7e2e43abb5226fada079ab70e82b1eff94ee2c72e992e132b9de9c",
+    "links": "a0abce8be248b1d7cd2af910945456a98302dd00bea20ffa29155ed79cbd5d48"
+  },
+  "selection": {
+    "kind": "preselected_runtime_predictions_for_reliable_map_rehearsal",
+    "vehicle_ids": [
+      "roadeye_5d01be7368ca57e9a2db",
+      "roadeye_0e0b4f50a52b58ae9ec3",
+      "roadeye_714071559a2b5ce2a24d",
+      "roadeye_ab1e3b31f713579385c7",
+      "roadeye_0d40f23565a857108d14",
+      "roadeye_b9fe8f69ee2d5909bd57",
+      "roadeye_5229ccd9991653beabda",
+      "roadeye_e7134e2992dd5b3e8166"
+    ],
+    "changes_association_output": false
+  },
+  "source_frozen_artifact_sha256": {
+    "journeys.json": "d327dbff1202294aa67995eeaba38bf81679a2d243bacd39a18c8b48910b67ca",
+    "links.json": "34913e16fe168bcf0c1d91fc878abd1ae56528e35ceb261e7b96b09458c51810",
+    "tracklets.json": "76155329b33ae9fe938921c84e363202043a79ec3c5d6757cf372673f9e4ea54",
+    "topology.json": "b0f3ba0e259d927255cdde0811bbd064ec6d6be88293c51f8626ea41f684df09"
   }
 }

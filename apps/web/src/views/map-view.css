@@ -163,6 +163,60 @@
   box-shadow: 0 0 0 2px rgba(220, 129, 80, 0.14);
 }
 
+.road-map-route-card {
+  display: grid;
+  gap: 7px;
+  margin: 10px;
+  padding: 12px;
+  border: 1px solid #7d5037;
+  border-radius: 9px;
+  background: linear-gradient(145deg, rgba(73, 43, 28, 0.82), rgba(23, 31, 39, 0.94));
+}
+
+.road-map-route-card > span {
+  color: #bca18e;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.road-map-route-card > strong {
+  color: #fff2e8;
+  font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+  font-size: 0.9rem;
+}
+
+.road-map-route-card dl {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin: 2px 0 0;
+}
+
+.road-map-route-card dl div {
+  display: grid;
+  gap: 2px;
+}
+
+.road-map-route-card dt {
+  color: #8293a1;
+  font-size: 0.64rem;
+}
+
+.road-map-route-card dd {
+  margin: 0;
+  color: #f2a06c;
+  font-size: 0.76rem;
+  font-weight: 700;
+}
+
+.road-map-route-card dd small {
+  color: #8293a1;
+  font-size: 0.58rem;
+  font-weight: 500;
+}
+
 .road-map-list {
   min-height: 180px;
   max-height: 390px;
@@ -294,7 +348,8 @@
 }
 
 .road-map-camera-marker,
-.road-map-vehicle-marker {
+.road-map-vehicle-marker,
+.road-map-sequence-marker {
   background: transparent;
 }
 
@@ -338,6 +393,20 @@
   box-shadow: 0 0 0 5px rgba(245, 127, 66, 0.24), 0 4px 14px rgba(0, 0, 0, 0.5);
 }
 
+.road-map-sequence-marker > span {
+  display: grid;
+  width: 24px;
+  height: 24px;
+  place-items: center;
+  border: 2px solid #fff7f0;
+  border-radius: 50%;
+  color: #17100c;
+  background: #f28a50;
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.55);
+  font-size: 0.7rem;
+  font-weight: 800;
+}
+
 path.road-map-trajectory-line {
   animation: road-map-flow 1.2s linear infinite;
   cursor: pointer;
@@ -364,6 +433,35 @@ path.road-map-trajectory-line--selected {
   color: #ced9e2;
   background: rgba(9, 15, 21, 0.88);
   font-size: 0.7rem;
+}
+
+.road-map-location {
+  position: absolute;
+  z-index: 500;
+  top: 12px;
+  left: 52px;
+  display: grid;
+  gap: 2px;
+  max-width: min(360px, calc(100% - 250px));
+  padding: 8px 10px;
+  border: 1px solid rgba(49, 64, 77, 0.8);
+  border-radius: 7px;
+  color: #dce7ef;
+  background: rgba(9, 15, 21, 0.9);
+  pointer-events: none;
+}
+
+.road-map-location strong {
+  overflow: hidden;
+  font-size: 0.72rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.road-map-location span {
+  color: #91a5b5;
+  font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+  font-size: 0.62rem;
 }
 
 .road-map-legend span {
@@ -437,6 +535,8 @@ path.road-map-trajectory-line--selected {
   .road-map-list { max-height: 230px; }
   .road-map-canvas, .road-map-layout { min-height: 520px; }
   .road-map-canvas-wrap { height: 520px; }
+  .road-map-location { left: 12px; max-width: calc(100% - 24px); }
+  .road-map-legend { top: auto; right: 12px; bottom: 12px; }
 }
 
 @media (prefers-reduced-motion: reduce) {

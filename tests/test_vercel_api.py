@@ -33,7 +33,15 @@ def test_vercel_entrypoint_supports_login_and_evaluation_data(monkeypatch) -> No
         assert "SameSite=strict" in login.headers["set-cookie"]
         assert client.get("/v1/auth/me").status_code == 200
         assert len(client.get("/v1/demo/runs").json()["data"]) == 1
-        assert len(client.get("/v1/cameras").json()["data"]) == 2
+        assert len(client.get("/v1/cameras").json()["data"]) == 4
+        run_id = client.get("/v1/demo/runs").json()["data"][0]["id"]
+        map_cameras = client.get(f"/v1/map/cameras?run_id={run_id}").json()["data"]
+        assert map_cameras["location_country"] == "United States"
+        assert map_cameras["approximate_center"]["longitude"] < 0
+        map_trajectories = client.get(
+            f"/v1/map/trajectories?run_id={run_id}"
+        ).json()["data"]["trajectories"]
+        assert len(map_trajectories) == 8
 
         # Vercel's file-based Python runtime may present the rewritten function
         # path to ASGI; the middleware normalizes it to the existing API contract.

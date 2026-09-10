@@ -152,13 +152,39 @@ def create_map_router(
         require_run(run_id)
         try:
             cameras = _camera_rows(repository)
-        except ValueError as error:
+            configured_center = repository.config.get("approximate_center")
+            if configured_center is not None:
+                center = {
+                    "latitude": float(configured_center["latitude"]),
+                    "longitude": float(configured_center["longitude"]),
+                    "source": configured_center.get(
+                        "source", "deployment configuration"
+                    ),
+                }
+                if not _valid_coordinate(center["latitude"], center["longitude"]):
+                    raise ValueError("Invalid approximate scenario center")
+            elif cameras:
+                center = {
+                    "latitude": sum(camera["latitude"] for camera in cameras)
+                    / len(cameras),
+                    "longitude": sum(camera["longitude"] for camera in cameras)
+                    / len(cameras),
+                    "source": "mean of representative camera road-reference points",
+                }
+            else:
+                raise ValueError("No camera positions are available for the map")
+        except (KeyError, TypeError, ValueError) as error:
             raise HTTPException(status_code=422, detail=str(error)) from error
         response.headers["Cache-Control"] = "private, max-age=300"
         return {
             "data": {
                 "run_id": run_id,
                 "scenario": repository.config["scenario"],
+                "location_label": repository.config.get(
+                    "location_label", "Approximate CityFlow scenario area"
+                ),
+                "location_country": repository.config.get("location_country"),
+                "approximate_center": center,
                 "coordinate_accuracy": "APPROXIMATE_NOT_SURVEYED_GPS",
                 "coordinate_notice": _coordinate_notice(repository),
                 "tile_source": {
@@ -192,12 +218,6 @@ def create_map_router(
                 for source in repository.journeys
                 if not multi_camera_only or int(source["camera_count"]) > 1
             ]
-            sources.sort(
-                key=lambda journey: (
-                    float(journey["visits"][0]["identified_at_s"]),
-                    journey["global_id"],
-                )
-            )
             sources = sources[:limit]
         try:
             trajectories = [_trajectory_row(journey) for journey in sources]

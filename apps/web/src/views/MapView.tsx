@@ -3,7 +3,11 @@ import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import "./map-view.css";
 import {
+  cameraSequence,
+  featuredTrajectory,
+  minimumAssociationScore,
   orderedPoints,
+  trajectorySpanSeconds,
   visibleTrajectory,
   type CameraMapPayload,
   type MapCamera,
@@ -63,6 +67,16 @@ function vehicleIcon(): L.DivIcon {
   });
 }
 
+function sequenceIcon(sequence: number): L.DivIcon {
+  return L.divIcon({
+    className: "road-map-sequence-marker",
+    html: `<span>${sequence}</span>`,
+    iconSize: [24, 24],
+    iconAnchor: [12, 12],
+    tooltipAnchor: [0, -14],
+  });
+}
+
 function fitMap(map: L.Map, cameras: MapCamera[], trajectories: MapTrajectory[]): void {
   const positions = trajectories.flatMap((trajectory) =>
     trajectory.points.map(
@@ -76,7 +90,7 @@ function fitMap(map: L.Map, cameras: MapCamera[], trajectories: MapTrajectory[])
   if (bounds.length === 1) {
     map.setView(bounds[0], 16);
   } else if (bounds.length > 1) {
-    map.fitBounds(bounds, { padding: [45, 45], maxZoom: 17 });
+    map.fitBounds(bounds, { padding: [90, 90], maxZoom: 19 });
   }
 }
 
@@ -119,7 +133,7 @@ export function MapView({ runId }: MapViewProps) {
       .then(([cameras, trajectories]) => {
         setCameraData(cameras);
         setTrajectoryData(trajectories);
-        setSelectedVehicle("");
+        setSelectedVehicle(featuredTrajectory(trajectories.trajectories)?.vehicle_id ?? "");
         setMode("static");
         setProgress(0);
       })
@@ -134,6 +148,14 @@ export function MapView({ runId }: MapViewProps) {
   }, [runId]);
 
   const trajectories = trajectoryData?.trajectories ?? [];
+  const rankedTrajectories = useMemo(
+    () =>
+      [...trajectories].sort(
+        (left, right) =>
+          right.camera_count - left.camera_count || right.point_count - left.point_count,
+      ),
+    [trajectories],
+  );
   const selected = useMemo(
     () => trajectories.find((trajectory) => trajectory.vehicle_id === selectedVehicle) ?? null,
     [selectedVehicle, trajectories],
@@ -144,13 +166,13 @@ export function MapView({ runId }: MapViewProps) {
   );
   const filteredTrajectories = useMemo(() => {
     const normalized = query.trim().toLowerCase();
-    if (!normalized) return trajectories;
-    return trajectories.filter(
+    if (!normalized) return rankedTrajectories;
+    return rankedTrajectories.filter(
       (trajectory) =>
         trajectory.vehicle_id.toLowerCase().includes(normalized) ||
         trajectory.predicted_plate?.toLowerCase().includes(normalized),
     );
-  }, [query, trajectories]);
+  }, [query, rankedTrajectories]);
 
   useEffect(() => {
     if (!containerRef.current || !cameraData || mapRef.current) return;
@@ -225,6 +247,23 @@ export function MapView({ runId }: MapViewProps) {
         });
         line.addTo(overlays);
       }
+      if (selected) {
+        ordered.forEach((point, pointIndex) => {
+          const marker = L.marker([point.latitude, point.longitude], {
+            icon: sequenceIcon(pointIndex + 1),
+            keyboard: true,
+            title: `${pointIndex + 1}. Camera ${point.camera_id}`,
+            zIndexOffset: 800,
+          });
+          marker.bindTooltip(
+            tooltip(
+              `${pointIndex + 1}. Camera ${point.camera_id} · observed ${point.first_observed_s.toFixed(1)}–${point.last_observed_s.toFixed(1)}s`,
+            ),
+            { direction: "top", opacity: 0.95 },
+          );
+          marker.addTo(overlays);
+        });
+      }
       if (mode === "replay" && selected && visible.currentPosition) {
         L.marker(visible.currentPosition, {
           icon: vehicleIcon(),
@@ -287,10 +326,10 @@ export function MapView({ runId }: MapViewProps) {
       <header className="road-map-header">
         <div>
           <span className="road-map-eyebrow">CITYFLOW TRAJECTORY VIEW</span>
-          <h1 id="map-view-title">Camera Network Map</h1>
+          <h1 id="map-view-title">U.S. Camera Network Map</h1>
           <p>
-            Recorded camera observations joined by straight-line predicted associations.
-            Positions are representative and are not surveyed camera GPS coordinates.
+            Frozen CityFlow S02 camera observations shown over their approximate U.S. road
+            context. Connectors follow observation order; they are not road-snapped GPS tracks.
           </p>
         </div>
         <div className="road-map-status" aria-label="Map data status">
@@ -341,6 +380,26 @@ export function MapView({ runId }: MapViewProps) {
               placeholder="RoadEye ID or plate"
             />
           </label>
+
+          {selected && (
+            <section className="road-map-route-card" aria-label="Selected vehicle route">
+              <span>Selected camera sequence</span>
+              <strong>{cameraSequence(selected)}</strong>
+              <dl>
+                <div>
+                  <dt>Observed span</dt>
+                  <dd>{trajectorySpanSeconds(selected).toFixed(1)}s</dd>
+                </div>
+                <div>
+                  <dt>Lowest ReID link</dt>
+                  <dd>
+                    {minimumAssociationScore(selected)?.toFixed(3) ?? "N/A"}
+                    <small> uncalibrated</small>
+                  </dd>
+                </div>
+              </dl>
+            </section>
+          )}
 
           <div className="road-map-list" aria-label="Available trajectories">
             {!loading && !error && filteredTrajectories.length === 0 && (
@@ -397,6 +456,15 @@ export function MapView({ runId }: MapViewProps) {
 
         <div className="road-map-canvas-wrap">
           <div ref={containerRef} className="road-map-canvas" aria-label="OpenStreetMap trajectory visualization" />
+          {cameraData && (
+            <div className="road-map-location" aria-label="Approximate map location">
+              <strong>{cameraData.location_label}</strong>
+              <span>
+                {cameraData.approximate_center.latitude.toFixed(6)}, {cameraData.approximate_center.longitude.toFixed(6)}
+                {cameraData.location_country ? ` · ${cameraData.location_country}` : ""}
+              </span>
+            </div>
+          )}
           {!loading && !error && trajectories.length === 0 && (
             <div className="road-map-overlay-empty">
               No multi-camera trajectories are available for this run.
@@ -412,7 +480,7 @@ export function MapView({ runId }: MapViewProps) {
       <footer className="road-map-notice">
         <span>© OpenStreetMap contributors · ODbL</span>
         <span>{cameraData?.coordinate_notice ?? "Coordinates are approximate."}</span>
-        <span>Animated dashes indicate sequence; they do not represent a verified road route or measured speed.</span>
+        <span>Numbered points are camera visits. Animated dashes show predicted direction, not a verified road route or measured speed.</span>
       </footer>
     </section>
   );

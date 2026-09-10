@@ -355,9 +355,11 @@ function App() {
      ========================================================================= */
   const pendingReviewCount = metrics.data?.review_required || 0;
   const pendingAlertsCount = alerts.data?.filter((a) => a.status === "new" || a.status === "pending").length || 0;
-  const sourceModeLabel = page === "Cameras"
-    ? "RECORDED FOOTAGE · REAL MODEL INFERENCE"
-    : "SYNTHETIC INPUT · MOCK OCR";
+  const sourceModeLabel = run.data?.prediction_status
+    ? `CITYFLOW S02 · ${run.data.prediction_status}`
+    : page === "Cameras"
+      ? "RECORDED FOOTAGE · REAL MODEL INFERENCE"
+      : "SYNTHETIC INPUT · MOCK OCR";
 
   return (
     <AppShell
