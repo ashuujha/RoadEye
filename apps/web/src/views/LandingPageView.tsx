@@ -27,11 +27,10 @@ export function LandingPageView({
       <nav className="landing-nav" role="navigation" aria-label="Main Navigation">
         <div className="landing-nav-left">
           <div className="landing-brand">
-            <svg className="landing-brand-icon" width="28" height="28" viewBox="0 0 28 28" fill="none">
-              <rect width="28" height="28" rx="6" fill="rgba(255,255,255,0.1)" stroke="rgba(255,255,255,0.2)" strokeWidth="1"/>
-              <circle cx="10" cy="10" r="3" fill="#D69A72"/>
-              <circle cx="18" cy="10" r="3" fill="#8BAFC8"/>
-              <rect x="8" y="16" width="12" height="3" rx="1.5" fill="rgba(255,255,255,0.5)"/>
+            <svg className="landing-brand-icon" width="68" height="68" viewBox="0 0 64 64" fill="none" aria-hidden="true">
+              <path d="M17 5H5V17M47 5H59V17M5 47V59H17M59 47V59H47" stroke="currentColor" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"/>
+              <path d="M18 35L22 25H42L46 35M16 35H48V47H16V35Z" stroke="currentColor" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round"/>
+              <path d="M21 47V52M43 47V52M22 40H26M38 40H42" stroke="currentColor" strokeWidth="3.5" strokeLinecap="round"/>
             </svg>
             <span className="landing-brand-name">RoadEye</span>
           </div>
@@ -69,11 +68,9 @@ export function LandingPageView({
             className="landing-btn-primary"
             onClick={onOpenDashboard}
           >
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-              <rect x="1" y="1" width="6" height="6" rx="1" stroke="currentColor" strokeWidth="1.5"/>
-              <rect x="9" y="1" width="6" height="6" rx="1" stroke="currentColor" strokeWidth="1.5"/>
-              <rect x="1" y="9" width="6" height="6" rx="1" stroke="currentColor" strokeWidth="1.5"/>
-              <rect x="9" y="9" width="6" height="6" rx="1" stroke="currentColor" strokeWidth="1.5"/>
+            <svg width="22" height="22" viewBox="0 0 22 22" fill="none" aria-hidden="true">
+              <path d="M3 19H20M5 16V10H8V16M10 16V5H13V16M15 16V8H18V16" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"/>
+              <path d="M4 6L8 3L12 6L18 2" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
             Live Dashboard
           </button>
@@ -82,9 +79,9 @@ export function LandingPageView({
             className="landing-btn-outline"
             onClick={onOpenDashboard}
           >
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-              <circle cx="7" cy="7" r="5" stroke="currentColor" strokeWidth="1.5"/>
-              <line x1="11" y1="11" x2="14.5" y2="14.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+            <svg width="22" height="22" viewBox="0 0 22 22" fill="none" aria-hidden="true">
+              <circle cx="9" cy="9" r="6" stroke="currentColor" strokeWidth="1.7"/>
+              <line x1="13.5" y1="13.5" x2="19" y2="19" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round"/>
             </svg>
             Track a Vehicle
           </button>
@@ -96,60 +93,61 @@ export function LandingPageView({
         <div className="landing-feature-card" onClick={onOpenDashboard} role="button" tabIndex={0}
           onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") onOpenDashboard(); }}>
           <div className="landing-feature-icon">
-            <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
-              <rect x="2" y="2" width="18" height="14" rx="2" stroke="#D69A72" strokeWidth="1.5"/>
-              <circle cx="11" cy="9" r="3" stroke="#D69A72" strokeWidth="1.5"/>
-              <line x1="4" y1="19" x2="18" y2="19" stroke="#D69A72" strokeWidth="1.5" strokeLinecap="round"/>
+            <svg width="48" height="48" viewBox="0 0 48 48" fill="none" aria-hidden="true">
+              <path d="M8 17H31L39 23V35H8V17Z" stroke="currentColor" strokeWidth="2.4" strokeLinejoin="round"/>
+              <circle cx="22" cy="26" r="6" stroke="currentColor" strokeWidth="2.4"/>
+              <path d="M39 25L44 22V31L39 28M12 35V41M28 35V41M7 41H33" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
           </div>
           <div className="landing-feature-text">
             <strong>AI-Powered ANPR</strong>
-            <span>&gt;90% OCR accuracy across all lighting and weather conditions</span>
+            <span>&gt;90% OCR accuracy<br />in all conditions</span>
           </div>
         </div>
 
         <div className="landing-feature-card" onClick={onOpenDashboard} role="button" tabIndex={0}
           onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") onOpenDashboard(); }}>
           <div className="landing-feature-icon icon-trajectory">
-            <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
-              <circle cx="5" cy="5" r="3" stroke="#8BAFC8" strokeWidth="1.5"/>
-              <circle cx="17" cy="17" r="3" stroke="#8BAFC8" strokeWidth="1.5"/>
-              <path d="M7.5 7.5L14.5 14.5" stroke="#8BAFC8" strokeWidth="1.5" strokeDasharray="3 2" strokeLinecap="round"/>
+            <svg width="48" height="48" viewBox="0 0 48 48" fill="none" aria-hidden="true">
+              <path d="M18 20C18 27 10 34 10 34S2 27 2 20A8 8 0 1 1 18 20Z" stroke="currentColor" strokeWidth="2.4"/>
+              <circle cx="10" cy="20" r="2.5" fill="currentColor"/>
+              <path d="M18 20C18 27 10 34 10 34S2 27 2 20A8 8 0 1 1 18 20Z" stroke="currentColor" strokeWidth="2.4" transform="translate(26 -10)"/>
+              <circle cx="36" cy="10" r="2.5" fill="currentColor"/>
+              <path d="M7 39C18 34 25 42 37 35" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round"/>
             </svg>
           </div>
           <div className="landing-feature-text">
             <strong>Trajectory Tracking</strong>
-            <span>Follow any plate across the entire city camera network</span>
+            <span>Follow any plate across<br />the entire city</span>
           </div>
         </div>
 
         <div className="landing-feature-card" onClick={onOpenDashboard} role="button" tabIndex={0}
           onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") onOpenDashboard(); }}>
           <div className="landing-feature-icon icon-analytics">
-            <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
-              <rect x="3" y="12" width="4" height="7" rx="1" stroke="#82B095" strokeWidth="1.5"/>
-              <rect x="9" y="8" width="4" height="11" rx="1" stroke="#82B095" strokeWidth="1.5"/>
-              <rect x="15" y="3" width="4" height="16" rx="1" stroke="#82B095" strokeWidth="1.5"/>
+            <svg width="48" height="48" viewBox="0 0 48 48" fill="none" aria-hidden="true">
+              <path d="M5 42H44M8 38V27H15V38M19 38V20H26V38M30 38V14H37V38" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"/>
+              <path d="M8 19L18 11L25 16L40 4M34 4H40V10" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
           </div>
           <div className="landing-feature-text">
             <strong>Traffic Analytics</strong>
-            <span>Heatmaps, density, speed &amp; congestion insights</span>
+            <span>Heatmaps, density,<br />speed &amp; congestion</span>
           </div>
         </div>
 
         <div className="landing-feature-card" onClick={onOpenDashboard} role="button" tabIndex={0}
           onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") onOpenDashboard(); }}>
           <div className="landing-feature-icon icon-alerts">
-            <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
-              <path d="M11 3L3 18H19L11 3Z" stroke="#D2B477" strokeWidth="1.5" strokeLinejoin="round"/>
-              <line x1="11" y1="10" x2="11" y2="13" stroke="#D2B477" strokeWidth="1.5" strokeLinecap="round"/>
-              <circle cx="11" cy="15.5" r="0.75" fill="#D2B477"/>
+            <svg width="48" height="48" viewBox="0 0 48 48" fill="none" aria-hidden="true">
+              <path d="M11 34H37L33 29V20C33 14 29 10 24 10C19 10 15 14 15 20V29L11 34Z" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"/>
+              <path d="M20 39C21 42 27 42 28 39M24 5V9M37 10L34 13M11 10L14 13" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round"/>
+              <path d="M39 17L41 15M9 17L7 15" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
             </svg>
           </div>
           <div className="landing-feature-text">
             <strong>Smart Alerts</strong>
-            <span>Blacklist detection &amp; route anomaly alerts in real-time</span>
+            <span>Blacklist detection &amp;<br />route anomaly alerts</span>
           </div>
         </div>
       </section>
