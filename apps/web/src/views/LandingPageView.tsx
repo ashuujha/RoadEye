@@ -19,7 +19,7 @@ export function LandingPageView({
         playsInline
         className="landing-bg-video"
       >
-        <source src="/login-bg.mp4" type="video/mp4" />
+        <source src="/just_extract_the_background.mp4" type="video/mp4" />
       </video>
       <div className="landing-bg-overlay" />
 
