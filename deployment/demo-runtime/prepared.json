@@ -2,7 +2,7 @@
   "schema_version": 1,
   "source": "frozen CityFlow V2 S02 prediction metadata; no identity ground truth",
   "artifact_sha256": {
-    "tracklets.json": "8f8fc67678c822141d1219c0f1614708f41dafea2f8684d8d5ded2ad622f45dd",
-    "topology.json": "86d3f1ab054cf99c39e056825a83e8fc89d5210e8d3356de94b509a4f5fba946"
+    "tracklets.json": "8042934e09223cedbe052db9027eab07527ce961771f9415e98905bb9bc0b543",
+    "topology.json": "f7935514b367905c3b92da6ff362c0e359acb8db7d5365991731b98100085e80"
   }
 }

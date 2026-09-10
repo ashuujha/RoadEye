@@ -32,7 +32,9 @@ def load_json(path: Path) -> Any:
 
 
 def write_json(path: Path, value: Any) -> None:
-    path.write_text(json.dumps(value, indent=2) + "\n", encoding="utf-8")
+    # Hashes are part of the runtime contract. Write canonical LF bytes so a
+    # Windows build and a Linux/Vercel checkout verify identically.
+    path.write_bytes((json.dumps(value, indent=2) + "\n").encode("utf-8"))
 
 
 def sha256(path: Path) -> str:

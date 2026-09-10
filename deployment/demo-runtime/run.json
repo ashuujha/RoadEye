@@ -1,9 +1,9 @@
 {
   "schema_version": 1,
-  "prepared_sha256": "caab7e57f65feef5b2fd68361d29428094816987275f1d368db54fde8c96c41f",
+  "prepared_sha256": "570738f2275424e2f287b40a8740d810a9169c0c7f001fb2d96b10ac705d6e22",
   "prediction_sha256": {
-    "journeys": "2981220b8b7e2e43abb5226fada079ab70e82b1eff94ee2c72e992e132b9de9c",
-    "links": "a0abce8be248b1d7cd2af910945456a98302dd00bea20ffa29155ed79cbd5d48"
+    "journeys": "1ff52592f2bc159cc95923e296fc91e6829f9f41da2497d2112030c2a911f2d1",
+    "links": "af243be436f96fe6b84cdb8a86309a6f9d956cedc088ef33015951ce385c4180"
   },
   "selection": {
     "kind": "preselected_runtime_predictions_for_reliable_map_rehearsal",
